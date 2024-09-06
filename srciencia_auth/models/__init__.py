@@ -3,4 +3,9 @@ from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
-from .aluno import Aluno
+PERFIL=(
+    (1, 'Admin'),
+    (2, 'Aluno'),
+    (3, 'Professor'),
+)
+from .Usuario import Usuario
