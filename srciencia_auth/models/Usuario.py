@@ -1,30 +1,26 @@
-from srciencia_auth.models import *
+from django.db import models
+from django.contrib.auth.models import AbstractUser
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
-class Usuario(models.Model):
+class Usuario(AbstractUser):
     nome = models.CharField(max_length=255)
-    matricula = models.IntegerField(unique=True)
-    perfil = models.IntegerField(choices=PERFIL, default=2)
+    perfil = models.IntegerField(choices=PERFIL, default=2) 
     email = models.EmailField(unique=True)
-    senha = models.CharField(max_length=255)
     foto = models.ImageField(blank=True, null=True)
     data_cadastro = models.DateTimeField(auto_now_add=True)
     data_alteracao = models.DateTimeField(auto_now=True)
     situacao = models.CharField(max_length=100)
 
     def __str__(self):
-        return f'{self.nome} - ({self.matricula})'
-    
-    @receiver(post_save, sender=User)
-    def create_user_usuario(sender, instance, created, **kwargs):
-        try:
-            if created:
-                Usuario.objects.create(user=instance)
-        except: 
-            pass
-    
-    @receiver(post_save, sender=User)
-    def save_user_usuario(sender, instance, **kwargs):
-        try:
-            instance.usuario.save()
-        except:
-            pass
+        return f'{self.nome} - ({self.perfil})'
+
+@receiver(post_save, sender=AbstractUser)
+def create_user_usuario(sender, instance, created, **kwargs):
+    if created:
+        Usuario.objects.create(username=instance.username, email=instance.email)
+
+@receiver(post_save, sender=AbstractUser)
+def save_user_usuario(sender, instance, **kwargs):
+    instance.usuario.save()
+

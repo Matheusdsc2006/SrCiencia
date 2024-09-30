@@ -42,6 +42,8 @@ INSTALLED_APPS = [
     'srciencia_auth',
 ]
 
+AUTH_USER_MODEL = 'srciencia_auth.Usuario'
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',

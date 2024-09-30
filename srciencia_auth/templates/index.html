@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sr. Ciência</title>
-    <link rel="stylesheet" href="login.css">
+    <link rel="stylesheet" href="../static/css/style.css">
 </head>
 <body>
     <header>
@@ -26,13 +26,21 @@
         </figure>
         <section>
             <div class="titulo_cadastro">
-                <h1>Fazer Login</h1>
+                <h1>Fazer Cadastro</h1>
             </div>
             <div>
                 
             </div>
             <div class="cadastro">
                 <form>
+                        <label>Apelido</label>
+                    <div class="input_box">
+                        <input type="text" name="apelido" id="apelido" placeholder="Como quer se chamar" required>
+                    </div>
+                        <label>Nome completo</label>
+                    <div class="input_box">
+                        <input type="text" name="nome_completo" id="nome_completo" placeholder="Digite seu nome completo" required>
+                    </div>
                     <label>Email</label>
                     <div class="input_box">
                         <input type="email" name="email" id="email" placeholder="Digite seu email" required>
@@ -41,12 +49,15 @@
                     <div class="input_box">
                         <input type="password" name="senha" id="senha" placeholder="Digite sua senha" required>
                     </div>
+                    <label>Confirmar senha</label>
+                    <div class="input_box">
+                        <input type="password" name="confirmar_senha" id="confirmar_senha" placeholder="Confirme sua senha" required>
+                    </div>
                 </form>
-                <a href="#" class="esqueci_senha">Esqueci minha senha</a>
                 <div class="info">
-                    <p>Não possui possui conta?</p>
-                    <a href="index.html">Fazer cadastro</a>
-                    <button>Entrar</button>
+                    <p>Já possui conta?</p>
+                    <a href="login.html">Fazer login</a>
+                    <button>Cadastrar-se</button>
                 </div>
             </div>
         </section>
