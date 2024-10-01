@@ -3,11 +3,17 @@ from django.contrib.auth.models import AbstractUser
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
+PERFIL=(
+    (1, 'Admin'),
+    (2, 'Aluno'),
+    (3, 'Professor'),
+)
+
 class Usuario(AbstractUser):
     nome = models.CharField(max_length=255)
     perfil = models.IntegerField(choices=PERFIL, default=2) 
     email = models.EmailField(unique=True)
-    foto = models.ImageField(blank=True, null=True)
+    foto = models.BinaryField(blank=True, null=True)
     data_cadastro = models.DateTimeField(auto_now_add=True)
     data_alteracao = models.DateTimeField(auto_now=True)
     situacao = models.CharField(max_length=100)

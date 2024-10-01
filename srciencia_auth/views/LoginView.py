@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate
-from .forms import UsuarioCreationForm, UsuarioLoginForm
+from srciencia_auth.forms import UsuarioLoginForm
 
 def login_view(request):
     if request.method == 'POST':
@@ -14,4 +14,4 @@ def login_view(request):
                 return redirect('home')  # redirecionar para a página inicial ou outra página
     else:
         form = UsuarioLoginForm()
-    return render(request, 'login.html', {'form': form})
+    return render(request, './auth/login.html', {'form': form})
