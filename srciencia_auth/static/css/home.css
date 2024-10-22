@@ -1,5 +1,8 @@
 main{
     background-color: var(--color-light-purple);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
 header .container, .container{
@@ -15,16 +18,22 @@ header .container nav ul{
 }
 
 header .container nav ul li button{
-    padding: .5em 2em;
+    padding: 1em 3em;
     border: none;
     font-size: .9rem;
     font-weight: 500;
+    border-radius: 5px;
 }
 
 header .container nav ul li#call-to-login button{
     background: none;
-    border: 1px solid var(--color-primary-purple);
-    color: var(--color-primary-purple);
+    border: 1px solid var(--color-dark-purple-gray);
+    color: var(--color-dark-purple-gray);
+}
+
+header .container nav ul li#call-to-register button{
+    background-color: var(--color-dark-purple-gray);
+    color: var(--color-white);
 }
 
 section.container{
@@ -69,4 +78,44 @@ section.container.call-to-action .call-to-action-call button a{
 
 section.container.call-to-action .call-to-action-call button:hover{
     background-color: var(--color-dark-purple);
+}
+
+@media (max-width:1024px) and (min-width:769px){
+    section.container.call-to-action .call-to-action-image{
+        width: 45%;
+    }
+    section.container.call-to-action .call-to-action-call{
+        width: 50%;
+    }
+    section.container.call-to-action .call-to-action-call p{
+        font-size: 1.3rem;
+    }
+
+}
+
+@media (max-width: 768px){
+    header .container{
+        justify-content: center;
+    }
+    header .container nav{
+        display: none;
+    }
+    section.container.call-to-action{
+        flex-direction: column;
+        gap: 2rem;
+    }
+    section.container.call-to-action .call-to-action-image{
+        width: 100%;
+    }
+    section.container.call-to-action .call-to-action-call{
+        width: 100%;
+    }
+    section.container.call-to-action .call-to-action-call p{
+        font-size: 1.1rem;
+        text-align: start;
+    }
+    section.container.call-to-action .call-to-action-call button{
+        width: 100%;
+    }
+
 }
