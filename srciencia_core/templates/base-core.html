@@ -1,0 +1,27 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-BR">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <link rel="stylesheet" href="{% static 'css/global.css' %}">
+        <link rel="shortcut icon" href="{% static 'assets/favicon.ico' %}" type="image/x-icon">
+        {% block styles %}{% endblock %}
+        <title>Sr Ciência - {% block title %}{% endblock %}</title>
+    </head>
+    <body>
+        <header>
+            <div id="icon-container"></div>
+            <div class="container">
+                <h1 class="logo"><img src="{% static 'assets/logo_sr_ciencia.svg' %}" alt=""></h1>
+                {% block nav %}
+                {% endblock %}
+            </div>
+        </header>
+        
+        {% block content %}{% endblock %}
+        
+        <script src="{% static 'js/global.js' %}"></script>
+        {% block scripts %}{% endblock %}
+    </body>
+</html>

@@ -1,0 +1,22 @@
+{% extends "base-core.html" %}
+{% load static %}
+
+{% block nav %}
+<nav class="menu-core">
+    <ul>
+        
+        <li class="{% if request.path == '/' %}active{% endif %}">
+            <a href="">Página Inicial</a>
+        </li>
+        <li class="{% if request.path == '/questoes/' %}active{% endif %}">
+            <a href="">Questões</a>
+        </li>
+        <li class="{% if request.path == '/forum/' %}active{% endif %}">
+            <a href="">Usuários</a>
+        </li>
+        <li class="{% if request.path == '/perfil/' %}active{% endif %}">
+            <a href="">Perfil</a>
+        </li>
+    </ul>
+</nav>
+{% endblock %}
