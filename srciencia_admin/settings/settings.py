@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'srciencia_auth',
+    'srciencia_core',
 ]
 
 AUTH_USER_MODEL = 'srciencia_auth.Usuario'

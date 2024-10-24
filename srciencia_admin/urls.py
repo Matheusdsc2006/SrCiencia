@@ -24,4 +24,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('srciencia_auth.urls.HomeUrls')),
     path('auth/', include('srciencia_auth.urls.LoginUrls')),
+    path('u/0/', include('srciencia_core.urls.adminUrls')),
 ]+ static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
