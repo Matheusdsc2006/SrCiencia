@@ -25,7 +25,7 @@ header .container nav ul li button{
     border-radius: 5px;
 }
 
-header .container nav ul li#call-to-login button:hover{
+header .container nav ul li#call-to-login button{
     background: none;
     border: 1px solid var(--color-dark-purple-gray);
     color: var(--color-dark-purple-gray);
