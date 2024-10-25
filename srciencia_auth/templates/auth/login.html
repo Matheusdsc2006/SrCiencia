@@ -2,7 +2,10 @@
 {% load static %}
 {% block title %}Login{% endblock %}
 {% block styles %}
-    <link rel="stylesheet" href="{% static 'css/login.css' %}">
+    <link rel="stylesheet" href="{% static 'css/login.css' %}?v=1.0">
+{% endblock %}
+{% block scripts %}
+    <script src="{% static 'js/login.js' %}"></script>
 {% endblock %}
 {% block content %}
     <main>
@@ -13,12 +16,13 @@
                 
                 <div class="form-group">
                     <label for="id_username">Nome de Usuário ou E-mail:</label>
-                    {{ form.username }}
+                    {{ form.username }} 
                 </div>
-                
                 <div class="form-group">
                     <label for="id_password">Senha:</label>
                     {{ form.password }}
+                    <img id="icon-eye-show" src="{% static 'assets/eye-show.svg' %}" alt="Mostrar senha">
+                    <img id="icon-eye-off" src="{% static 'assets/eye-off.svg' %}" alt="Ocultar senha" style="display: none;">
                     <a href="{% url 'password_reset' %}" id="password-recover">Esqueci minha senha</a>
                 </div>
                 
@@ -44,7 +48,4 @@
             </form>
         </div>
     </main>
-{% endblock %}
-
-{% block scripts %}
 {% endblock %}
