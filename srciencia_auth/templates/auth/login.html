@@ -23,6 +23,7 @@
                     {{ form.password }}
                     <img id="icon-eye-show" src="{% static 'assets/eye-show.svg' %}" alt="Mostrar senha">
                     <img id="icon-eye-off" src="{% static 'assets/eye-off.svg' %}" alt="Ocultar senha" style="display: none;">
+                    <a href="{% url 'password_reset' %}" id="password-recover">Esqueci minha senha</a>
                 </div>
                 
                 {% if form.errors %}

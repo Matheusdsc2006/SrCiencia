@@ -49,3 +49,10 @@ class UsuarioLoginForm(AuthenticationForm):
             self.cleaned_data['username'] = User.objects.get(email=username_or_email).username
 
         return super().clean()
+
+class PasswordResetForm(forms.Form):
+    email = forms.EmailField()
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['email'].widget.attrs['placeholder'] = 'Digite seu e-mail'

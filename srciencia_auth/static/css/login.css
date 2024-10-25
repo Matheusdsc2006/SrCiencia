@@ -76,7 +76,7 @@ main{
     color: var(--color-dark-purple-gray);
 }
 
-.auth-container form{
+.auth-container form, .container .reset-done-container{
     background-color: var(--color-white);
     padding: 2em;
     border-radius: 10px;
@@ -86,6 +86,10 @@ main{
     flex-direction: column;
     gap: 1.5rem;  
     color: var(--color-dark-gray);
+}
+
+.container .reset-done-container .auth-link{
+    align-self: center;
 }
 
 .auth-container form .form-group{
@@ -101,7 +105,7 @@ main{
     flex-wrap: wrap;
 }
 
-.auth-container form .form-group .auth-link{
+.auth-link{
     font-size: 1rem;
     font-weight: 600;
     color: var(--color-dark-gray)
@@ -164,6 +168,7 @@ main{
     flex-direction: column;
     gap: 1rem;
 }
+
 
 @media (max-width: 768px){
 
