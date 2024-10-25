@@ -26,14 +26,28 @@ header .container nav ul li button{
 }
 
 header .container nav ul li#call-to-login button{
+    transition: 0.5s ease;
     background: none;
     border: 1px solid var(--color-dark-purple-gray);
     color: var(--color-dark-purple-gray);
 }
 
+header .container nav ul li#call-to-login button:hover{
+    border: 1px solid var(--color-dark-purple);
+    color: var(--color-dark-purple);
+    cursor: pointer;
+}
+
 header .container nav ul li#call-to-register button{
+    transition: 0.5s ease;
     background-color: var(--color-dark-purple-gray);
     color: var(--color-white);
+}
+
+header .container nav ul li#call-to-register button:hover{
+    background-color: var(--color-dark-purple);
+    color: var(--color-white);
+    cursor: pointer;
 }
 
 section.container{

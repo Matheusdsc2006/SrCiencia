@@ -6,6 +6,62 @@ main{
     padding: 3rem 0;
 }
 
+/* Estilos gerais */
+.auth-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    max-width: 40rem;
+    margin: auto;
+}
+
+.auth-container form .form-group {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: .5rem;
+}
+
+/* Estilo para os ícones de olho */
+#icon-eye-show,
+#icon-eye-off {
+    position: absolute;
+    right: 1rem;
+    top: 73%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    width: 25px;
+    height: 25px;
+    opacity: 0.5;
+    transition: opacity 0.3s;
+}
+
+#icon-eye-show:hover,
+#icon-eye-off:hover {
+    opacity: 1;
+}
+
+/* Estilo para os ícones de olho */
+#icon-eye-show-password1, #icon-eye-off-password1,
+#icon-eye-show-password2, #icon-eye-off-password2 {
+    position: absolute;
+    right: 1rem;
+    top: 73%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    width: 25px;
+    height: 25px;
+    opacity: 0.5;
+    transition: opacity 0.3s;
+}
+
+#icon-eye-show-password1:hover, #icon-eye-off-password1:hover,
+#icon-eye-show-password2:hover, #icon-eye-off-password2:hover {
+    opacity: 1;
+}
+
+
 .auth-container{
     display: flex;
     flex-direction: column;
