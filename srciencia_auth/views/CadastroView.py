@@ -2,7 +2,9 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import login
 from srciencia_auth.forms import UsuarioCreationForm
 from srciencia_auth.models import Usuario 
+from django.contrib.auth import get_user_model
 
+User = get_user_model()
 def register(request):
     if request.method == 'POST':
         form = UsuarioCreationForm(request.POST)
@@ -11,6 +13,7 @@ def register(request):
             user.perfil = 2 
             user.situacao = 'Regular'  
             user.save()  
+            user.backend = 'django.contrib.auth.backends.ModelBackend' 
             login(request, user)
             return redirect('home')  
     else:
