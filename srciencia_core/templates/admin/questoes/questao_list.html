@@ -1,0 +1,22 @@
+{% extends "admin/base-admin.html" %}
+{% block content %}
+  <h2>Lista de Questões</h2>
+  <a href="{% url 'questao_create' %}" class="btn btn-primary">Adicionar questão</a>
+  <ul>
+    {% for questao in questoes %}
+      <li>
+        <strong>{{ questao.descricao }}</strong> - Pontuação: {{ questao.pontuacao }}
+        <ul>
+          {% for alternativa in questao.alternativas.all %}
+            <li>{{ alternativa.descricao }} - {% if alternativa.correta %}Correta{% else %}Incorreta{% endif %}</li>
+          {% endfor %}
+        </ul>
+        <a href="{% url 'questao_update' questao.pk %}" class="btn btn-secondary">Editar questão</a>
+        <form action="{% url 'questao_delete' questao.pk %}" method="post" style="display:inline;">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-danger">Apagar questão</button>
+        </form>
+      </li>
+    {% endfor %}
+  </ul>
+{% endblock %}

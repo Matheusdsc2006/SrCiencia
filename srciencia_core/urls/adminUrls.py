@@ -1,6 +1,9 @@
 from django.urls import path
-from srciencia_core.views.adminView import crud_questoes
+from srciencia_core.views.adminView import *
 
 urlpatterns = [
-    path("questoes", crud_questoes, name='crud_questoes'),
+    path("questoes/", questao_list, name="questao_list"),
+    path("questoes/create", questao_create, name="questao_create"),
+    path("questoes/edit/<int:pk>/", questao_update, name="questao_update"),
+    path("questoes/delete/<int:pk>/", questao_delete, name="questao_delete"),
 ]
