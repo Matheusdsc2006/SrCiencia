@@ -5,6 +5,7 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         <link rel="stylesheet" href="{% static 'css/global.css' %}">
+        <link rel="stylesheet" href="{% static 'css/global-core.css' %}">
         <link rel="shortcut icon" href="{% static 'assets/favicon.ico' %}" type="image/x-icon">
         {% block styles %}{% endblock %}
         <title>Sr Ciência - {% block title %}{% endblock %}</title>
@@ -22,6 +23,14 @@
         {% block content %}{% endblock %}
         
         <script src="{% static 'js/global.js' %}"></script>
+        <script src="{% static 'ckeditor/ckeditor-init.js' %}"></script>
+        <script src="{% static 'ckeditor/ckeditor/ckeditor.js' %}"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-AMS_HTML"></script>
+        <script>
+            function renderLatex() {
+                MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
+            }
+        </script>
         {% block scripts %}{% endblock %}
     </body>
 </html>

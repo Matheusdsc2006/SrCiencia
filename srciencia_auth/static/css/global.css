@@ -19,13 +19,14 @@
     --color-medium-gray: #C9C9C9;
     --color-dark-gray: #48444C;
     --color-dark-purple-gray: #2B2433;
+    --color-red: #E83030;
     --box-shadow: 0 0px 10px rgba(0, 0, 0, 0.2);
 }
 
 html, body{
     display: flex;
     flex-direction: column;
-    height: 100%;
+    min-height: 100dvh;
 }
 
 main{

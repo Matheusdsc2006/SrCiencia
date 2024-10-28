@@ -39,6 +39,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'ckeditor',
+    'ckeditor_uploader',
+    'rest_framework',
     'srciencia_auth',
     'srciencia_core',
 ]
@@ -54,6 +57,18 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+CKEDITOR_CONFIGS = {
+    'default': {
+        'toolbar': 'Full',
+        'extraPlugins': 'uploadimage', 
+        'height': 300,
+        'width': '100%',
+        'filebrowserUploadUrl': "/ckeditor/upload/",
+        'filebrowserBrowseUrl': "/ckeditor/browse/",
+    },
+}
+
 
 ROOT_URLCONF = 'srciencia_admin.urls'
 
@@ -130,6 +145,7 @@ USE_TZ = True
 STATIC_URL = 'static/'
 MEDIA_URL='/media/'
 MEDIA_ROOT=os.path.join(BASE_DIR, 'media')
+CKEDITOR_UPLOAD_PATH = "uploads/"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field

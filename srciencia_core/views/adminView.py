@@ -4,13 +4,16 @@ from django.urls import reverse_lazy
 from srciencia_core.models import Questao, Alternativa
 from srciencia_core.forms import QuestaoForm, AlternativaForm
 from django.forms import modelformset_factory
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from srciencia_core.models import Conteudo, Topico
 
 def questao_list(request):
     questoes = Questao.objects.all()
     return render(request, "admin/questoes/questao_list.html", {"questoes": questoes})
 
 def questao_create(request):
-    AlternativaFormSet = modelformset_factory(Alternativa, form=AlternativaForm, extra=4)
+    AlternativaFormSet = modelformset_factory(Alternativa, form=AlternativaForm, extra=5)
     if request.method == "POST":
         questao_form = QuestaoForm(request.POST)
         formset = AlternativaFormSet(request.POST, queryset=Alternativa.objects.none())
@@ -47,3 +50,14 @@ def questao_delete(request, pk):
         questao.delete()
         return redirect("questao_list")
     return render(request, "admin/questoes/questao_confirm_delete.html", {"questao": questao})
+
+
+@api_view(['GET'])
+def get_conteudos(request, disciplina_id):
+    conteudos = Conteudo.objects.filter(disciplina_id=disciplina_id).values('id', 'nome')
+    return Response(list(conteudos))
+
+@api_view(['GET'])
+def get_topicos(request, conteudo_id):
+    topicos = Topico.objects.filter(conteudo_id=conteudo_id).values('id', 'nome')
+    return Response(list(topicos))
