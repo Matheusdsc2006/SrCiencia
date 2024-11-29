@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SR. Ciência - Página Inicial</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/pagina_inicial.css' %}">
+</head>
+<body>
+    <div class="container">
+        <!-- Barra Lateral -->
+        <aside class="sidebar">
+            <div class="logo">
+                <img src="{% static 'assets/sr_ciencia.svg' %}" alt="SR. Ciência">
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="#" class="active"><img src="{% static 'assets/home.svg' %}" alt="">Página inicial</a></li>
+                    <li><a href="#"><img src="{% static 'assets/profile.svg' %}" alt="">Meu perfil</a></li>
+                    <li><a href="#"><img src="{% static 'assets/practice.svg' %}" alt="">Praticar</a></li>
+                    <li><a href="#"><img src="{% static 'assets/classes.svg' %}" alt="">Turmas</a></li>
+                    <li><a href="#"><img src="{% static 'assets/forum.svg' %}" alt="">Fórum</a></li>
+                    <li><a href="#"><img src="{% static 'assets/help.svg' %}" alt="">Ajuda</a></li>
+                    <li><a href="#" class="logout" style="color: #e72427;"><img src="{% static 'assets/logout.svg' %}" alt="">Sair</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Conteúdo Principal -->
+        <main>
+            <header class="header">
+                <div class="welcome">
+                    <h1>Bem-vindo, <span class="highlight">Lucas</span></h1>
+                </div>
+                <div class="header-user">
+                    <div class="user-info">
+                        <span class="premium">Premium</span>
+                        <img class="notif" src="{% static 'assets/notif.svg' %}" alt="Notificações">
+                        <span class="points">2485 pontos</span>
+                        <img class="user-avatar" src="{% static 'assets/user.svg' %}" alt="Usuário">
+                    </div>
+                </div>
+            </header>                            
+            <div class="content-grid">
+                <!-- Coluna Esquerda -->
+                <section class="left-column">
+                    <section class="activities">
+                        <h2>Atividades pendentes</h2>
+                        <div class="card-container">
+                            <!-- Atividade Física II -->
+                            <div class="activity-card">
+                                <h3>Física II</h3>
+                                <p>Eletrodinâmica</p>
+                                <p>Até dia 31/03</p>
+                                <p><img src="{% static 'assets/questions.svg' %}" alt="icone_q"> 20 questões</p>
+                                <p><img src="{% static 'assets/time.svg' %}" alt="icone_t"> Indefinido</p>
+                                <button>Iniciar tarefa</button>
+                            </div>
+                            <!-- Atividade Química II -->
+                            <div class="activity-card">
+                                <h3>Química II</h3>
+                                <p>Eletroquímica</p>
+                                <p>Até dia 17/04</p>
+                                <p><img src="{% static 'assets/questions.svg' %}" alt="icone_q"> 20 questões</p>
+                                <p><img src="{% static 'assets/time.svg' %}" alt="icone_t"> 40 min</p>
+                                <button>Iniciar tarefa</button>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="practicing">
+                        <h2>Continuar praticando</h2>
+                        <div class="practice-card">
+                            <h3>Química II</h3>
+                            <p>Pilha de Daniell</p>
+                            <p>Sem prazo de entrega</p>
+                            <div class="progress-bar">
+                                <div class="progress" style="width: 75%;"></div>
+                            </div>
+                            <button>Continuar tarefa</button>
+                        </div>
+                    </section>
+                </section>
+
+                <!-- Coluna Direita -->
+                <aside class="right-column">
+                    <section class="daily-goal">
+                        <h2>Meta diária</h2>
+                        <p>Ganhe 60 pontos</p>
+                        <div class="progress-bar">
+                            <div class="progress" style="width: 75%;"></div>
+                        </div>
+                        <p>45/60</p>
+                    </section>
+
+                    <section class="ranking">
+                        <h2>Ranking Semanal</h2>
+                        <ul>
+                            <li>1. username - 4012 pontos</li>
+                            <li>2. username - 3021 pontos</li>
+                            <li>3. username - 2914 pontos</li>
+                            <li>4. Lucas - 2845 pontos</li>
+                            <li>5. username - 1512 pontos</li>
+                        </ul>
+                    </section>
+
+                    <section class="announcement">
+                        <h2>Anúncio</h2>
+                        <div class="ad-placeholder"></div>
+                    </section>
+                </aside>
+            </div>
+        </main>
+    </div>
+</body>
+</html>

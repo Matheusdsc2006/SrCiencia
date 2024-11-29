@@ -1,0 +1,229 @@
+/* Configurações Gerais */
+body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f9f5ff;
+    color: #333;
+}
+
+main {
+    margin-left: 260px;
+    padding: 40px;
+    flex: 1;
+}
+
+.container {
+    display: flex;
+}
+
+/* Barra Lateral */
+.sidebar {
+    width: 240px;
+    background-color: white;
+    padding: 20px;
+    height: 100vh;
+    position: fixed;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+}
+
+.logo img {
+    width: 100%;
+    max-width: 235px;
+    margin-bottom: 50px;
+    margin-top: 20px;
+    display: block;
+}
+
+.sidebar nav ul {
+    list-style: none;
+    padding: 0;
+}
+
+.sidebar nav ul li {
+    margin-bottom: 20px;
+}
+
+.sidebar nav ul li a {
+    text-decoration: none;
+    color: #333;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 10px;
+    border-radius: 8px;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.sidebar nav ul li a:hover {
+    background-color: #ece6ff; /* Fundo roxo claro no hover */
+}
+
+.sidebar nav ul li a img {
+    width: 20px;
+}
+
+.sidebar nav ul li a.active {
+    background-color: #ece6ff;
+    font-weight: bold;
+}
+
+.logout {
+    color: #ff4d4f;
+    font-weight: bold;
+}
+
+/* Área usuário */
+/* Cabeçalho */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 40px;
+}
+
+.welcome h1 {
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: #333;
+    margin: 0;
+}
+
+.welcome .highlight {
+    color: #5e2a8a; /* Roxo padrão */
+}
+
+/* Contêiner do Usuário */
+.header-user {
+    background-color: white;
+    width: 370px;
+    height: 60px;
+    border-radius: 5px; /* Bordas arredondadas */
+    display: flex;
+    align-items: center;
+    padding: 0 15px; /* Espaçamento interno */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Sombra leve */
+}
+
+/* Informações do Usuário */
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 15px; /* Espaço entre elementos */
+}
+
+.premium {
+    background-color: black;
+    color: white;
+    padding: 12px 49px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    border-radius: 5px; /* Estilo do rótulo Premium */
+}
+
+.points {
+    color: #5e2a8a; /* Roxo padrão */
+    font-size: 1rem;
+    font-weight: bold;
+}
+
+.user-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%; /* Avatar circular */
+    border: 2px solid #5e2a8a; /* Borda roxa */
+}
+
+
+/* Grid Principal */
+.content-grid {
+    display: grid;
+    grid-template-columns: 3fr 1fr;
+    gap: 30px;
+}
+
+/* Cartões e Widgets */
+.activities, .practicing, .daily-goal, .ranking, .announcement {
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    margin-bottom: 30px;
+}
+
+/* Botões estilizados */
+button {
+    background: #5e2a8a; /* Cor de fundo roxa padrão */
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    text-align: center;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background: #4a2070; /* Fundo escurecido no hover */
+}
+
+/* Atividades e Progresso */
+.activity-card, .practice-card {
+    padding: 15px;
+    border: 1px solid #e6e6e6;
+    border-radius: 10px;
+    margin-bottom: 15px;
+}
+
+.activity-card h3, .practice-card h3 {
+    color: #5e2a8a;
+    margin: 0 0 10px;
+}
+
+.progress-bar {
+    background: #e6e6e6;
+    border-radius: 5px;
+    height: 10px;
+    overflow: hidden;
+    margin: 10px 0;
+}
+
+.progress {
+    height: 100%;
+    background: #5e2a8a;
+}
+
+/* Ranking */
+.ranking ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.ranking li {
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+/* Anúncio */
+.ad-placeholder {
+    height: 150px;
+    background-color: #f9f9f9;
+    border: 1px dashed #ccc;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+}
+
+/* Refinamento Adicional para Espaçamento */
+.section {
+    margin-bottom: 40px;
+}
+
+.card-container {
+    display: flex;
+    gap: 20px;
+}
