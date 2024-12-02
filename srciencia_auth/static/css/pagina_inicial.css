@@ -1,3 +1,15 @@
+:root {
+    --light-purple: #f3eaff;
+    --dark-purple: #5e4b8a;
+    --primary-purple: #7d5baa;
+    --white: #ffffff;
+    --gray: #666666;
+    --light-gray: #cccccc;
+    --danger-red: #ff4d4d;
+    --green: #4caf50;
+    --orange: #ff9800;
+}
+
 /* Configurações Gerais */
 body {
     font-family: 'Arial', sans-serif;
@@ -19,20 +31,18 @@ main {
 
 /* Barra Lateral */
 .sidebar {
-    width: 240px;
-    background-color: white;
-    padding: 20px;
+    width: 240px; /* Define a largura fixa do menu lateral */
+    background-color: var(--white);
     height: 100vh;
-    position: fixed;
-    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+    position: fixed; /* Mantém o menu fixado à esquerda */
+    padding: 20px;
+    box-shadow: 2px 0 6px rgba(0, 0, 0, 0.1);
 }
 
 .logo img {
     width: 100%;
-    max-width: 235px;
-    margin-bottom: 50px;
-    margin-top: 20px;
-    display: block;
+    max-width: 200px;
+    margin: 15px 0px 10px 10px;
 }
 
 .sidebar nav ul {
@@ -45,26 +55,34 @@ main {
 }
 
 .sidebar nav ul li a {
-    text-decoration: none;
-    color: #333;
     display: flex;
     align-items: center;
     gap: 15px;
     padding: 10px;
+    text-decoration: none;
+    color: var(--gray);
     border-radius: 8px;
-    transition: background-color 0.3s, color 0.3s;
-}
-
-.sidebar nav ul li a:hover {
-    background-color: #ece6ff; /* Fundo roxo claro no hover */
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .sidebar nav ul li a img {
     width: 20px;
+    height: 20px;
+}
+
+.sidebar nav ul li a:hover {
+    background-color: var(--light-purple);
+    color: var(--dark-purple);
 }
 
 .sidebar nav ul li a.active {
-    background-color: #ece6ff;
+    background-color: var(--light-purple);
+    color: var(--dark-purple);
+    font-weight: bold;
+}
+
+.sidebar nav ul li a.logout {
+    color: var(--danger-red);
     font-weight: bold;
 }
 

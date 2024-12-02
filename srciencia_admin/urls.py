@@ -26,4 +26,5 @@ urlpatterns = [
     path('', include('srciencia_auth.urls.HomeUrls')),
     path('auth/', include('srciencia_auth.urls.LoginUrls')),
     path('paginas/', include('srciencia_auth.urls.Pagina_inicialUrls')),
-]+ static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    path('paginas/', include('srciencia_auth.urls.TurmasUrls')), 
+] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

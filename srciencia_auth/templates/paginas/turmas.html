@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SR. Ciência - Turmas</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/turmas.css' %}">
+</head>
+<body>
+    <div class="container">
+        <!-- Menu Lateral -->
+        <aside class="sidebar">
+            <div class="logo">
+                <img src="{% static 'assets/sr_ciencia.svg' %}" alt="SR. Ciência">
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="{% url 'pagina_inicial' %}"><img src="{% static 'assets/home.svg' %}" alt="">Página inicial</a></li>
+                    <li><a href="#"><img src="{% static 'assets/profile.svg' %}" alt="">Meu perfil</a></li>
+                    <li><a href="#"><img src="{% static 'assets/practice.svg' %}" alt="">Praticar</a></li>
+                    <li><a href="#" class="active"><img src="{% static 'assets/classes.svg' %}" alt="">Turmas</a></li>
+                    <li><a href="#"><img src="{% static 'assets/forum.svg' %}" alt="">Fórum</a></li>
+                    <li><a href="#"><img src="{% static 'assets/help.svg' %}" alt="">Ajuda</a></li>
+                    <li><a href="#" class="logout" style="color: #e72427;"><img src="{% static 'assets/logout.svg' %}" alt="">Sair</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Conteúdo Principal -->
+        <main class="main-container">
+            <div class="header">
+                <div class="header-input">
+                    <label for="codigo-turma">Código da turma:</label>
+                    <input type="text" id="codigo-turma" placeholder="Peça ao seu professor o código da turma e digite aqui">
+                </div>
+                <div class="header-user">
+                    <div class="user-info">
+                        <div class="user-avatar">
+                            <figure>
+                                <img src="{% static 'assets/bugas.png' %}" alt="Lucas Albuquerque">
+                            </figure>
+                        </div>
+                        <div>
+                            <p class="user-name">Lucas Albuquerque</p>
+                            <p class="user-email">Lucas123@escolar.ifrn.edu.br</p>
+                        </div>
+                    </div>
+                    <button class="change-account">Mudar de conta</button>
+                </div>
+            </div>
+            <div class="cards">
+                {% for turma in turmas %}
+                <div class="card {{ turma.cor }}">
+                    <div class="card-header">
+                        <h3>{{ turma.nome }}</h3>
+                        <p>{{ turma.descricao }}</p>
+                    </div>
+                    <p>{{ turma.professor }}</p>
+                    <div class="card-actions">
+                        <button onclick="window.location.href='{% url 'pendentes' turma.id %}'">Trabalhos pendentes</button>
+                        <button onclick="window.location.href='{{ turma.google_drive_url }}'">Abrir pasta no Google Drive</button>
+                        <button class="cancel" onclick="window.location.href='{% url 'cancelar_inscricao' turma.id %}'">Cancelar inscrição</button>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </main>
+    </div>
+</body>
+</html>
