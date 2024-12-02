@@ -2,46 +2,64 @@
 {% load static %}
 
 {% block content %}
-<main>
+<main class="container">
+    <h2>{{ questao_form.instance.pk|yesno:"Editar Questão,Nova Questão" }}</h2>
     
-    <h2>{% if questao_form.instance.pk %}Editar Questão{% else %}Nova Questão{% endif %}</h2>
-    <form method="post" enctype="multipart/form-data">  <!-- Adiciona enctype para upload de arquivos -->
-      {% csrf_token %}
-      {{ questao_form.as_p }}
-      <h3>Alternativas</h3>
-      {{ formset.management_form }}
-      <div>
-        {% for form in formset %}
-          {{ form.as_p }}
-        {% endfor %}
-      </div>
-      <button type="submit" class="btn btn-primary">Salvar</button>
-      <a href="{% url 'questao_list' %}" class="btn btn-secondary">Cancelar</a>
+    <form method="post" enctype="multipart/form-data"> <!-- Para upload de arquivos -->
+        {% csrf_token %}
+        {{ questao_form.media }} <!-- Carrega os arquivos necessários para os widgets -->
+        {{ questao_form.as_p }}
+
+        <!-- Disciplinas, Conteúdos e Tópicos -->
+        <section>
+            <h3>Disciplinas, Conteúdos e Tópicos</h3>
+            <div class="form-section">
+                {% for form in disciplina_formset %}
+                    <div class="form-row">
+                        {{ form.as_p }}
+                    </div>
+                {% endfor %}
+            </div>
+        </section>
+
+        <!-- Casos e Alternativas -->
+        <section>
+            <h3>Casos</h3>
+            {{ caso_formset.management_form }}
+            <div class="form-section">
+                {% for caso_form in caso_formset %}
+                    <div class="case-form">
+                        <h4>Caso {{ forloop.counter }}</h4>
+                        {{ caso_form.as_p }}
+
+                        <!-- Alternativas -->
+                        <h5>Alternativas</h5>
+                        {{ caso_form.alternativaformset.management_form }}
+                        <div class="alternativas">
+                            {% for alternativa_form in caso_form.alternativaformset %}
+                                <div class="alternativa-form">
+                                    {{ alternativa_form.as_p }}
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </section>
+
+        <!-- Botões de Ação -->
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Salvar</button>
+            <a href="{% url 'admin:index' %}" class="btn btn-secondary">Cancelar</a>
+        </div>
     </form>
-  
-    {% if questao_form.instance.pk %}
-      <h3>Visualização da Questão:</h3>
-      <div>
-        <h4>Descrição:</h4>
-        <div id="latex-preview-descricao">{{ questao_form.instance.descricao|safe }}</div>
-        
-        <h4>Resolução:</h4>
-        <div id="latex-preview-resolucao">{{ questao_form.instance.resolucao|safe }}</div>
-        
-        <h4>Alternativas:</h4>
-        <ul>
-          {% for form in formset %}
-            <li>{{ form.instance.descricao|safe }}</li>
-          {% endfor %}
-        </ul>
-      </div>
-      <script>
-        MathJax.typeset();  // Renderiza o LaTeX após a atualização do DOM
-      </script>
-    {% endif %}
 </main>
 {% endblock %}
 
 {% block scripts %}
+<!-- Carrega os arquivos JavaScript necessários -->
+{{ questao_form.media }}
+<script src="{% static 'django_ckeditor_5/app.js' %}"></script>
+<script src="{% static 'django_ckeditor_5/src/ckeditor.js' %}"></script>
 <script src="{% static 'js/questao-form.js' %}"></script>
 {% endblock %}
