@@ -15,7 +15,7 @@ body {
     font-family: 'Arial', sans-serif;
     margin: 0;
     padding: 0;
-    background-color: #f9f5ff;
+    background-color: var(--light-purple);
     color: #333;
 }
 

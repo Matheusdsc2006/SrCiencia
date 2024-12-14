@@ -67,5 +67,175 @@
             </div>
         </main>
     </div>
+    <div id="account-modal" class="modal">
+        <div class="modal-content">
+            <span id="close-modal" class="close-icon">&times;</span>
+            <h2>Adicionar ou selecionar uma conta</h2>
+            <div>
+                <ul class="account-list">
+                </ul>
+                <div class="add-account">
+                    <input type="email" id="new-account" placeholder="Digite um e-mail do Gmail" />
+                </div>
+                <div class="modal-actions">
+                    <button id="add-account-btn">Adicionar Conta</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Modal para Capturar o Nome do Usuário -->
+    <div id="name-modal" class="modal">
+        <div class="modal-content">
+            <h2>Digite o nome para o e-mail selecionado</h2>
+            <input type="text" id="user-name-input" placeholder="Digite o nome" />
+            <div class="modal-actions">
+                <button id="save-name-btn">Salvar</button>
+                <button id="cancel-name-btn">Cancelar</button>
+            </div>
+        </div>
+    </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+    const modal = document.getElementById("account-modal");
+    const nameModal = document.getElementById("name-modal");
+    const closeModal = document.getElementById("close-modal");
+    const changeAccountButton = document.querySelector(".change-account");
+    const accountList = document.querySelector(".account-list");
+    const newAccountInput = document.getElementById("new-account");
+    const addAccountButton = document.getElementById("add-account-btn");
+    const userNameElement = document.querySelector(".user-name");
+    const userEmailElement = document.querySelector(".user-email");
+
+    const saveNameButton = document.getElementById("save-name-btn");
+    const cancelNameButton = document.getElementById("cancel-name-btn");
+    const userNameInput = document.getElementById("user-name-input");
+
+    // Armazenar as contas adicionadas pelo usuário
+    let accounts = [];
+    const MAX_ACCOUNTS = 3; // Máximo de 3 contas permitidas
+    let selectedEmail = null; // Armazena o e-mail selecionado para associar o nome
+
+    // Mostrar o modal ao clicar no botão "Mudar de Conta"
+    changeAccountButton.addEventListener("click", () => {
+        modal.style.display = "block";
+        renderAccounts(); // Atualizar a lista ao abrir o modal
+    });
+
+    // Fechar o modal ao clicar no "X"
+    closeModal.addEventListener("click", () => {
+        modal.style.display = "none";
+    });
+
+    // Fechar o modal ao clicar fora do conteúdo
+    window.addEventListener("click", (event) => {
+        if (event.target === modal) {
+            modal.style.display = "none";
+        } else if (event.target === nameModal) {
+            nameModal.style.display = "none";
+        }
+    });
+
+    // Adicionar uma nova conta e abrir modal de nome automaticamente
+    addAccountButton.addEventListener("click", () => {
+        const newAccount = newAccountInput.value.trim();
+
+        // Verificar se a lista já atingiu o limite
+        if (accounts.length >= MAX_ACCOUNTS) {
+            alert(`Você só pode adicionar até ${MAX_ACCOUNTS} contas. Remova uma conta antes de adicionar outra.`);
+            return;
+        }
+
+        // Validar se é um e-mail válido
+        if (newAccount && /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(newAccount)) {
+            // Evitar contas duplicadas
+            if (!accounts.includes(newAccount)) {
+                accounts.push(newAccount);
+                renderAccounts();
+                newAccountInput.value = ""; // Limpar o campo
+
+                // Abrir modal de nome automaticamente
+                openNameModal(newAccount);
+            } else {
+                alert("Esta conta já foi adicionada.");
+            }
+        } else {
+            alert("Por favor, insira um e-mail válido.");
+        }
+    });
+
+    // Renderizar a lista de contas
+    function renderAccounts() {
+        accountList.innerHTML = ""; // Limpar a lista atual
+
+        if (accounts.length === 0) {
+            const emptyMessage = document.createElement("li");
+            emptyMessage.classList.add("empty");
+            emptyMessage.textContent = "Nenhuma conta adicionada.";
+            accountList.appendChild(emptyMessage);
+        } else {
+            accounts.forEach((account, index) => {
+                const listItem = document.createElement("li");
+                listItem.textContent = account;
+
+                // Botão "Remover"
+                const removeButton = document.createElement("button");
+                removeButton.textContent = "Remover";
+                removeButton.style.marginLeft = "5px";
+                removeButton.style.color = "#e72427";
+                removeButton.style.cursor = "pointer";
+
+                // Evento de remoção
+                removeButton.addEventListener("click", (event) => {
+                    event.stopPropagation(); // Impede o evento do item da lista
+                    accounts.splice(index, 1); // Remover a conta do array
+                    alert("Conta removida com sucesso."); // Mensagem ao remover
+                    renderAccounts(); // Atualizar a lista
+                });
+
+                // Evento de alternar conta
+                listItem.addEventListener("click", () => {
+                    openNameModal(account); // Abre o modal de nome
+                });
+
+                // Adicionar botão de remoção à lista
+                listItem.appendChild(removeButton);
+                accountList.appendChild(listItem);
+            });
+        }
+    }
+
+    // Função para abrir o modal de nome
+    function openNameModal(email) {
+        selectedEmail = email; // Define o e-mail selecionado
+        modal.style.display = "none"; // Oculta o modal de contas
+        nameModal.style.display = "block"; // Exibe o modal de nome
+    }
+
+    // Evento para salvar o nome associado ao e-mail selecionado
+    saveNameButton.addEventListener("click", () => {
+        const userName = userNameInput.value.trim();
+
+        if (userName) {
+            userNameElement.textContent = userName; // Atualizar o nome do usuário
+            userEmailElement.textContent = selectedEmail; // Atualizar o e-mail do usuário
+
+            // Fechar todos os modais
+            nameModal.style.display = "none";
+            modal.style.display = "none";
+
+            // Limpar o campo de entrada de nome
+            userNameInput.value = "";
+        } else {
+            alert("Por favor, insira um nome válido.");
+        }
+    });
+
+    // Evento para cancelar a edição do nome
+    cancelNameButton.addEventListener("click", () => {
+        nameModal.style.display = "none";
+        userNameInput.value = ""; // Limpar o campo
+    });
+});
+    </script>    
 </body>
 </html>
