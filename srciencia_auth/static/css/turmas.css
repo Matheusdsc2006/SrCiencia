@@ -389,6 +389,7 @@ button:hover {
     border: 1px solid #ddd;
     border-radius: 5px;
     font-size: 1em; /* Texto mais legível */
+    margin-bottom: 15px;
 }
 
 /* Estilo do novo modal */
