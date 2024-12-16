@@ -27,6 +27,7 @@ class UsuarioCreationForm(UserCreationForm):
     def save(self, commit=True):
         user = super().save(commit=False)
         user.email = self.cleaned_data['email']
+        user.nome = self.cleaned_data['nome']  # Certifique-se de salvar o campo "nome"
         if commit:
             user.save()
         return user

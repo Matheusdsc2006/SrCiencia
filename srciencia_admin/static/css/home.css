@@ -1,0 +1,121 @@
+main{
+    background-color: var(--color-light-purple);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+header .container, .container{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+header .container nav ul{
+    display: flex;
+    list-style-type: none;
+    gap: 1rem;
+}
+
+header .container nav ul li button{
+    padding: 1em 3em;
+    border: none;
+    font-size: .9rem;
+    font-weight: 500;
+    border-radius: 5px;
+}
+
+header .container nav ul li#call-to-login button{
+    background: none;
+    border: 1px solid var(--color-dark-purple-gray);
+    color: var(--color-dark-purple-gray);
+}
+
+header .container nav ul li#call-to-register button{
+    background-color: var(--color-dark-purple-gray);
+    color: var(--color-white);
+}
+
+section.container{
+    padding: 3rem 2rem;
+}
+
+section.container.call-to-action .call-to-action-image{
+    width: 50%;
+}
+
+section.container.call-to-action .call-to-action-image img{
+    width: 100%;
+}
+
+section.container.call-to-action .call-to-action-call{
+    width: 40%;
+    text-align: right;
+}
+
+section.container.call-to-action .call-to-action-call p{
+    font-size: 1.4rem;
+    font-weight: 500;
+    color: var(--color-dark-gray);
+    margin-bottom: 1rem;
+}
+
+section.container.call-to-action .call-to-action-call button{
+    cursor: pointer;
+    border: none;
+    font-size: 1.1rem;
+    font-weight: 500;
+    background-color: var(--color-primary-purple);
+    color: var(--color-white);
+    padding: .8rem 3rem;
+    border-radius: 5px;
+    transition: all .3s;
+}
+
+section.container.call-to-action .call-to-action-call button a{
+    color: var(--color-white);
+}
+
+section.container.call-to-action .call-to-action-call button:hover{
+    background-color: var(--color-dark-purple);
+}
+
+@media (max-width:1024px) and (min-width:769px){
+    section.container.call-to-action .call-to-action-image{
+        width: 45%;
+    }
+    section.container.call-to-action .call-to-action-call{
+        width: 50%;
+    }
+    section.container.call-to-action .call-to-action-call p{
+        font-size: 1.3rem;
+    }
+
+}
+
+@media (max-width: 768px){
+    header .container{
+        justify-content: center;
+    }
+    header .container nav{
+        display: none;
+    }
+    section.container.call-to-action{
+        flex-direction: column;
+        gap: 2rem;
+    }
+    section.container.call-to-action .call-to-action-image{
+        width: 100%;
+    }
+    section.container.call-to-action .call-to-action-call{
+        width: 100%;
+    }
+    section.container.call-to-action .call-to-action-call p{
+        font-size: 1.1rem;
+        text-align: start;
+    }
+    section.container.call-to-action .call-to-action-call button{
+        width: 100%;
+    }
+
+}

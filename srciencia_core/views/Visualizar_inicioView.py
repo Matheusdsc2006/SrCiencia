@@ -1,4 +1,4 @@
 from django.shortcuts import render
 
 def pagina_inicial(request):
-    return render(request, 'paginas/pagina_inicial.html')
+    return render(request, 'pagina_inicial.html')

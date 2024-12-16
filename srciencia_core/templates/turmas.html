@@ -1,10 +1,10 @@
+{% load static %}   
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SR. Ciência - Turmas</title>
-    {% load static %}
     <link rel="stylesheet" href="{% static 'css/turmas.css' %}">
 </head>
 <body>
@@ -42,7 +42,7 @@
                             </figure>
                         </div>
                         <div>
-                            <p class="user-name">Lucas Albuquerque</p>
+                            <p class="user-name">{{ user.username }}</p>
                             <p class="user-email">{{ conta_atual }}</p>
                         </div>
                     </div>
@@ -72,164 +72,258 @@
         </main>
     </div>
 
-    <!-- Modal para Gerenciar Contas -->
-    <div id="account-modal" class="modal">
-        <div class="modal-content">
-            <span id="close-modal" class="close-icon">&times;</span>
-            <h2>Adicionar ou selecionar uma conta</h2>
-            <ul class="account-list">
-                {% for conta in contas %}
-                    <li>
-                        <span>{{ conta }}</span>
-                        <button class="select-account" data-email="{{ conta }}">Selecionar</button>
-                    </li>
-                {% endfor %}
-            </ul>
-            <div class="add-account">
-                <input type="email" id="new-account" placeholder="Digite um e-mail" />
-                <button id="add-account-btn">Adicionar Conta</button>
-            </div>
+<!-- Modal de Confirmação -->
+<div id="confirmation-modal" class="modal">
+    <div class="modal-content">
+        <h2>Deseja realmente mudar de conta?</h2>
+        <p>Você sairá da conta atual.</p>
+        <div class="modal-actions">
+            <button id="confirm-change-btn" class="btn-confirm">Sim</button>
+            <button id="cancel-change-btn" class="btn-cancel">Não</button>
         </div>
     </div>
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            const modal = document.getElementById("account-modal");
-            const closeModal = document.getElementById("close-modal");
-            const changeAccountButton = document.querySelector(".change-account");
-            const accountList = document.querySelector(".account-list");
-            const newAccountInput = document.getElementById("new-account");
-            const addAccountButton = document.getElementById("add-account-btn");
-            const userEmailElement = document.querySelector(".user-email");
-    
-            let accounts = []; // Lista de contas adicionadas
-    
-            // Mostrar o modal ao clicar no botão "Mudar de Conta"
-            changeAccountButton.addEventListener("click", () => {
-                modal.style.display = "block";
-                renderAccounts(); // Atualiza a lista ao abrir o modal
-            });
-    
-            // Fechar o modal ao clicar no "X"
-            closeModal.addEventListener("click", () => {
-                modal.style.display = "none";
-            });
-    
-            // Fechar o modal ao clicar fora do conteúdo
-            window.addEventListener("click", (event) => {
-                if (event.target === modal) {
-                    modal.style.display = "none";
-                }
-            });
-    
-            // Adicionar uma nova conta
-            addAccountButton.addEventListener("click", () => {
-                const newAccount = newAccountInput.value.trim();
-    
-                if (!newAccount || !validateEmail(newAccount)) {
-                    alert("Por favor, insira um e-mail válido.");
-                    return;
-                }
-    
-                if (accounts.includes(newAccount)) {
-                    alert("Esta conta já foi adicionada.");
-                    return;
-                }
-    
-                accounts.push(newAccount);
-                renderAccounts(); // Atualiza a lista
-                newAccountInput.value = ""; // Limpa o campo
-                alert("Conta adicionada com sucesso.");
-            });
-    
-            // Renderizar a lista de contas
-            function renderAccounts() {
-                accountList.innerHTML = ""; // Limpar a lista atual
-    
-                if (accounts.length === 0) {
-                    const emptyMessage = document.createElement("li");
-                    emptyMessage.classList.add("empty");
-                    emptyMessage.textContent = "Nenhuma conta adicionada.";
-                    accountList.appendChild(emptyMessage);
-                } else {
-                    accounts.forEach((account, index) => {
-                        const listItem = document.createElement("li");
-                        listItem.textContent = account;
-    
-                        // Evento de seleção de conta
-                        listItem.addEventListener("click", () => {
-                            switchAccount(account); // Trocar para a conta selecionada
-                        });
-    
-                        // Botão "Remover"
-                        const removeButton = document.createElement("button");
-                        removeButton.textContent = "Remover";
-                        removeButton.style.marginLeft = "10px";
-                        removeButton.style.color = "#e72427";
-                        removeButton.style.cursor = "pointer";
-    
-                        // Evento de remoção
-                        removeButton.addEventListener("click", (event) => {
-                            event.stopPropagation(); // Impede o evento do item da lista
-                            accounts.splice(index, 1); // Remove a conta do array
-                            alert("Conta removida com sucesso."); // Mensagem ao remover
-                            renderAccounts(); // Atualiza a lista
-                        });
-    
-                        listItem.appendChild(removeButton);
-                        accountList.appendChild(listItem);
-                    });
-                }
-            }
-    
-            // Trocar de conta no backend
-            function switchAccount(email) {
-                fetch("{% url 'mudar_conta' %}", {
-                    method: "POST",
-                    headers: {
-                        "X-CSRFToken": "{{ csrf_token }}",
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({ nova_conta: email }),
-                })
-                    .then((response) => response.json())
-                    .then((data) => {
-                        if (data.success) {
-                            userEmailElement.textContent = email; // Atualiza apenas o email no frontend
-                            alert(data.message); // Mensagem de sucesso
-                            modal.style.display = "none"; // Fecha o modal
-                            location.reload(); // Recarrega a página para refletir mudanças
-                        } else {
-                            alert(data.message); // Mensagem de erro
-                        }
-                    })
-                    .catch((error) => {
-                        console.error("Erro ao enviar requisição:", error);
-                        alert("Erro ao mudar de conta. Tente novamente.");
-                    });
-            }
-    
-            // Função para validar e-mails
-            function validateEmail(email) {
-                const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-                return emailRegex.test(email);
-            }
-    
-            // Atualizar a lista de contas ao carregar a página
-            function initializeAccounts() {
-                fetch("{% url 'listar_contas' %}")
-                    .then((response) => response.json())
-                    .then((data) => {
-                        accounts = data.contas || [];
-                        renderAccounts(); // Renderiza a lista inicial
-                        userEmailElement.textContent = data.conta_atual || "Nenhuma conta selecionada"; // Atualiza o email no frontend
-                    })
-                    .catch((error) => {
-                        console.error("Erro ao carregar contas:", error);
-                    });
-            }
-    
-            initializeAccounts(); // Chamada inicial para configurar a lista
+</div>
+
+
+<div id="account-modal" class="modal">
+    <div class="modal-content">
+        <span id="close-modal" class="close-icon">&times;</span>
+        <h2>Selecione ou remova uma conta</h2>
+        <ul class="account-list">
+            <!-- As contas serão renderizadas dinamicamente pelo JavaScript -->
+        </ul>
+        <div class="add-account">
+            <input type="email" id="new-account" placeholder="Digite um e-mail" />
+            <button id="add-account-btn">Adicionar Conta</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Confirmação para Remover Conta Atual -->
+<div id="confirm-remove-modal" class="modal">
+    <div class="modal-content">
+        <h2>Deseja realmente sair da conta?</h2>
+        <p>Você será direcionado à página de login.</p>
+        <div class="modal-actions">
+            <button id="confirm-remove-yes" class="confirm-button">Sim</button>
+            <button id="confirm-remove-no" class="cancel-button">Não</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const accountModal = document.getElementById("account-modal");
+        const confirmationModal = document.getElementById("confirmation-modal");
+        const removeCurrentAccountModal = document.getElementById("remove-current-account-modal");
+        const closeModal = document.getElementById("close-modal");
+        const changeAccountButton = document.querySelector(".change-account");
+        const accountList = document.querySelector(".account-list");
+        const newAccountInput = document.getElementById("new-account");
+        const addAccountButton = document.getElementById("add-account-btn");
+        const userEmailElement = document.querySelector(".user-email");
+        const confirmChangeButton = document.getElementById("confirm-change-btn");
+        const cancelChangeButton = document.getElementById("cancel-change-btn");
+        const confirmRemoveButton = document.getElementById("confirm-remove-btn");
+        const cancelRemoveButton = document.getElementById("cancel-remove-btn");
+
+        let accounts = [];
+        const MAX_ACCOUNTS = 3;
+        let selectedEmail = null; // E-mail selecionado para confirmação
+        let currentEmail = null; // Conta atual
+
+        // Abrir modal de gerenciamento de contas
+        changeAccountButton.addEventListener("click", () => {
+            accountModal.style.display = "block";
+            renderAccounts();
         });
-    </script>    
+
+        // Fechar modal de contas
+        closeModal.addEventListener("click", () => {
+            accountModal.style.display = "none";
+        });
+
+        // Fechar modal ao clicar fora
+        window.addEventListener("click", (event) => {
+            if (event.target === accountModal) {
+                accountModal.style.display = "none";
+            } else if (event.target === confirmationModal) {
+                confirmationModal.style.display = "none";
+            } else if (event.target === removeCurrentAccountModal) {
+                removeCurrentAccountModal.style.display = "none";
+            }
+        });
+
+        // Adicionar nova conta
+        addAccountButton.addEventListener("click", () => {
+            const newAccount = newAccountInput.value.trim();
+
+            if (accounts.length >= MAX_ACCOUNTS) {
+                alert("Você atingiu o limite de 3 contas. Remova uma conta para adicionar outra.");
+                return;
+            }
+
+            if (!newAccount || !validateEmail(newAccount)) {
+                alert("Por favor, insira um e-mail válido.");
+                return;
+            }
+
+            if (accounts.includes(newAccount)) {
+                alert("Esta conta já foi adicionada.");
+                return;
+            }
+
+            fetch("{% url 'mudar_conta' %}", {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": "{{ csrf_token }}",
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ nova_conta: newAccount }),
+            })
+                .then((response) => response.json())
+                .then((data) => {
+                    if (data.success) {
+                        accounts.push(newAccount);
+                        renderAccounts();
+                        newAccountInput.value = "";
+                        alert("Conta adicionada com sucesso.");
+                    } else {
+                        alert("Erro ao adicionar a conta.");
+                    }
+                })
+                .catch((error) => {
+                    console.error("Erro ao adicionar conta:", error);
+                    alert("Erro ao adicionar a conta. Tente novamente.");
+                });
+        });
+
+        // Renderizar lista de contas
+        function renderAccounts() {
+            accountList.innerHTML = "";
+
+            if (accounts.length === 0) {
+                const emptyMessage = document.createElement("li");
+                emptyMessage.classList.add("empty");
+                emptyMessage.textContent = "Nenhuma conta adicionada.";
+                accountList.appendChild(emptyMessage);
+            } else {
+                accounts.forEach((account) => {
+                    const listItem = document.createElement("li");
+                    listItem.textContent = account;
+
+                    // Clique para trocar de conta (com confirmação)
+                    listItem.addEventListener("click", () => {
+                        if (account === currentEmail) {
+                            alert("A conta selecionada deve ser diferente da atual!");
+                            return; // Não fecha o modal
+                        }
+                        selectedEmail = account;
+                        accountModal.style.display = "none"; // Fechar modal de contas
+                        confirmationModal.style.display = "block"; // Abrir modal de confirmação
+                    });
+
+                    // Botão "Remover"
+                    const removeButton = document.createElement("button");
+                    removeButton.textContent = "Remover";
+                    removeButton.style.marginLeft = "10px";
+                    removeButton.style.color = "#e72427";
+                    removeButton.style.cursor = "pointer";
+
+                    removeButton.addEventListener("click", (event) => {
+                        event.stopPropagation();
+                        if (account === currentEmail) {
+                            accountModal.style.display = "none";
+                            removeCurrentAccountModal.style.display = "block";
+                        } else {
+                            removeAccount(account);
+                        }
+                    });
+
+                    listItem.appendChild(removeButton);
+                    accountList.appendChild(listItem);
+                });
+            }
+        }
+
+        // Confirmar troca de conta
+        confirmChangeButton.addEventListener("click", () => {
+            confirmationModal.style.display = "none";
+            redirectToLogin(selectedEmail);
+        });
+
+        // Cancelar troca de conta
+        cancelChangeButton.addEventListener("click", () => {
+            confirmationModal.style.display = "none";
+        });
+
+        // Confirmar remoção da conta atual
+        confirmRemoveButton.addEventListener("click", () => {
+            removeCurrentAccountModal.style.display = "none";
+            redirectToLogin(null);
+        });
+
+        // Cancelar remoção da conta atual
+        cancelRemoveButton.addEventListener("click", () => {
+            removeCurrentAccountModal.style.display = "none";
+            accountModal.style.display = "block"; // Reabre o modal de listagem
+        });
+
+        // Remover conta do backend e frontend
+        function removeAccount(email) {
+            fetch("{% url 'remover_conta' %}", {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": "{{ csrf_token }}",
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ conta: email }),
+            })
+                .then((response) => response.json())
+                .then((data) => {
+                    if (data.success) {
+                        accounts = accounts.filter((account) => account !== email);
+                        renderAccounts();
+                        alert(data.message);
+                    } else {
+                        alert(data.message);
+                    }
+                })
+                .catch((error) => {
+                    console.error("Erro ao remover conta:", error);
+                    alert("Erro ao remover a conta. Tente novamente.");
+                });
+        }
+
+        // Redirecionar para a tela de login
+        function redirectToLogin(email) {
+            const loginUrl = email ? `{% url 'login' %}?email=` + encodeURIComponent(email) : "{% url 'login' %}";
+            window.location.href = loginUrl;
+        }
+
+        // Validar e-mail
+        function validateEmail(email) {
+            const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+            return emailRegex.test(email);
+        }
+
+        // Inicializar contas ao carregar a página
+        function initializeAccounts() {
+            fetch("{% url 'listar_contas' %}")
+                .then((response) => response.json())
+                .then((data) => {
+                    accounts = data.contas || [];
+                    currentEmail = data.conta_atual; // Atualiza a conta atual
+                    renderAccounts();
+                    userEmailElement.textContent = currentEmail;
+                })
+                .catch((error) => {
+                    console.error("Erro ao carregar contas:", error);
+                });
+        }
+
+        initializeAccounts();
+    });
+</script>
 </body>
 </html>

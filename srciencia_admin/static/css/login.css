@@ -1,0 +1,123 @@
+main{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--color-light-purple);
+    padding: 3rem 0;
+}
+
+.auth-container{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1.5rem;
+    max-width: 40rem;
+}
+
+.auth-container h2{
+    text-transform: uppercase;
+    color: var(--color-dark-purple-gray);
+}
+
+.auth-container form, .container .reset-done-container{
+    background-color: var(--color-white);
+    padding: 2em;
+    border-radius: 10px;
+    box-shadow: var(--box-shadow);
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;  
+    color: var(--color-dark-gray);
+}
+
+.container .reset-done-container .auth-link{
+    align-self: center;
+}
+
+.auth-container form .form-group{
+    display: flex;
+    flex-direction: column;
+    gap: .5rem;
+}
+
+.auth-container form .submit{
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.auth-link{
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--color-dark-gray)
+}
+
+.auth-container form .form-group #password-recover{
+    font-size: .9rem;
+}
+
+.auth-container form .form-group .auth-link a, .auth-container form .form-group #password-recover{
+    color: var(--color-primary-purple);
+    font-weight: 600;
+    transition: all .3s;
+}
+
+.auth-container form .form-group .auth-link a:hover, .auth-container form .form-group #password-recover:hover{
+    color: var(--color-dark-purple);
+}
+
+.auth-container form .form-group button{
+    cursor: pointer;
+    padding: .5rem 3rem;
+    border: none;
+    background-color: var(--color-primary-purple);
+    border-radius: 5px;
+    color: var(--color-white);
+    font-size: 1rem;
+    transition: all .3s;
+}
+
+.auth-container form .form-group button:hover{
+    background-color: var(--color-dark-purple);
+}
+
+.auth-container form .form-group input{
+    padding: .5rem .8rem;
+    font-size: 1rem;
+    border: none;
+    border-bottom: 1px solid var(--color-primary-purple)
+}
+
+.auth-container form .form-group input::placeholder{
+    color: var(--color-medium-gray);
+}
+
+.auth-container form .form-group input:focus-visible{
+    outline: none;
+}
+
+.auth-container .error{
+    background-color: rgba(255, 125, 125, 0.20);
+    border-radius: 5px;
+    padding: 1rem;
+}
+
+.auth-container .error ul{
+    list-style-position: inside;
+    color: var(--color-dark-purple-gray);
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+
+@media (max-width: 768px){
+
+    .auth-container form .form-group button{
+        width: 100%;
+    }
+
+}

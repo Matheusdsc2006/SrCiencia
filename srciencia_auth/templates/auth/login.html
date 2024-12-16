@@ -44,6 +44,19 @@
             </form>
         </div>
     </main>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const urlParams = new URLSearchParams(window.location.search);
+            const emailParam = urlParams.get("email");
+    
+            if (emailParam) {
+                const emailField = document.getElementById("id_username");
+                if (emailField) {
+                    emailField.value = emailParam;
+                }
+            }
+        });
+    </script>    
 {% endblock %}
 
 {% block scripts %}
