@@ -20,7 +20,10 @@ def login_view(request):
             user = authenticate(username=username, password=password)
             if user is not None:
                 login(request, user)
-                return redirect('pagina_inicial')  # Redirecionar para a página inicial após login bem-sucedido
+                # Salvar o email da conta atual na sessão
+                request.session['conta_atual'] = user.email
+                request.session.modified = True
+                return redirect('pagina_inicial')
             else:
                 messages.error(request, "Credenciais inválidas. Por favor, tente novamente.")
     else:

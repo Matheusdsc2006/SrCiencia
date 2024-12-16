@@ -6,7 +6,7 @@ from django.contrib.auth import get_user_model
 class UsuarioCreationForm(UserCreationForm):
     nome = forms.CharField(max_length=255, required=True, label="Nome Completo")
     email = forms.EmailField(required=True)
-    
+
     class Meta:
         model = Usuario
         fields = ('username', 'nome', 'email', 'password1', 'password2')
@@ -27,7 +27,7 @@ class UsuarioCreationForm(UserCreationForm):
     def save(self, commit=True):
         user = super().save(commit=False)
         user.email = self.cleaned_data['email']
-        user.nome = self.cleaned_data['nome']  # Certifique-se de salvar o campo "nome"
+        user.nome = self.cleaned_data['nome']  # Salvar o nome completo
         if commit:
             user.save()
         return user
