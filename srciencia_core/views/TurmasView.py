@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.http import JsonResponse
 import json
 from django.contrib.auth import get_user_model
+from django.contrib.auth.decorators import login_required
 
 
 def turmas_view(request):
@@ -15,6 +16,19 @@ def turmas_view(request):
         "conta_atual": conta_atual,  # Enviar conta atual
         "contas": contas,  # Enviar lista de contas
     })
+
+@login_required
+def listar_turmas(request):
+    conta_atual = request.session.get("conta_atual")
+    if not conta_atual:
+        return JsonResponse({"success": False, "message": "Nenhuma conta selecionada."})
+
+    # Buscar turmas associadas ao usuário pela conta atual
+    turmas = Turma.objects.filter(alunos__email=conta_atual).values(
+        "id", "nome", "descricao", "professor__username"
+    )
+
+    return JsonResponse({"success": True, "turmas": list(turmas)})
 
 
 def mudar_conta(request):

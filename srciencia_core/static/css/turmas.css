@@ -22,7 +22,7 @@ body {
 }
 
 .main-container {
-    margin-left: 350px; /* Compensa a largura do menu lateral */
+    margin-left: 330px; /* Compensa a largura do menu lateral */
     padding: 2rem;
     display: flex;
     flex-direction: column;
@@ -438,3 +438,49 @@ button:hover {
     background-color: #e72427;
     color: white;
 }
+
+.input-wrapper {
+    position: relative; /* Permite posicionar o botão dentro do campo */
+    display: flex;
+    align-items: center;
+    width: 465px;
+}
+
+.input-wrapper input {
+    width: 100%; /* O input ocupa todo o espaço disponível */
+    padding-right: 50px; /* Deixa espaço suficiente para o botão */
+    font-size: 1rem;
+    border: 1px solid var(--light-gray);
+    border-radius: 5px;
+    height: 40px;
+}
+
+.input-wrapper button {
+    position: absolute;
+    right: 5px; /* Alinha o botão à direita dentro do input */
+    top: 50%;
+    transform: translateY(-50%); /* Centraliza verticalmente */
+    background-color: var(--primary-purple);
+    border: none;
+    width: 35px;
+    height: 35px;
+    border-radius: 50%; /* Forma um botão circular */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-right: 10px;
+}
+
+.input-wrapper button:hover {
+    background-color: var(--dark-purple);
+}
+
+.submit-icon {
+    width: 16px; /* Ajuste o tamanho do ícone */
+    height: 16px;
+    filter: brightness(0) invert(1);
+}
+
+

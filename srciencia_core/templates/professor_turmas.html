@@ -1,0 +1,144 @@
+{% load static %}   
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SR. Ciência - Professor</title>
+    <link rel="stylesheet" href="{% static 'css/turmas.css' %}">
+</head>
+<body>
+    <div class="container">
+        <!-- Menu Lateral -->
+        <aside class="sidebar">
+            <div class="logo">
+                <img src="{% static 'assets/sr_ciencia.svg' %}" alt="SR. Ciência">
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="{% url 'pagina_inicial' %}"><img src="{% static 'assets/home.svg' %}" alt="">Página inicial</a></li>
+                    <li><a href="#"><img src="{% static 'assets/profile.svg' %}" alt="">Meu perfil</a></li>
+                    <li><a href="#"><img src="{% static 'assets/practice.svg' %}" alt="">Praticar</a></li>
+                    <li><a href="#" class="active"><img src="{% static 'assets/classes.svg' %}" alt="">Turmas</a></li>
+                    <li><a href="#"><img src="{% static 'assets/forum.svg' %}" alt="">Fórum</a></li>
+                    <li><a href="#"><img src="{% static 'assets/help.svg' %}" alt="">Ajuda</a></li>
+                    <li><a href="#" class="logout" style="color: #e72427;"><img src="{% static 'assets/logout.svg' %}" alt="">Sair</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Conteúdo Principal -->
+        <main class="main-container">
+            <div class="header">
+                <div class="header-input">
+                    <button id="create-class-btn" class="btn-create">Criar turma</button>
+                </div>
+                <div class="header-user">
+                    <div class="user-info">
+                        <div class="user-avatar">
+                            <figure>
+                                <img src="{% static 'assets/user.avif' %}" alt="Usuário">
+                            </figure>
+                        </div>
+                        <div>
+                            <p class="user-name">{{ user.username }}</p>
+                            <p class="user-email">{{ user.email }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="cards">
+                {% if turmas %}
+                    {% for turma in turmas %}
+                        <div class="card {{ turma.cor }}">
+                            <div class="card-header">
+                                <h3>{{ turma.nome }}</h3>
+                                <p>{{ turma.descricao }}</p>
+                            </div>
+                            <p>{{ turma.codigo }}</p>
+                            <div class="card-actions">
+                                <button onclick="window.location.href='{% url 'alunos_turma' turma.id %}'">Ver alunos</button>
+                                <button onclick="window.location.href='{{ turma.google_drive_url }}'">Abrir pasta no Google Drive</button>
+                                <button class="cancel" onclick="window.location.href='{% url 'excluir_turma' turma.id %}'">Excluir turma</button>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <p>Você ainda não criou nenhuma turma.</p>
+                {% endif %}
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal de Criação de Turma -->
+    <div id="create-class-modal" class="modal">
+        <div class="modal-content">
+            <h2>Criar nova turma</h2>
+            <form id="create-class-form">
+                <label for="class-name">Nome da turma:</label>
+                <input type="text" id="class-name" name="class_name" placeholder="Digite o nome da turma" required>
+
+                <label for="class-description">Descrição:</label>
+                <textarea id="class-description" name="class_description" placeholder="Adicione uma descrição (opcional)"></textarea>
+
+                <button type="submit" class="btn-confirm">Criar turma</button>
+                <button type="button" id="close-modal-btn" class="btn-cancel">Cancelar</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const createClassBtn = document.getElementById("create-class-btn");
+            const createClassModal = document.getElementById("create-class-modal");
+            const closeModalBtn = document.getElementById("close-modal-btn");
+            const createClassForm = document.getElementById("create-class-form");
+
+            // Abrir modal de criação de turma
+            createClassBtn.addEventListener("click", () => {
+                createClassModal.style.display = "block";
+            });
+
+            // Fechar modal
+            closeModalBtn.addEventListener("click", () => {
+                createClassModal.style.display = "none";
+            });
+
+            // Fechar modal ao clicar fora
+            window.addEventListener("click", (event) => {
+                if (event.target === createClassModal) {
+                    createClassModal.style.display = "none";
+                }
+            });
+
+            // Submeter formulário de criação de turma
+            createClassForm.addEventListener("submit", (event) => {
+                event.preventDefault();
+
+                const formData = new FormData(createClassForm);
+                fetch("{% url 'criar_turma' %}", {
+                    method: "POST",
+                    headers: {
+                        "X-CSRFToken": "{{ csrf_token }}",
+                    },
+                    body: formData,
+                })
+                    .then((response) => response.json())
+                    .then((data) => {
+                        if (data.success) {
+                            alert(`Turma criada com sucesso! Código: ${data.codigo}`);
+                            createClassModal.style.display = "none";
+                            window.location.reload(); // Atualizar a página para refletir a nova turma
+                        } else {
+                            alert("Erro ao criar turma: " + data.message);
+                        }
+                    })
+                    .catch((error) => {
+                        console.error("Erro ao criar turma:", error);
+                        alert("Erro ao criar turma. Tente novamente.");
+                    });
+            });
+        });
+    </script>
+</body>
+</html>
