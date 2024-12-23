@@ -3,18 +3,25 @@ from django.http import JsonResponse
 import json
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
+from srciencia_core.models import Turma
 
 
+@login_required
 def turmas_view(request):
+    # Obter a conta atual da sessão
     conta_atual = request.session.get("conta_atual")
     if not conta_atual:
-        conta_atual = "Nenhuma conta selecionada"
+        return render(request, "turmas.html", {"turmas": [], "conta_atual": "Nenhuma conta selecionada"})
 
-    contas = request.session.get("contas", [])
+    # Obter o usuário associado à conta atual
+    usuario = request.user
+
+    # Filtrar turmas associadas ao usuário (aluno)
+    turmas = Turma.objects.filter(alunos=usuario).order_by("-criado_em")
+
     return render(request, "turmas.html", {
-        "turmas": [],  # Ajustar lógica de turmas conforme necessário
-        "conta_atual": conta_atual,  # Enviar conta atual
-        "contas": contas,  # Enviar lista de contas
+        "turmas": turmas,  # Enviar as turmas associadas
+        "conta_atual": conta_atual,
     })
 
 @login_required

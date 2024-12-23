@@ -59,7 +59,8 @@
                             <div class="card-actions">
                                 <button onclick="window.location.href='{% url 'alunos_turma' turma.id %}'">Ver alunos</button>
                                 <button onclick="window.location.href='{{ turma.google_drive_url }}'">Abrir pasta no Google Drive</button>
-                                <button class="cancel" onclick="window.location.href='{% url 'excluir_turma' turma.id %}'">Excluir turma</button>
+                                <button class="cancel" data-turma-id="{{ turma.id }}" data-turma-name="{{ turma.nome }}">Excluir turma</button>
+
                             </div>
                         </div>
                     {% endfor %}
@@ -71,74 +72,167 @@
     </div>
 
     <!-- Modal de Criação de Turma -->
-    <div id="create-class-modal" class="modal">
-        <div class="modal-content">
-            <h2>Criar nova turma</h2>
-            <form id="create-class-form">
-                <label for="class-name">Nome da turma:</label>
-                <input type="text" id="class-name" name="class_name" placeholder="Digite o nome da turma" required>
+<div id="create-class-modal" class="modal">
+    <div class="modal-content">
+        <span class="close-icon" id="close-create-modal">&times;</span>
+        <h2>Criar nova turma</h2>
+        <form id="create-class-form">
+            <label for="class-name">Nome da turma:</label>
+            <input type="text" id="class-name" name="class_name" placeholder="Digite o nome da turma" required>
 
-                <label for="class-description">Descrição:</label>
-                <textarea id="class-description" name="class_description" placeholder="Adicione uma descrição (opcional)"></textarea>
+            <label for="class-description">Descrição:</label>
+            <textarea id="class-description" name="class_description" placeholder="Adicione uma descrição (opcional)"></textarea>
 
-                <button type="submit" class="btn-confirm">Criar turma</button>
-                <button type="button" id="close-modal-btn" class="btn-cancel">Cancelar</button>
-            </form>
-        </div>
+            <button type="submit" class="btn-confirm">Criar turma</button>
+        </form>
     </div>
+</div>
 
+<!-- Modal de Confirmação para Excluir Turma -->
+<div id="delete-class-modal" class="modal">
+    <div class="modal-content">
+        <span class="close-icon" id="close-delete-modal">&times;</span>
+        <h2>Para excluir uma turma, digite a senha da conta</h2>
+        <form id="delete-class-form">
+            {% csrf_token %}
+            <input type="password" id="delete-password-input" placeholder="Digite sua senha" required>
+            <button type="submit" class="btn-confirm">Confirmar</button>
+        </form>
+        
+    </div>
+</div>
     <script>
         document.addEventListener("DOMContentLoaded", function () {
-            const createClassBtn = document.getElementById("create-class-btn");
-            const createClassModal = document.getElementById("create-class-modal");
-            const closeModalBtn = document.getElementById("close-modal-btn");
-            const createClassForm = document.getElementById("create-class-form");
+    const createClassModal = document.getElementById("create-class-modal");
+    const deleteClassModal = document.getElementById("delete-class-modal");
+    const closeCreateModal = document.getElementById("close-create-modal");
+    const closeDeleteModal = document.getElementById("close-delete-modal");
+    const createClassForm = document.getElementById("create-class-form");
+    const deleteClassForm = document.getElementById("delete-class-form");
+    const deletePasswordInput = document.getElementById("delete-password-input");
+    const createClassBtn = document.getElementById("create-class-btn");
 
-            // Abrir modal de criação de turma
-            createClassBtn.addEventListener("click", () => {
-                createClassModal.style.display = "block";
-            });
+    let turmaIdToDelete = null;
 
-            // Fechar modal
-            closeModalBtn.addEventListener("click", () => {
+    // Abrir modal de criação de turma
+    createClassBtn.addEventListener("click", () => {
+        createClassModal.style.display = "block";
+    });
+
+    // Fechar modal de criação
+    closeCreateModal.addEventListener("click", () => {
+        createClassModal.style.display = "none";
+    });
+
+    // Fechar modal de criação ao clicar fora
+    window.addEventListener("click", (event) => {
+        if (event.target === createClassModal) {
+            createClassModal.style.display = "none";
+        }
+    });
+
+    // Abrir modal de exclusão
+    function openDeleteModal(turmaId) {
+        turmaIdToDelete = turmaId;
+        deleteClassModal.style.display = "block";
+    }
+
+    // Fechar modal de exclusão
+    closeDeleteModal.addEventListener("click", () => {
+        deleteClassModal.style.display = "none";
+        turmaIdToDelete = null;
+    });
+
+    // Fechar modal de exclusão ao clicar fora
+    window.addEventListener("click", (event) => {
+        if (event.target === deleteClassModal) {
+            deleteClassModal.style.display = "none";
+            turmaIdToDelete = null;
+        }
+    });
+
+    // Submeter formulário de criação de turma
+    createClassForm.addEventListener("submit", (event) => {
+    event.preventDefault();
+
+    const formData = new FormData(createClassForm);
+
+    fetch("/professor_turmas/criar/", {
+        method: "POST",
+        headers: {
+            "X-CSRFToken": document.querySelector('[name="csrfmiddlewaretoken"]').value,
+        },
+        body: formData,
+    })
+        .then((response) => response.json())
+        .then((data) => {
+            if (data.success) {
+                alert("Turma criada com sucesso.");
                 createClassModal.style.display = "none";
-            });
-
-            // Fechar modal ao clicar fora
-            window.addEventListener("click", (event) => {
-                if (event.target === createClassModal) {
-                    createClassModal.style.display = "none";
-                }
-            });
-
-            // Submeter formulário de criação de turma
-            createClassForm.addEventListener("submit", (event) => {
-                event.preventDefault();
-
-                const formData = new FormData(createClassForm);
-                fetch("{% url 'criar_turma' %}", {
-                    method: "POST",
-                    headers: {
-                        "X-CSRFToken": "{{ csrf_token }}",
-                    },
-                    body: formData,
-                })
-                    .then((response) => response.json())
-                    .then((data) => {
-                        if (data.success) {
-                            alert(`Turma criada com sucesso! Código: ${data.codigo}`);
-                            createClassModal.style.display = "none";
-                            window.location.reload(); // Atualizar a página para refletir a nova turma
-                        } else {
-                            alert("Erro ao criar turma: " + data.message);
-                        }
-                    })
-                    .catch((error) => {
-                        console.error("Erro ao criar turma:", error);
-                        alert("Erro ao criar turma. Tente novamente.");
-                    });
-            });
+                window.location.reload(); // Atualiza a página
+            } else {
+                alert("Erro ao criar turma: " + data.message);
+            }
+        })
+        .catch((error) => {
+            console.error("Erro ao criar turma:", error);
+            alert("Erro ao criar turma. Reinicie a página e tente novamente.");
         });
-    </script>
+});
+
+
+    deleteClassForm.addEventListener("submit", (event) => {
+    event.preventDefault();
+
+    const password = deletePasswordInput.value.trim();
+    if (!password) {
+        alert("Por favor, insira sua senha.");
+        return;
+    }
+
+    fetch(`/professor_turmas/excluir_turma/${turmaIdToDelete}/`, {
+        method: "POST",
+        headers: {
+            "X-CSRFToken": document.querySelector('[name="csrfmiddlewaretoken"]').value,
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ senha: password }),
+    })
+        .then((response) => response.json())
+        .then((data) => {
+            if (data.success) {
+                alert("Turma excluída com sucesso.");
+                deleteClassModal.style.display = "none";
+                window.location.reload(); // Atualiza a página
+            } else {
+                alert("Erro ao excluir turma: " + data.message);
+            }
+        })
+        .catch((error) => {
+            console.error("Erro ao excluir turma:", error);
+            alert("Erro ao excluir turma. Reinicie a página e tente novamente.");
+        })
+        .finally(() => {
+            deletePasswordInput.value = ""; // Limpa o campo de senha
+            turmaIdToDelete = null; // Limpa o ID da turma
+        });
+});
+
+
+    // Capturar o evento de clique nos botões de exclusão
+    document.querySelectorAll(".cancel").forEach((button) => {
+        button.addEventListener("click", (event) => {
+            event.preventDefault(); // Impede o comportamento padrão de redirecionamento
+
+            const turmaId = button.getAttribute("data-turma-id");
+            const turmaName = button.getAttribute("data-turma-name");
+
+            // Abre o modal de exclusão
+            openDeleteModal(turmaId, turmaName);
+        });
+    });
+
+});
+</script>
 </body>
 </html>

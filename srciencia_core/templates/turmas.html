@@ -72,7 +72,7 @@
                         </div>
                     {% endfor %}
                 {% else %}
-                    <p>Não há turmas cadastradas para esta conta.</p>
+                <p id="no-turmas-message">Não há turmas cadastradas para esta conta.</p>
                 {% endif %}
             </div>
         </main>
@@ -156,15 +156,16 @@
                 });
         }
 
-        // Função para renderizar turmas
         function renderTurmas(turmas) {
             const cardsContainer = document.querySelector(".cards");
-            cardsContainer.innerHTML = ""; // Limpar o container atual
+            const noTurmasMessage = document.getElementById("no-turmas-message");
 
-            if (turmas.length === 0) {
-                cardsContainer.innerHTML = "<p>Não há turmas cadastradas para esta conta.</p>";
-                return;
+            // Remover a mensagem de "Nenhuma turma" se houver turmas
+            if (turmas.length > 0 && noTurmasMessage) {
+                noTurmasMessage.style.display = "none";
             }
+
+            cardsContainer.innerHTML = ""; // Limpar o container atual
 
             turmas.forEach((turma) => {
                 const turmaCard = `
@@ -185,8 +186,43 @@
             });
         }
 
+        // Função para renderizar turmas
+        function renderTurma(turma) {
+            const cardsContainer = document.querySelector(".cards");
+            const noTurmasMessage = document.getElementById("no-turmas-message");
+
+            // Remover a mensagem de "Nenhuma turma" se houver turmas
+            if (noTurmasMessage) {
+                noTurmasMessage.style.display = "none";
+            }
+
+            const turmaCard = `
+                <div class="card">
+                    <div class="card-header">
+                        <h3>${turma.nome}</h3>
+                        <p>${turma.descricao}</p>
+                    </div>
+                    <p>Professor: ${turma.professor__username}</p>
+                    <div class="card-actions">
+                        <button onclick="window.location.href='/turmas/${turma.id}/pendentes/'">Trabalhos pendentes</button>
+                        <button onclick="window.location.href='/google-drive/${turma.id}/'">Abrir pasta no Google Drive</button>
+                        <button class="cancel" onclick="window.location.href='/turmas/${turma.id}/cancelar/'">Cancelar inscrição</button>
+                    </div>
+                </div>
+            `;
+            cardsContainer.innerHTML += turmaCard; // Adicionar a nova turma
+        }
+
         // Chamar a função ao carregar a página
-        document.addEventListener("DOMContentLoaded", loadTurmas);
+        document.addEventListener("DOMContentLoaded", () => {
+            const serverRenderedTurmas = JSON.parse('{{ turmas|safe }}'.replace(/&quot;/g, '"'));
+            if (serverRenderedTurmas.length > 0) {
+                renderTurmas(serverRenderedTurmas); // Renderizar turmas carregadas do backend
+            } else {
+                loadTurmas(); // Carregar turmas via API caso necessário
+            }
+        });
+
 
 
         // Abrir modal de gerenciamento de contas
@@ -262,8 +298,8 @@
                     alert("Erro ao adicionar a conta. Tente novamente.");
                 });
         });
-
         // Renderizar lista de contas
+        
         function renderAccounts() {
             accountList.innerHTML = "";
 
@@ -318,34 +354,38 @@
             }
         }
 
-        // Confirmar troca de conta
-        confirmChangeButton.addEventListener("click", () => {
-            closeAllModals();
-            fetch("{% url 'mudar_conta' %}", {
-                method: "POST",
-                headers: {
-                    "X-CSRFToken": "{{ csrf_token }}",
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ nova_conta: selectedEmail }),
-            })
-                .then((response) => response.json())
-                .then((data) => {
-                    if (data.success) {
-                        alert("Conta alterada com sucesso.");
-                        loadTurmas(); // Recarregar turmas associadas à nova conta
-                    } else {
-                        alert(data.message);
-                    }
+        confirmChangeButton.addEventListener("click", () => { 
+            closeAllModals(); // Fechar todos os modais
+            if (selectedEmail) { // Verificar se há uma conta selecionada
+                fetch("{% url 'mudar_conta' %}", {
+                    method: "POST",
+                    headers: {
+                        "X-CSRFToken": "{{ csrf_token }}",
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ nova_conta: selectedEmail }),
                 })
-                .catch((error) => {
-                    console.error("Erro ao mudar conta:", error);
-                });
+                    .then((response) => response.json())
+                    .then((data) => {
+                        if (data.success) {
+                            redirectToLogin(selectedEmail); // Redirecionar para a tela de login com o e-mail
+                        } else {
+                            alert(data.message);
+                        }
+                    })
+                    .catch((error) => {
+                        console.error("Erro ao mudar conta:", error);
+                        alert("Ocorreu um erro ao tentar alterar a conta. Tente novamente.");
+                    });
+            } else {
+                alert("Nenhuma conta foi selecionada."); // Garantia de controle caso algo falhe
+            }
         });
 
-        // Cancelar troca de conta
+       // Cancelar troca de conta
         cancelChangeButton.addEventListener("click", () => {
-            closeAllModals();
+            closeAllModals(); // Fechar todos os modais
+            selectedEmail = null; // Limpar o e-mail selecionado para evitar erros
         });
 
         // Confirmar remoção da conta atual
@@ -399,11 +439,12 @@
 
         // Redirecionar para a tela de login
         function redirectToLogin(email) {
-            const loginUrl = email
-                ? `{% url 'login' %}?email=` + encodeURIComponent(email)
-                : "{% url 'login' %}";
+            const loginUrl = email 
+                ? `{% url 'login' %}?email=${encodeURIComponent(email)}`
+                : `{% url 'login' %}`;
             window.location.href = loginUrl;
         }
+
 
         // Validar e-mail
         function validateEmail(email) {
@@ -428,7 +469,6 @@
 
         initializeAccounts();
 
-        // Submeter código da turma
         submitButton.addEventListener("click", () => {
             const codigoTurma = inputCodigoTurma.value.trim();
 
@@ -448,10 +488,9 @@
                 .then((response) => response.json())
                 .then((data) => {
                     if (data.success) {
-                        // Exibir mensagem de sucesso
-                        alert(`Você foi adicionado à turma: ${data.turma.nome}`);
                         // Atualizar a lista de turmas na interface
-                        renderTurmas([data.turma]);
+                        renderTurma(data.turma); // Renderizar apenas a nova turma
+                        alert(`Você foi adicionado à turma: ${data.turma.nome}`);
                     } else {
                         alert(data.message);
                     }
@@ -461,8 +500,7 @@
                     alert("Erro ao verificar o código da turma. Tente novamente.");
                 });
         });
-
-    });
+});
 </script>
 
 </body>

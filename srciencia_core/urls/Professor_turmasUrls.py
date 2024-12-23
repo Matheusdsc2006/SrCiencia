@@ -5,7 +5,8 @@ from srciencia_core.views.Excluir_turmaView import *
 
 urlpatterns = [
     path("", professor_turmas, name="professor_turmas"), 
-    path("criar/", criar_turma, name="criar_turma"), 
+    path("criar/", criar_turma, name="criar_turma"),
+    path('professor_turmas/listar_turmas/', listar_turmas_professor, name='listar_turmas_professor'),
     path('turmas/<int:turma_id>/alunos/', alunos_turma_view, name='alunos_turma'),
     path('excluir_turma/<int:id>/', excluir_turma, name='excluir_turma'),
 ]
