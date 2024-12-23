@@ -49,3 +49,36 @@ document.addEventListener('DOMContentLoaded', function() {
             });
     }
 });
+
+document.querySelectorAll('.uploadIcon').forEach(function(icon) {
+    const index = icon.id.split('_')[1];  
+    icon.addEventListener('click', function() {
+        document.getElementById('id_imagem_' + index).click(); 
+    });
+});
+
+document.querySelectorAll('input[type="file"]').forEach(function(input) {
+    const index = input.id.split('_')[2]; 
+    input.addEventListener('change', function(event) {
+        previewImage(event, index); 
+    });
+});
+
+function previewImage(event, index) {
+    const file = event.target.files[0];
+    const imagePreview = document.getElementById('imagePreviewImg_' + index);
+    
+    if (file) {
+        const reader = new FileReader();
+        
+        reader.onload = function() {
+            imagePreview.src = reader.result;
+            imagePreview.style.display = 'block'; 
+        };
+        
+        reader.readAsDataURL(file);
+    } else {
+        imagePreview.src = '';
+        imagePreview.style.display = 'none'; 
+    }
+}

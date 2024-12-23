@@ -85,9 +85,8 @@ customColorPalette = [
 
 CKEDITOR_5_CONFIGS = {
     'default': {
-        'toolbar': ['heading', '|', 'bold', 'italic', 'link',
-                    'bulletedList', 'numberedList', 'blockQuote', 'imageUpload', ],
-
+        'toolbar': ['bold', 'italic', 'underline', 'strikethrough', 'link', 'imageUpload', ],
+        'language': 'pt-br',
     },
     'extends': {
         'blockToolbar': [
@@ -215,7 +214,7 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
-
+LOGIN_URL = 'auth/login/'
 STATIC_URL = '/static/'
 MEDIA_URL='/media/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')

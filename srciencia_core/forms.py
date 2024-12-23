@@ -1,38 +1,34 @@
 from django import forms
-from .models import Questao, Banca, Disciplina, DisciplinaQuestao, Conteudo, Topico, Caso, Alternativa
-from django_ckeditor_5.widgets import CKEditor5Widget
+from srciencia_core.models import Questao, Alternativa, Banca, Disciplina, Conteudo, Topico
 
 class QuestaoForm(forms.ModelForm):
     class Meta:
         model = Questao
-        fields = ['descricao', 'banca', 'dificuldade']
+        fields = [
+            "descricao", "banca", "disciplina", "conteudo", "topico", "resolucao"
+        ]
         widgets = {
-              "descricao": CKEditor5Widget(
-                  attrs={"class": "django_ckeditor_5"}, config_name="default"
-              )
-          }
+            'banca': forms.Select(attrs={'placeholder': 'Selecione a banca examinadora'}),
+            'disciplina': forms.Select(attrs={'placeholder': 'Selecione a disciplina', 'id': 'id_disciplina'}),
+            'conteudo': forms.Select(attrs={'placeholder': 'Selecione o conteúdo', 'id': 'id_conteudo', 'disabled': 'disabled'}),
+            'topico': forms.Select(attrs={'placeholder': 'Selecione o tópico', 'id': 'id_topico', 'disabled': 'disabled'}),
+            'alteravel': forms.CheckboxInput(),
+        }
 
-class DisciplinaQuestaoForm(forms.Form):
-    disciplina = forms.ModelChoiceField(queryset=Disciplina.objects.all())
-    conteudo = forms.ModelChoiceField(queryset=Conteudo.objects.all())
-    topico = forms.ModelChoiceField(queryset=Topico.objects.all())
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['banca'].queryset = Banca.objects.all()
+        self.fields['disciplina'].queryset = Disciplina.objects.all()
 
-class CasoForm(forms.ModelForm):
-    class Meta:
-        model = Caso
-        fields = ['variaveis', 'resolucao']
-        widgets = {
-              "resolucao": CKEditor5Widget(
-                  attrs={"class": "django_ckeditor_5"}, config_name="default"
-              )
-          }
+
+
 
 class AlternativaForm(forms.ModelForm):
     class Meta:
         model = Alternativa
-        fields = ['descricao', 'imagem', 'correta']
-
-CasoFormSet = forms.modelformset_factory(Caso, form=CasoForm, extra=1)
-AlternativaFormSet = forms.inlineformset_factory(Caso, Alternativa, form=AlternativaForm, extra=1)
-DisciplinaQuestaoFormSet = forms.modelformset_factory(DisciplinaQuestao, fields=('disciplina',), extra=1)
-
+        fields = ["descricao", "correta", "imagem"] 
+        widgets = {
+            'descricao': forms.TextInput(attrs={'placeholder': 'Descrição da alternativa'}),
+            'correta': forms.CheckboxInput(),
+            'imagem': forms.ClearableFileInput(attrs={'style': 'display: none;'}),
+        }
