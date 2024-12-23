@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponseForbidden
 import json
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
@@ -8,34 +8,47 @@ from srciencia_core.models import Turma
 
 @login_required
 def turmas_view(request):
+    # Verificar se o usuário é um aluno (não professor)
+    if request.user.is_staff:
+        return HttpResponseForbidden("Acesso negado para professores.")
+
     # Obter a conta atual da sessão
     conta_atual = request.session.get("conta_atual")
     if not conta_atual:
         return render(request, "turmas.html", {"turmas": [], "conta_atual": "Nenhuma conta selecionada"})
 
-    # Obter o usuário associado à conta atual
-    usuario = request.user
-
     # Filtrar turmas associadas ao usuário (aluno)
-    turmas = Turma.objects.filter(alunos=usuario).order_by("-criado_em")
+    turmas = Turma.objects.filter(alunos=request.user).select_related("professor").order_by("-criado_em")
+
+    # Adicionar professor ao contexto
+    turmas_com_dados = [
+        {
+            "id": turma.id,
+            "nome": turma.nome,
+            "descricao": turma.descricao,
+            "professor__username": turma.professor.username if turma.professor else "Desconhecido",
+        }
+        for turma in turmas
+    ]
 
     return render(request, "turmas.html", {
-        "turmas": turmas,  # Enviar as turmas associadas
+        "turmas": turmas_com_dados,
         "conta_atual": conta_atual,
     })
 
+
+
 @login_required
 def listar_turmas(request):
-    conta_atual = request.session.get("conta_atual")
-    if not conta_atual:
-        return JsonResponse({"success": False, "message": "Nenhuma conta selecionada."})
+    if not request.user.is_authenticated:
+        return JsonResponse({"success": False, "message": "Usuário não autenticado."})
 
-    # Buscar turmas associadas ao usuário pela conta atual
-    turmas = Turma.objects.filter(alunos__email=conta_atual).values(
-        "id", "nome", "descricao", "professor__username"
+    turmas = Turma.objects.filter(alunos=request.user).select_related("professor").values(
+        "id", "nome", "descricao", "professor__username", "google_drive_url"
     )
 
     return JsonResponse({"success": True, "turmas": list(turmas)})
+
 
 
 def mudar_conta(request):

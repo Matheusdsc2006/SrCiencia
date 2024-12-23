@@ -22,7 +22,7 @@ def verificar_codigo_turma(request):
             turma.alunos.add(request.user)
             turma.save()
 
-            # Retornar os dados da turma
+            # Retornar os dados da turma, incluindo o professor
             return JsonResponse({
                 "success": True,
                 "message": "Você foi adicionado à turma.",
@@ -30,7 +30,8 @@ def verificar_codigo_turma(request):
                     "id": turma.id,
                     "nome": turma.nome,
                     "descricao": turma.descricao,
-                    "professor__username": turma.professor.username
+                    "codigo": turma.codigo,
+                    "professor__username": turma.professor.username,
                 }
             })
         except Exception as e:

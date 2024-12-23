@@ -22,7 +22,7 @@
                     <li><a href="{% url 'turmas' %}"><img src="{% static 'assets/classes.svg' %}" alt="">Turmas</a></li>
                     <li><a href="#"><img src="{% static 'assets/forum.svg' %}" alt="">Fórum</a></li>
                     <li><a href="#"><img src="{% static 'assets/help.svg' %}" alt="">Ajuda</a></li>
-                    <li><a href="#" class="logout" style="color: #e72427;"><img src="{% static 'assets/logout.svg' %}" alt="">Sair</a></li>
+                    <li><a href="{% url 'login' %}" class="logout" style="color: #e72427;"><img src="{% static 'assets/logout.svg' %}" alt="">Sair</a></li>
                 </ul>
             </nav>
         </aside>

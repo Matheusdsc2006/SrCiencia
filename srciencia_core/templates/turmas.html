@@ -11,8 +11,8 @@
 <body>
     <div class="container">
         <!-- Menu Lateral -->
-        <aside class="sidebar">
-            <div class="logo">
+            <aside class="sidebar">
+                <div class="logo">
                 <img src="{% static 'assets/sr_ciencia.svg' %}" alt="SR. Ciência">
             </div>
             <nav>
@@ -23,7 +23,7 @@
                     <li><a href="#" class="active"><img src="{% static 'assets/classes.svg' %}" alt="">Turmas</a></li>
                     <li><a href="#"><img src="{% static 'assets/forum.svg' %}" alt="">Fórum</a></li>
                     <li><a href="#"><img src="{% static 'assets/help.svg' %}" alt="">Ajuda</a></li>
-                    <li><a href="#" class="logout" style="color: #e72427;"><img src="{% static 'assets/logout.svg' %}" alt="">Sair</a></li>
+                    <li><a href="{% url 'login' %}" class="logout" style="color: #e72427;"><img src="{% static 'assets/logout.svg' %}" alt="">Sair</a></li>
                 </ul>
             </nav>
         </aside>
@@ -58,26 +58,25 @@
             <div class="cards">
                 {% if turmas %}
                     {% for turma in turmas %}
-                        <div class="card {{ turma.cor }}">
-                            <div class="card-header">
-                                <h3>{{ turma.nome }}</h3>
-                                <p>{{ turma.descricao }}</p>
-                            </div>
-                            <p>{{ turma.professor }}</p>
-                            <div class="card-actions">
-                                <button onclick="window.location.href='{% url 'pendentes' turma.id %}'">Trabalhos pendentes</button>
-                                <button onclick="window.location.href='{{ turma.google_drive_url }}'">Abrir pasta no Google Drive</button>
-                                <button class="cancel" onclick="window.location.href='{% url 'cancelar_inscricao' turma.id %}'">Cancelar inscrição</button>
-                            </div>
+                    <div class="card {{ turma.cor }}">
+                        <div class="card-header">
+                            <h3>{{ turma.nome }}</h3>
+                            <p>{{ turma.descricao }}</p>
                         </div>
-                    {% endfor %}
+                        <p>Professor: {{ turma.professor__username }}</p>
+                        <div class="card-actions">
+                            <button onclick="window.location.href='/turmas/{{ turma.id }}/pendentes/'">Trabalhos pendentes</button>
+                            <button onclick="window.location.href='{{ turma.google_drive_url }}'">Pasta no Google Drive</button>
+                            <button class="cancel" onclick="window.location.href='/turmas/{{ turma.id }}/cancelar/'">Cancelar inscrição</button>
+                        </div>
+                    </div>
+                {% endfor %}
                 {% else %}
-                <p id="no-turmas-message">Não há turmas cadastradas para esta conta.</p>
+                    <p id="no-turmas-message">Não há turmas cadastradas para esta conta.</p>
                 {% endif %}
-            </div>
+            </div>            
         </main>
     </div>
-
 <!-- Modal de Confirmação -->
 <div id="confirmation-modal" class="modal">
     <div class="modal-content">
@@ -138,13 +137,12 @@
         let selectedEmail = null;
         let currentEmail = null;
 
-        // Função para carregar turmas no carregamento da página
-        function loadTurmas() {
-            fetch("{% url 'listar_turmas' %}")
+        function loadTurmasAluno() {
+            fetch("/turmas/listar_turmas/")
                 .then((response) => response.json())
                 .then((data) => {
                     if (data.success) {
-                        renderTurmas(data.turmas); // Renderizar as turmas recebidas
+                        renderTurmasAluno(data.turmas); // Renderizar turmas de alunos
                     } else {
                         console.error("Erro ao carregar turmas:", data.message);
                         document.querySelector(".cards").innerHTML =
@@ -156,16 +154,9 @@
                 });
         }
 
-        function renderTurmas(turmas) {
+        function renderTurmasAluno(turmas) {
             const cardsContainer = document.querySelector(".cards");
-            const noTurmasMessage = document.getElementById("no-turmas-message");
-
-            // Remover a mensagem de "Nenhuma turma" se houver turmas
-            if (turmas.length > 0 && noTurmasMessage) {
-                noTurmasMessage.style.display = "none";
-            }
-
-            cardsContainer.innerHTML = ""; // Limpar o container atual
+            cardsContainer.innerHTML = ""; // Limpar turmas existentes
 
             turmas.forEach((turma) => {
                 const turmaCard = `
@@ -174,10 +165,10 @@
                             <h3>${turma.nome}</h3>
                             <p>${turma.descricao}</p>
                         </div>
-                        <p>Professor: ${turma.professor__username}</p>
+                        <p>Professor: ${turma.professor__username || "Desconhecido"}</p>
                         <div class="card-actions">
                             <button onclick="window.location.href='/turmas/${turma.id}/pendentes/'">Trabalhos pendentes</button>
-                            <button onclick="window.location.href='/google-drive/${turma.id}/'">Abrir pasta no Google Drive</button>
+                            <button onclick="window.location.href='${turma.google_drive_url}'">Pasta no Google Drive</button>
                             <button class="cancel" onclick="window.location.href='/turmas/${turma.id}/cancelar/'">Cancelar inscrição</button>
                         </div>
                     </div>
@@ -185,6 +176,10 @@
                 cardsContainer.innerHTML += turmaCard;
             });
         }
+
+        // Chamar ao carregar a página
+        document.addEventListener("DOMContentLoaded", loadTurmasAluno);
+
 
         // Função para renderizar turmas
         function renderTurma(turma) {

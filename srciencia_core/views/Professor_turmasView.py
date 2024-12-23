@@ -5,15 +5,26 @@ from django.http import JsonResponse
 from srciencia_core.models import Turma
 import random
 import string
+from django.http import HttpResponseForbidden
 
-@login_required
+
 def professor_turmas(request):
     if not request.user.is_staff:
-        raise PermissionDenied
-
+        raise PermissionDenied("Acesso negado a professores.")
     turmas = Turma.objects.filter(professor=request.user)
-
     return render(request, "professor_turmas.html", {"turmas": turmas})
+
+@login_required
+def listar_turmas_professor(request):
+    if not request.user.is_staff:
+        return HttpResponseForbidden("Acesso negado para alunos.")
+
+    turmas = Turma.objects.filter(professor=request.user).values(
+        "id", "nome", "descricao", "codigo", "professor__username"
+    ).order_by("-criado_em")
+
+    return JsonResponse({"success": True, "turmas": list(turmas)})
+
 
 @login_required
 def criar_turma(request):
