@@ -6,27 +6,36 @@ from django.contrib.auth.decorators import login_required
 from srciencia_core.models import Turma
 
 
+from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
+from srciencia_core.models import Turma
+
 @login_required
 def turmas_view(request):
-    # Verificar se o usuário é um aluno (não professor)
     if request.user.is_staff:
-        return HttpResponseForbidden("Acesso negado para professores.")
+        # Para professores, renderizar uma página personalizada
+        turmas = Turma.objects.filter(professor=request.user)
+        turmas_com_dados = [
+            {
+                "id": turma.id,
+                "nome": turma.nome,
+                "descricao": turma.descricao,
+                "codigo": turma.codigo,
+            }
+            for turma in turmas
+        ]
+        return render(request, "professor_turmas.html", {"turmas": turmas_com_dados})
 
-    # Obter a conta atual da sessão
-    conta_atual = request.session.get("conta_atual")
-    if not conta_atual:
-        return render(request, "turmas.html", {"turmas": [], "conta_atual": "Nenhuma conta selecionada"})
-
-    # Filtrar turmas associadas ao usuário (aluno)
-    turmas = Turma.objects.filter(alunos=request.user).select_related("professor").order_by("-criado_em")
-
-    # Adicionar professor ao contexto
+    # Para alunos, exibir apenas turmas em que estão inscritos
+    conta_atual = request.session.get("conta_atual", request.user.email)
+    turmas = Turma.objects.filter(alunos=request.user).select_related("professor")
     turmas_com_dados = [
         {
             "id": turma.id,
             "nome": turma.nome,
             "descricao": turma.descricao,
             "professor__username": turma.professor.username if turma.professor else "Desconhecido",
+            "google_drive_url": turma.google_drive_url,
         }
         for turma in turmas
     ]
@@ -35,6 +44,7 @@ def turmas_view(request):
         "turmas": turmas_com_dados,
         "conta_atual": conta_atual,
     })
+
 
 
 
@@ -78,13 +88,18 @@ def mudar_conta(request):
                 request.session["ultima_conta_adicionada"] = nova_conta
                 request.session["contas"] = contas
 
-                return JsonResponse({"success": True, "message": "Conta adicionada com sucesso.", "nova_conta": nova_conta})
+                return JsonResponse({
+                    "success": True, 
+                    "message": "Conta adicionada com sucesso.",
+                    "nova_conta": nova_conta
+                })
 
             return JsonResponse({"success": False, "message": "Nenhuma conta fornecida."})
         except Exception as e:
             return JsonResponse({"success": False, "message": f"Erro interno: {str(e)}"})
 
     return JsonResponse({"success": False, "message": "Método inválido."})
+
 
 
 def remover_conta(request):
@@ -122,6 +137,7 @@ def remover_conta(request):
         return JsonResponse({"success": True, "message": "Conta removida com sucesso."})
 
     return JsonResponse({"success": False, "message": "Método inválido."})
+
 
 
 def listar_contas(request):

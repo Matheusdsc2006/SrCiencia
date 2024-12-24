@@ -8,11 +8,26 @@ import string
 from django.http import HttpResponseForbidden
 
 
+@login_required
 def professor_turmas(request):
+    # Verifica se o usuário é professor
     if not request.user.is_staff:
-        raise PermissionDenied("Acesso negado a professores.")
-    turmas = Turma.objects.filter(professor=request.user)
-    return render(request, "professor_turmas.html", {"turmas": turmas})
+        return HttpResponseForbidden("Acesso negado para alunos.")
+
+    turmas = Turma.objects.filter(professor=request.user).order_by("-criado_em")
+
+    turmas_com_dados = [
+        {
+            "id": turma.id,
+            "nome": turma.nome,
+            "descricao": turma.descricao,
+            "codigo": turma.codigo,
+        }
+        for turma in turmas
+    ]
+
+    return render(request, "professor_turmas.html", {"turmas": turmas_com_dados})
+
 
 @login_required
 def listar_turmas_professor(request):

@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SR. Ciência - Professor</title>
-    <link rel="stylesheet" href="{% static 'css/turmas.css' %}">
+    <link rel="stylesheet" href="{% static 'css/professor_turmas.css' %}">
 </head>
 <body>
     <div class="container">
@@ -31,6 +31,7 @@
         <main class="main-container">
             <div class="header">
                 <div class="header-input">
+                    <p class="cod">* Repasse o código aos alunos</p>
                     <button id="create-class-btn" class="btn-create">Criar turma</button>
                 </div>
                 <div class="header-user">
@@ -46,6 +47,7 @@
                         </div>
                     </div>
                 </div>
+                <button id="change-account-btn" class="change-account">Mudar de conta</button>
             </div>
             <div class="cards">
                 {% if turmas %}
@@ -72,21 +74,22 @@
     </div>
 
     <!-- Modal de Criação de Turma -->
-<div id="create-class-modal" class="modal">
-    <div class="modal-content">
-        <span class="close-icon" id="close-create-modal">&times;</span>
-        <h2>Criar nova turma</h2>
-        <form id="create-class-form">
-            <label for="class-name">Nome da turma:</label>
-            <input type="text" id="class-name" name="class_name" placeholder="Digite o nome da turma" required>
-
-            <label for="class-description">Descrição:</label>
-            <textarea id="class-description" name="class_description" placeholder="Adicione uma descrição (opcional)"></textarea>
-
-            <button type="submit" class="btn-confirm">Criar turma</button>
-        </form>
+    <div id="create-class-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-icon" id="close-create-modal">&times;</span>
+            <h2>Criar nova turma</h2>
+            <form id="create-class-form">
+                <label for="class-name">Disciplina:</label>
+                <input type="text" id="class-name" name="class_name" placeholder="Digite a disciplina" required>
+    
+                <label for="class-description">Turma/Turno:</label>
+                <input id="class-description" name="class_description" placeholder="Ex. Eletrotécnica - 2V"></input>
+    
+                <button type="submit" class="btn-confirm">Criar turma</button>
+            </form>
+        </div>
     </div>
-</div>
+    
 
 <!-- Modal de Confirmação para Excluir Turma -->
 <div id="delete-class-modal" class="modal">
@@ -101,6 +104,21 @@
         
     </div>
 </div>
+
+<div id="account-modal" class="modal">
+    <div class="modal-content">
+        <span id="close-modal" class="close-icon">&times;</span>
+        <h2>Selecione ou remova uma conta</h2>
+        <ul class="account-list">
+            <!-- As contas serão renderizadas dinamicamente pelo JavaScript -->
+        </ul>
+        <div class="add-account">
+            <input type="email" id="new-account" placeholder="Digite um e-mail" />
+            <button id="add-account-btn">Adicionar Conta</button>
+        </div>
+    </div>
+</div>
+
     <script>
         document.addEventListener("DOMContentLoaded", function () {
     const createClassModal = document.getElementById("create-class-modal");
@@ -111,11 +129,62 @@
     const deleteClassForm = document.getElementById("delete-class-form");
     const deletePasswordInput = document.getElementById("delete-password-input");
     const createClassBtn = document.getElementById("create-class-btn");
+    const accountModal = document.getElementById("account-modal");
+    const changeAccountButton = document.getElementById("change-account-btn");
+    const closeModalButton = document.getElementById("close-modal");
+    const accountList = document.querySelector(".account-list");
+    const addAccountButton = document.getElementById("add-account-btn");
+    const newAccountInput = document.getElementById("new-account");
+    const confirmationModal = document.createElement("div");
+    const logoutConfirmationModal = document.createElement("div");
 
     let turmaIdToDelete = null;
+    let selectedEmail = null;
+
+    // Modal de confirmação para mudança de conta
+    confirmationModal.id = "confirmation-modal";
+    confirmationModal.className = "modal";
+    confirmationModal.innerHTML = `
+        <div class="modal-content">
+            <h2>Deseja realmente mudar para esta conta?</h2>
+            <div class="modal-actions">
+                <button id="confirm-change-btn" class="btn-confirm">Sim</button>
+                <button id="cancel-change-btn" class="btn-cancel">Não</button>
+            </div>
+        </div>`;
+    document.body.appendChild(confirmationModal);
+
+    const confirmChangeButton = document.getElementById("confirm-change-btn");
+    const cancelChangeButton = document.getElementById("cancel-change-btn");
+
+    // Modal de confirmação para remoção da conta atual
+    logoutConfirmationModal.id = "logout-confirmation-modal";
+    logoutConfirmationModal.className = "modal";
+    logoutConfirmationModal.innerHTML = `
+        <div class="modal-content">
+            <h2>Deseja realmente remover a conta atual?</h2>
+            <p>Você será deslogado.</p>
+            <div class="modal-actions">
+                <button id="confirm-logout-btn" class="btn-confirm">Sim</button>
+                <button id="cancel-logout-btn" class="btn-cancel">Não</button>
+            </div>
+        </div>`;
+    document.body.appendChild(logoutConfirmationModal);
+
+    const confirmLogoutButton = document.getElementById("confirm-logout-btn");
+    const cancelLogoutButton = document.getElementById("cancel-logout-btn");
+
+    // Função para fechar todos os modais
+    function closeAllModals() {
+        accountModal.style.display = "none";
+        confirmationModal.style.display = "none";
+        logoutConfirmationModal.style.display = "none";
+        deleteClassModal.style.display = "none";
+    }
 
     // Abrir modal de criação de turma
     createClassBtn.addEventListener("click", () => {
+        closeAllModals();
         createClassModal.style.display = "block";
     });
 
@@ -133,6 +202,7 @@
 
     // Abrir modal de exclusão
     function openDeleteModal(turmaId) {
+        closeAllModals();
         turmaIdToDelete = turmaId;
         deleteClassModal.style.display = "block";
     }
@@ -153,71 +223,69 @@
 
     // Submeter formulário de criação de turma
     createClassForm.addEventListener("submit", (event) => {
-    event.preventDefault();
+        event.preventDefault();
 
-    const formData = new FormData(createClassForm);
+        const formData = new FormData(createClassForm);
 
-    fetch("/professor_turmas/criar/", {
-        method: "POST",
-        headers: {
-            "X-CSRFToken": document.querySelector('[name="csrfmiddlewaretoken"]').value,
-        },
-        body: formData,
-    })
-        .then((response) => response.json())
-        .then((data) => {
-            if (data.success) {
-                alert("Turma criada com sucesso.");
-                createClassModal.style.display = "none";
-                window.location.reload(); // Atualiza a página
-            } else {
-                alert("Erro ao criar turma: " + data.message);
-            }
+        fetch("/professor_turmas/criar/", {
+            method: "POST",
+            headers: {
+                "X-CSRFToken": document.querySelector('[name="csrfmiddlewaretoken"]').value,
+            },
+            body: formData,
         })
-        .catch((error) => {
-            console.error("Erro ao criar turma:", error);
-            alert("Erro ao criar turma. Reinicie a página e tente novamente.");
-        });
-});
-
+            .then((response) => response.json())
+            .then((data) => {
+                if (data.success) {
+                    alert("Turma criada com sucesso.");
+                    createClassModal.style.display = "none";
+                    window.location.reload(); // Atualiza a página
+                } else {
+                    alert("Erro ao criar turma: " + data.message);
+                }
+            })
+            .catch((error) => {
+                console.error("Erro ao criar turma:", error);
+                alert("Erro ao criar turma. Reinicie a página e tente novamente.");
+            });
+    });
 
     deleteClassForm.addEventListener("submit", (event) => {
-    event.preventDefault();
+        event.preventDefault();
 
-    const password = deletePasswordInput.value.trim();
-    if (!password) {
-        alert("Por favor, insira sua senha.");
-        return;
-    }
+        const password = deletePasswordInput.value.trim();
+        if (!password) {
+            alert("Por favor, insira sua senha.");
+            return;
+        }
 
-    fetch(`/professor_turmas/excluir_turma/${turmaIdToDelete}/`, {
-        method: "POST",
-        headers: {
-            "X-CSRFToken": document.querySelector('[name="csrfmiddlewaretoken"]').value,
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ senha: password }),
-    })
-        .then((response) => response.json())
-        .then((data) => {
-            if (data.success) {
-                alert("Turma excluída com sucesso.");
-                deleteClassModal.style.display = "none";
-                window.location.reload(); // Atualiza a página
-            } else {
-                alert("Erro ao excluir turma: " + data.message);
-            }
+        fetch(`/professor_turmas/excluir_turma/${turmaIdToDelete}/`, {
+            method: "POST",
+            headers: {
+                "X-CSRFToken": document.querySelector('[name="csrfmiddlewaretoken"]').value,
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ senha: password }),
         })
-        .catch((error) => {
-            console.error("Erro ao excluir turma:", error);
-            alert("Erro ao excluir turma. Reinicie a página e tente novamente.");
-        })
-        .finally(() => {
-            deletePasswordInput.value = ""; // Limpa o campo de senha
-            turmaIdToDelete = null; // Limpa o ID da turma
-        });
-});
-
+            .then((response) => response.json())
+            .then((data) => {
+                if (data.success) {
+                    alert("Turma excluída com sucesso.");
+                    deleteClassModal.style.display = "none";
+                    window.location.reload(); // Atualiza a página
+                } else {
+                    alert("Erro ao excluir turma: " + data.message);
+                }
+            })
+            .catch((error) => {
+                console.error("Erro ao excluir turma:", error);
+                alert("Erro ao excluir turma. Reinicie a página e tente novamente.");
+            })
+            .finally(() => {
+                deletePasswordInput.value = ""; // Limpa o campo de senha
+                turmaIdToDelete = null; // Limpa o ID da turma
+            });
+    });
 
     // Capturar o evento de clique nos botões de exclusão
     document.querySelectorAll(".cancel").forEach((button) => {
@@ -232,7 +300,175 @@
         });
     });
 
+    // Abrir modal ao clicar no botão "Mudar conta"
+    changeAccountButton.addEventListener("click", () => {
+        fetch("{% url 'listar_contas' %}")
+            .then((response) => response.json())
+            .then((data) => {
+                const { contas, conta_atual } = data;
+                renderAccounts(contas, conta_atual);
+                closeAllModals();
+                accountModal.style.display = "block";
+            })
+            .catch((error) => {
+                console.error("Erro ao carregar contas:", error);
+            });
+    });
+
+    // Fechar modal ao clicar no botão de fechar
+    closeModalButton.addEventListener("click", () => {
+        accountModal.style.display = "none";
+    });
+
+    // Fechar modal ao clicar fora dele
+    window.addEventListener("click", (event) => {
+        if (event.target === accountModal) {
+            accountModal.style.display = "none";
+        }
+    });
+
+    // Adicionar uma nova conta ao clicar no botão "Adicionar conta"
+    addAccountButton.addEventListener("click", () => {
+        const newAccount = newAccountInput.value.trim();
+        if (!newAccount) {
+            alert("Por favor, insira um e-mail válido.");
+            return;
+        }
+
+        fetch("{% url 'mudar_conta' %}", {
+            method: "POST",
+            headers: {
+                "X-CSRFToken": document.querySelector('[name="csrfmiddlewaretoken"]').value,
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ nova_conta: newAccount }),
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                if (data.success) {
+                    alert("Conta adicionada com sucesso.");
+                    newAccountInput.value = ""; // Limpar o campo de entrada
+                    fetch("{% url 'listar_contas' %}")
+                        .then((response) => response.json())
+                        .then((updatedData) => {
+                            renderAccounts(updatedData.contas, updatedData.conta_atual);
+                        });
+                } else {
+                    alert(data.message);
+                }
+            })
+            .catch((error) => {
+                console.error("Erro ao adicionar conta:", error);
+            });
+    });
+
+    // Função para renderizar a lista de contas no modal
+    function renderAccounts(accounts, currentEmail) {
+        accountList.innerHTML = ""; // Limpa a lista atual
+        if (accounts.length === 0) {
+            accountList.innerHTML = "<li class='empty'>Nenhuma conta adicionada.</li>";
+        } else {
+            accounts.forEach((account) => {
+                const listItem = document.createElement("li");
+                listItem.textContent = account;
+
+                // Indicar qual é a conta atual
+                if (account === currentEmail) {
+                    listItem.textContent += " (atual)";
+                    listItem.classList.add("current-account");
+                }
+
+                // Botão "Remover"
+                const removeButton = document.createElement("button");
+                removeButton.textContent = "Remover";
+                removeButton.style.marginLeft = "10px";
+                removeButton.style.color = "#e72427";
+                removeButton.style.cursor = "pointer";
+
+                removeButton.addEventListener("click", (event) => {
+                    event.stopPropagation(); // Impedir seleção acidental de conta
+                    if (account === currentEmail) {
+                        selectedEmail = account;
+                        closeAllModals();
+                        logoutConfirmationModal.style.display = "block";
+                    } else {
+                        removeAccount(account, currentEmail);
+                    }
+                });
+
+                listItem.appendChild(removeButton);
+                listItem.addEventListener("click", () => {
+                    if (account === currentEmail) {
+                        alert("Você já está logado com essa conta.");
+                    } else {
+                        selectedEmail = account;
+                        closeAllModals();
+                        confirmationModal.style.display = "block";
+                    }
+                });
+
+                accountList.appendChild(listItem);
+            });
+        }
+    }
+
+    // Confirmar mudança de conta
+    confirmChangeButton.addEventListener("click", () => {
+        confirmationModal.style.display = "none";
+        if (selectedEmail) {
+            window.location.href = `{% url 'login' %}?email=${encodeURIComponent(selectedEmail)}`;
+        }
+    });
+
+    // Cancelar mudança de conta
+    cancelChangeButton.addEventListener("click", () => {
+        confirmationModal.style.display = "none";
+        selectedEmail = null;
+    });
+
+    // Confirmar remoção da conta atual
+    confirmLogoutButton.addEventListener("click", () => {
+        logoutConfirmationModal.style.display = "none";
+        window.location.href = "{% url 'login' %}"; // Redirecionar para login ao remover conta atual
+    });
+
+    // Cancelar remoção da conta atual
+    cancelLogoutButton.addEventListener("click", () => {
+        logoutConfirmationModal.style.display = "none";
+        selectedEmail = null;
+    });
+
+    // Remover conta
+    function removeAccount(email, currentEmail) {
+        fetch("{% url 'remover_conta' %}", {
+            method: "POST",
+            headers: {
+                "X-CSRFToken": document.querySelector('[name="csrfmiddlewaretoken"]').value,
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ conta: email }),
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                if (data.success) {
+                    alert("Conta removida com sucesso.");
+                    // Atualizar a lista de contas
+                    fetch("{% url 'listar_contas' %}")
+                        .then((response) => response.json())
+                        .then((updatedData) => {
+                            renderAccounts(updatedData.contas, updatedData.conta_atual);
+                        });
+                } else {
+                    alert(data.message);
+                }
+            })
+            .catch((error) => {
+                console.error("Erro ao remover conta:", error);
+            });
+    }
 });
+
+
 </script>
 </body>
 </html>
