@@ -79,12 +79,12 @@
             <span class="close-icon" id="close-create-modal">&times;</span>
             <h2>Criar nova turma</h2>
             <form id="create-class-form">
-                <label for="class-name">Disciplina:</label>
-                <input type="text" id="class-name" name="class_name" placeholder="Digite a disciplina" required>
-    
-                <label for="class-description">Turma/Turno:</label>
-                <input id="class-description" name="class_description" placeholder="Ex. Eletrotécnica - 2V"></input>
-    
+                <label for="class-name" class="disciplina">Disciplina:</label>
+                <input type="text" id="class-name" name="class_name" placeholder="Digite a disciplina" required />
+
+                <label for="class-description" class="turma">Turma/Turno:</label>
+                <input id="class-description" name="class_description" placeholder="Ex. Eletrotécnica - 2V" required />
+
                 <button type="submit" class="btn-confirm">Criar turma</button>
             </form>
         </div>
@@ -95,29 +95,33 @@
 <div id="delete-class-modal" class="modal">
     <div class="modal-content">
         <span class="close-icon" id="close-delete-modal">&times;</span>
-        <h2>Para excluir uma turma, digite a senha da conta</h2>
+        <h2>Como segurança, confirme sua senha</h2>
         <form id="delete-class-form">
             {% csrf_token %}
-            <input type="password" id="delete-password-input" placeholder="Digite sua senha" required>
+            <input type="password" id="delete-password-input" placeholder="Digite sua senha" class="senha" required>
             <button type="submit" class="btn-confirm">Confirmar</button>
         </form>
         
     </div>
 </div>
 
+<!-- Modal de Mudar conta -->
 <div id="account-modal" class="modal">
     <div class="modal-content">
         <span id="close-modal" class="close-icon">&times;</span>
-        <h2>Selecione ou remova uma conta</h2>
+        <h2 class="selecione">Selecione ou remova uma conta</h2>
         <ul class="account-list">
-            <!-- As contas serão renderizadas dinamicamente pelo JavaScript -->
         </ul>
-        <div class="add-account">
-            <input type="email" id="new-account" placeholder="Digite um e-mail" />
-            <button id="add-account-btn">Adicionar Conta</button>
-        </div>
+        <form id="add-account-form">
+            <label for="new-account" class="email">E-mail:</label>
+            <input type="email" id="new-account" placeholder="Digite um e-mail" required />
+            <button id="add-account-btn" class="btn-confirm">Adicionar Conta</button>
+        </form>
     </div>
 </div>
+
+
+
 
     <script>
         document.addEventListener("DOMContentLoaded", function () {
@@ -154,6 +158,12 @@
         </div>`;
     document.body.appendChild(confirmationModal);
 
+    window.addEventListener("click", (event) => {
+        if (event.target === confirmationModal) {
+            confirmationModal.style.display = "none";
+        }
+    });
+
     const confirmChangeButton = document.getElementById("confirm-change-btn");
     const cancelChangeButton = document.getElementById("cancel-change-btn");
 
@@ -163,7 +173,7 @@
     logoutConfirmationModal.innerHTML = `
         <div class="modal-content">
             <h2>Deseja realmente remover a conta atual?</h2>
-            <p>Você será deslogado.</p>
+            <p class="deslogado">Você será deslogado.</p>
             <div class="modal-actions">
                 <button id="confirm-logout-btn" class="btn-confirm">Sim</button>
                 <button id="cancel-logout-btn" class="btn-cancel">Não</button>
@@ -173,6 +183,12 @@
 
     const confirmLogoutButton = document.getElementById("confirm-logout-btn");
     const cancelLogoutButton = document.getElementById("cancel-logout-btn");
+
+    window.addEventListener("click", (event) => {
+        if (event.target === logoutConfirmationModal) {
+            logoutConfirmationModal.style.display = "none";
+        }
+    });
 
     // Função para fechar todos os modais
     function closeAllModals() {

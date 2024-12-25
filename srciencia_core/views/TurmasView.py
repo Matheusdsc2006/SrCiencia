@@ -1,14 +1,9 @@
 from django.shortcuts import render, redirect
-from django.http import JsonResponse, HttpResponseForbidden
+from django.http import JsonResponse
 import json
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
-from srciencia_core.models import Turma
-
-
-from django.shortcuts import render, redirect
-from django.contrib.auth.decorators import login_required
-from srciencia_core.models import Turma
+from srciencia_core.models.Turma import Turma
 
 @login_required
 def turmas_view(request):
@@ -28,14 +23,13 @@ def turmas_view(request):
 
     # Para alunos, exibir apenas turmas em que estão inscritos
     conta_atual = request.session.get("conta_atual", request.user.email)
-    turmas = Turma.objects.filter(alunos=request.user).select_related("professor")
+    turmas = TurmaAluno.objects.filter(aluno=request.user, visivel=True).select_related("turma", "turma__professor")
     turmas_com_dados = [
         {
-            "id": turma.id,
-            "nome": turma.nome,
-            "descricao": turma.descricao,
-            "professor__username": turma.professor.username if turma.professor else "Desconhecido",
-            "google_drive_url": turma.google_drive_url,
+            "id": turma.turma.id,
+            "nome": turma.turma.nome,
+            "descricao": turma.turma.descricao,
+            "professor__username": turma.turma.professor.username if turma.turma.professor else "Desconhecido",
         }
         for turma in turmas
     ]
@@ -53,11 +47,16 @@ def listar_turmas(request):
     if not request.user.is_authenticated:
         return JsonResponse({"success": False, "message": "Usuário não autenticado."})
 
-    turmas = Turma.objects.filter(alunos=request.user).select_related("professor").values(
-        "id", "nome", "descricao", "professor__username", "google_drive_url"
+    turmas = Turma.objects.filter(
+        aluno=request.user,
+        visivel=True  # Filtra apenas turmas visíveis
+    ).select_related("turma", "turma__professor").values(
+        "turma__id", "turma__nome", "turma__descricao", "turma__professor__username"
     )
 
     return JsonResponse({"success": True, "turmas": list(turmas)})
+
+
 
 
 
@@ -156,6 +155,15 @@ def listar_contas(request):
 def pendentes_view(request, turma_id):
     return render(request, "paginas/pendentes.html", {"turma_id": turma_id})
 
-
+@login_required
 def cancelar_inscricao(request, turma_id):
-    return redirect("turmas")
+    if request.method == "POST":
+        try:
+            turma_aluno = TurmaAluno.objects.get(aluno=request.user, turma_id=turma_id)
+            turma_aluno.visivel = False  # Torna a turma invisível
+            turma_aluno.save()
+            return JsonResponse({"success": True, "message": "Inscrição cancelada com sucesso."})
+        except TurmaAluno.DoesNotExist:
+            return JsonResponse({"success": False, "message": "Você não está inscrito nesta turma."})
+    return JsonResponse({"success": False, "message": "Método inválido."})
+

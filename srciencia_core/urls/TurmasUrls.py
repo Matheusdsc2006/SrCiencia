@@ -10,5 +10,5 @@ urlpatterns = [
     path("listar_turmas/", listar_turmas, name="listar_turmas"),
     path("verificar_codigo_turma/", verificar_codigo_turma, name="verificar_codigo_turma"),
     path("pendentes/<int:turma_id>/", pendentes_view, name="pendentes"),
-    path('<int:turma_id>/cancelar/', cancelar_inscricao, name='cancelar_inscricao'),
+    path("<int:turma_id>/cancelar/", cancelar_inscricao, name="cancelar_inscricao"),
 ]

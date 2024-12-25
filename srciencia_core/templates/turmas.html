@@ -58,7 +58,7 @@
             <div class="cards">
                 {% if turmas %}
                     {% for turma in turmas %}
-                    <div class="card {{ turma.cor }}">
+                    <div class="card {{ turma.cor }}" data-id="{{ turma.id }}">
                         <div class="card-header">
                             <h3>{{ turma.nome }}</h3>
                             <p>{{ turma.descricao }}</p>
@@ -67,7 +67,7 @@
                         <div class="card-actions">
                             <button onclick="window.location.href='/turmas/{{ turma.id }}/pendentes/'">Trabalhos pendentes</button>
                             <button onclick="window.location.href='{{ turma.google_drive_url }}'">Pasta no Google Drive</button>
-                            <button class="cancel" onclick="window.location.href='/turmas/{{ turma.id }}/cancelar/'">Cancelar inscrição</button>
+                            <button class="cancel" onclick="cancelarInscricao({{ turma.id }})">Cancelar inscrição</button>
                         </div>
                     </div>
                 {% endfor %}
@@ -81,7 +81,7 @@
 <div id="confirmation-modal" class="modal">
     <div class="modal-content">
         <h2>Deseja realmente mudar de conta?</h2>
-        <p>Você sairá da conta atual.</p>
+        <p style="font-size: 20px;">Você sairá da conta atual.</p>
         <div class="modal-actions">
             <button id="confirm-change-btn" class="btn-confirm">Sim</button>
             <button id="cancel-change-btn" class="btn-cancel">Não</button>
@@ -95,12 +95,12 @@
         <span id="close-modal" class="close-icon">&times;</span>
         <h2>Selecione ou remova uma conta</h2>
         <ul class="account-list">
-            <!-- As contas serão renderizadas dinamicamente pelo JavaScript -->
         </ul>
         <div class="add-account">
-            <input type="email" id="new-account" placeholder="Digite um e-mail" />
-            <button id="add-account-btn">Adicionar Conta</button>
-        </div>
+            <label for="new-account">E-mail:</label>
+            <input type="email" id="new-account" class="email" placeholder="Digite um e-mail" required />
+            <button id="add-account-btn" class="btn-confirm">Adicionar Conta</button>
+        </div>        
     </div>
 </div>
 
@@ -108,7 +108,7 @@
 <div id="remove-confirmation-modal" class="modal">
     <div class="modal-content">
         <h2>Você sairá da conta atual</h2>
-        <p style="font-size: smaller;">Deseja continuar?</p>
+        <p style="font-size: 20px;">Deseja continuar?</p>
         <button id="confirm-remove-btn" class="confirm-btn">Sim</button>
         <button id="cancel-remove-btn" class="cancel-btn">Não</button>
     </div>
@@ -495,6 +495,35 @@
                     alert("Erro ao verificar o código da turma. Tente novamente.");
                 });
         });
+
+    function cancelarInscricao(turmaId) {
+        const csrfToken = document.querySelector('[name=csrf-token]').content;
+
+        fetch(`/turmas/${turmaId}/cancelar/`, {
+            method: "POST",
+            headers: {
+                "X-CSRFToken": csrfToken,
+                "Content-Type": "application/json",
+            },
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert(data.message);
+                const turmaCard = document.querySelector(`.card[data-id="${turmaId}"]`);
+                if (turmaCard) {
+                    turmaCard.style.display = "none"; // Oculta o card
+                }
+            } else {
+                alert(data.message);
+            }
+        })
+        .catch(error => {
+            console.error("Erro ao cancelar inscrição:", error);
+            alert("Erro ao cancelar a inscrição. Tente novamente.");
+        });
+    }
+
 });
 </script>
 
