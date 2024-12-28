@@ -149,13 +149,17 @@
     confirmationModal.id = "confirmation-modal";
     confirmationModal.className = "modal";
     confirmationModal.innerHTML = `
-        <div class="modal-content">
-            <h2>Deseja realmente mudar para esta conta?</h2>
-            <div class="modal-actions">
-                <button id="confirm-change-btn" class="btn-confirm">Sim</button>
-                <button id="cancel-change-btn" class="btn-cancel">Não</button>
-            </div>
-        </div>`;
+        <div id="confirmation-modal" class="modal">
+    <div class="modal-content">
+        <span class="close-icon">&times;</span>
+        <h2>Deseja realmente mudar de conta?</h2>
+        <p style="font-size: 20px;">Você sairá da conta atual.</p>
+        <div class="modal-actions">
+            <button id="confirm-change-btn" class="btn-confirm">Sim</button>
+        </div>
+    </div>
+</div>
+`;
     document.body.appendChild(confirmationModal);
 
     window.addEventListener("click", (event) => {
@@ -171,14 +175,17 @@
     logoutConfirmationModal.id = "logout-confirmation-modal";
     logoutConfirmationModal.className = "modal";
     logoutConfirmationModal.innerHTML = `
-        <div class="modal-content">
-            <h2>Deseja realmente remover a conta atual?</h2>
-            <p class="deslogado">Você será deslogado.</p>
-            <div class="modal-actions">
-                <button id="confirm-logout-btn" class="btn-confirm">Sim</button>
-                <button id="cancel-logout-btn" class="btn-cancel">Não</button>
-            </div>
-        </div>`;
+        <div id="confirmation-modal" class="modal">
+    <div class="modal-content">
+        <span class="close-icon">&times;</span>
+        <h2>Deseja realmente remover a conta atual?</h2>
+        <p style="font-size: 20px;">Você será deslogado.</p>
+        <div class="modal-actions">
+            <button id="confirm-change-btn" class="btn-confirm">Sim</button>
+        </div>
+    </div>
+</div>
+`;
     document.body.appendChild(logoutConfirmationModal);
 
     const confirmLogoutButton = document.getElementById("confirm-logout-btn");

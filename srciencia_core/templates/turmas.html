@@ -77,14 +77,14 @@
             </div>            
         </main>
     </div>
-<!-- Modal de Confirmação -->
+<!-- Modal de Confirmação para Mudar de Conta -->
 <div id="confirmation-modal" class="modal">
     <div class="modal-content">
+        <span id="close-confirmation-modal" class="close-icon">&times;</span>
         <h2>Deseja realmente mudar de conta?</h2>
         <p style="font-size: 20px;">Você sairá da conta atual.</p>
         <div class="modal-actions">
             <button id="confirm-change-btn" class="btn-confirm">Sim</button>
-            <button id="cancel-change-btn" class="btn-cancel">Não</button>
         </div>
     </div>
 </div>
@@ -107,21 +107,22 @@
 <!-- Modal de Confirmação para Remover Conta Atual -->
 <div id="remove-confirmation-modal" class="modal">
     <div class="modal-content">
-        <h2>Você sairá da conta atual</h2>
-        <p style="font-size: 20px;">Deseja continuar?</p>
-        <button id="confirm-remove-btn" class="confirm-btn">Sim</button>
-        <button id="cancel-remove-btn" class="cancel-btn">Não</button>
+        <span id="close-remove-confirmation-modal" class="close-icon">&times;</span>
+        <h2>Deseja realmente remover a conta atual?</h2>
+        <p style="font-size: 20px;">Você será deslogado.</p>
+        <div class="modal-actions">
+            <button id="confirm-remove-btn" class="btn-confirm">Sim</button>
+        </div>
     </div>
 </div>
 
 <!-- Modal de Confirmação para Cancelar Inscrição -->
 <div id="cancel-class-modal" class="modal">
     <div class="modal-content">
-        <h2>Você sairá da turma</h2>
-        <p>Deseja continuar?</p>
+        <span id="close-cancel-class-modal" class="close-icon">&times;</span>
+        <h2>Deseja realmente sair da turma?</h2>
         <div class="modal-actions">
             <button id="confirm-cancel-class-btn" class="btn-confirm">Sim</button>
-            <button id="cancel-cancel-class-btn" class="btn-cancel">Não</button>
         </div>
     </div>
 </div>
@@ -146,6 +147,9 @@
         var submitButton = document.getElementById("submit-codigo-turma");
         var inputCodigoTurma = document.getElementById("codigo-turma");
         var cancelClassModal = document.getElementById("cancel-class-modal");
+        var closeConfirmationModal = document.getElementById("close-confirmation-modal");
+        var closeRemoveConfirmationModal = document.getElementById("close-remove-confirmation-modal");
+        var closeCancelClassModal = document.getElementById("close-cancel-class-modal");
 
         var accounts = [];
         var MAX_ACCOUNTS = 3;
@@ -153,9 +157,50 @@
         var currentEmail = null;
         var turmaIdToCancel = null;
 
+        // Fechar modal ao clicar no "X"
+        closeConfirmationModal.addEventListener("click", () => {
+            confirmationModal.style.display = "none";
+        });
+
+        closeRemoveConfirmationModal.addEventListener("click", () => {
+            removeConfirmationModal.style.display = "none";
+        });
+
+        closeCancelClassModal.addEventListener("click", () => {
+            cancelClassModal.style.display = "none";
+        });
+
+        // Fechar modal ao clicar fora dele
+        window.addEventListener("click", (event) => {
+            if (event.target === confirmationModal) {
+                confirmationModal.style.display = "none";
+            }
+            if (event.target === removeConfirmationModal) {
+                removeConfirmationModal.style.display = "none";
+            }
+            if (event.target === cancelClassModal) {
+                cancelClassModal.style.display = "none";
+            }
+        });
+
+        function closeAllModals() {
+            document.querySelectorAll(".modal").forEach((modal) => {
+                modal.style.display = "none"; // Fecha todos os modais
+            });
+        }
+
+        // Redirecionar para a tela de login
+        function redirectToLogin(email) {
+            const loginUrl = email 
+                ? `{% url 'login' %}?email=${encodeURIComponent(email)}`
+                : `{% url 'login' %}`;
+            window.location.href = loginUrl;
+        }
+
         function renderTurma(turma) {
             const cardsContainer = document.querySelector(".cards");
             const noTurmasMessage = document.getElementById("no-turmas-message");
+            closeAllModals();
 
             // Remover mensagem de "Não há turmas cadastradas para esta conta."
             if (noTurmasMessage) {
@@ -252,6 +297,96 @@
         }
 
 
+        function initializeAccounts() {
+            fetch("{% url 'listar_contas' %}")
+                .then((response) => response.json())
+                .then((data) => {
+                    accounts = data.contas || [];
+                    currentEmail = data.conta_atual; // Define a conta atual
+
+                    // Adiciona a conta atual à lista de contas, se ainda não estiver incluída
+                    if (!accounts.includes(currentEmail)) {
+                        accounts.push(currentEmail);
+                    }
+
+                    userEmailElement.textContent = currentEmail; // Atualiza o e-mail no cabeçalho
+                    renderAccounts(); // Renderiza as contas no modal
+                })
+                .catch((error) => {
+                    console.error("Erro ao carregar contas:", error);
+                });
+        }
+
+        initializeAccounts();
+
+        function renderAccounts() {
+            accountList.innerHTML = ""; // Limpa a lista de contas
+
+            if (accounts.length === 0) {
+                const emptyMessage = document.createElement("li");
+                emptyMessage.classList.add("empty");
+                emptyMessage.textContent = "Nenhuma conta adicionada.";
+                accountList.appendChild(emptyMessage);
+            } else {
+                accounts.forEach((account) => {
+                    const listItem = document.createElement("li");
+                    listItem.textContent = account;
+
+                    // Verifica se é a conta atual
+                    if (account === currentEmail) {
+                        listItem.classList.add("current-account");
+                        listItem.textContent += " (atual)";
+
+                        // Exibe pop-up ao clicar na conta atual
+                        listItem.addEventListener("click", (event) => {
+                            event.stopPropagation(); // Evita eventos duplicados
+                            alert("Essa conta já está em andamento!");
+                        });
+
+                        // Botão "Remover" para a conta atual
+                        const removeButton = document.createElement("button");
+                        removeButton.textContent = "Remover";
+                        removeButton.style.marginLeft = "10px";
+                        removeButton.style.color = "#e72427";
+                        removeButton.style.cursor = "pointer";
+
+                        // Adicionar evento para abrir o modal de remoção da conta atual
+                        removeButton.addEventListener("click", (event) => {
+                            event.stopPropagation();
+                            closeAllModals(); // Fecha outros modais
+                            selectedEmail = account; // Define a conta atual para remoção
+                            removeConfirmationModal.style.display = "block"; // Abre o modal
+                        });
+
+                        listItem.appendChild(removeButton);
+                    } else {
+                        // Permite seleção de outras contas
+                        listItem.addEventListener("click", () => {
+                            closeAllModals();
+                            selectedEmail = account;
+                            confirmationModal.style.display = "block";
+                        });
+
+                        // Botão "Remover" para contas não atuais
+                        const removeButton = document.createElement("button");
+                        removeButton.textContent = "Remover";
+                        removeButton.style.marginLeft = "10px";
+                        removeButton.style.color = "#e72427";
+                        removeButton.style.cursor = "pointer";
+
+                        removeButton.addEventListener("click", (event) => {
+                            event.stopPropagation();
+                            removeAccount(account); // Remove diretamente
+                        });
+
+                        listItem.appendChild(removeButton);
+                    }
+
+                    accountList.appendChild(listItem);
+                });
+            }
+        }
+
 
 
         function closeAllModals() {
@@ -328,59 +463,6 @@
         });
         // Renderizar lista de contas
         
-        function renderAccounts() {
-            accountList.innerHTML = "";
-
-            if (accounts.length === 0) {
-                const emptyMessage = document.createElement("li");
-                emptyMessage.classList.add("empty");
-                emptyMessage.textContent = "Nenhuma conta adicionada.";
-                accountList.appendChild(emptyMessage);
-            } else {
-                accounts.forEach((account) => {
-                    const listItem = document.createElement("li");
-                    listItem.textContent = account;
-
-                    // Se for a conta atual, desabilitar seleção
-                    if (account === currentEmail) {
-                        listItem.classList.add("current-account");
-                        listItem.textContent += " (atual)";
-                        listItem.addEventListener("click", () => {
-                            alert("A conta selecionada deve ser diferente da atual!");
-                        });
-                    } else {
-                        listItem.addEventListener("click", () => {
-                            closeAllModals();
-                            selectedEmail = account;
-                            confirmationModal.style.display = "block";
-                        });
-                    }
-
-                    // Botão "Remover"
-                    const removeButton = document.createElement("button");
-                    removeButton.textContent = "Remover";
-                    removeButton.style.marginLeft = "10px";
-                    removeButton.style.color = "#e72427";
-                    removeButton.style.cursor = "pointer";
-
-                    removeButton.addEventListener("click", (event) => {
-                        event.stopPropagation();
-                        if (account === currentEmail) {
-                            // Modal de remoção da conta atual
-                            closeAllModals();
-                            selectedEmail = account;
-                            removeConfirmationModal.style.display = "block";
-                        } else {
-                            // Remover conta diferente da atual
-                            removeAccount(account);
-                        }
-                    });
-
-                    listItem.appendChild(removeButton);
-                    accountList.appendChild(listItem);
-                });
-            }
-        }
 
         confirmChangeButton.addEventListener("click", () => { 
             closeAllModals(); // Fechar todos os modais
@@ -409,18 +491,11 @@
                 alert("Nenhuma conta foi selecionada."); // Garantia de controle caso algo falhe
             }
         });
-
+        
        // Cancelar troca de conta
         cancelChangeButton.addEventListener("click", () => {
             closeAllModals(); // Fechar todos os modais
             selectedEmail = null; // Limpar o e-mail selecionado para evitar erros
-        });
-
-        // Confirmar remoção da conta atual
-        confirmRemoveButton.addEventListener("click", () => {
-            closeAllModals();
-            alert("Você foi deslogado.");
-            redirectToLogin(null);
         });
 
         // Cancelar remoção de conta atual
@@ -465,37 +540,12 @@
                 });
         }
 
-        // Redirecionar para a tela de login
-        function redirectToLogin(email) {
-            const loginUrl = email 
-                ? `{% url 'login' %}?email=${encodeURIComponent(email)}`
-                : `{% url 'login' %}`;
-            window.location.href = loginUrl;
-        }
-
-
         // Validar e-mail
         function validateEmail(email) {
             const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
             return emailRegex.test(email);
         }
 
-        // Inicializar contas a partir do backend
-        function initializeAccounts() {
-            fetch("{% url 'listar_contas' %}")
-                .then((response) => response.json())
-                .then((data) => {
-                    accounts = data.contas || [];
-                    currentEmail = data.conta_atual;
-                    userEmailElement.textContent = currentEmail;
-                    renderAccounts();
-                })
-                .catch((error) => {
-                    console.error("Erro ao carregar contas:", error);
-                });
-        }
-
-        initializeAccounts();
 
         submitButton.addEventListener("click", () => {
             const codigoTurma = inputCodigoTurma.value.trim();
@@ -627,16 +677,24 @@
             closeAllModals();
             turmaIdToCancel = null;
         });
-    } else {
-        console.error("cancelCancelClassBtn não encontrado.");
-    }
 
-    // Fechar o modal ao clicar fora dele
-    window.addEventListener("click", function (event) {
-        if (event.target === cancelClassModal) {
-            closeAllModals();
+    };
+
+    let selectedEmail = null;
+    var confirmRemoveButton = document.getElementById("confirm-remove-btn");
+    // Confirmar remoção da conta atual
+    confirmRemoveButton.addEventListener("click", () => {
+        console.log("Botão 'Sim' clicado");
+        closeAllModals();
+        if (selectedEmail === currentEmail) {
+            const loginUrl = `{% url 'login' %}?email=${encodeURIComponent(selectedEmail)}`;
+            console.log("Redirecionando para:", loginUrl);
+            window.location.href = loginUrl;
+        } else {
+            alert("Erro: A conta selecionada para remoção não é a conta atual.");
         }
     });
+
 </script>
 
 </body>

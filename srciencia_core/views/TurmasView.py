@@ -141,14 +141,16 @@ def remover_conta(request):
 
 def listar_contas(request):
     contas = request.session.get("contas", [])
-    conta_atual = request.session.get("conta_atual", "Nenhuma conta selecionada")
+    conta_atual = request.session.get("conta_atual", request.user.email)
 
-    # Adicionar a conta atual à lista, se não estiver
-    if conta_atual not in contas and conta_atual != "Nenhuma conta selecionada":
+    # Adicionar a conta atual à lista, se não estiver presente
+    if conta_atual not in contas:
         contas.append(conta_atual)
         request.session["contas"] = contas  # Atualizar a sessão
 
     return JsonResponse({"contas": contas, "conta_atual": conta_atual})
+
+
 
 
 
