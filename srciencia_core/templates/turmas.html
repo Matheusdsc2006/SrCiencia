@@ -67,7 +67,7 @@
                         <div class="card-actions">
                             <button onclick="window.location.href='/turmas/{{ turma.id }}/pendentes/'">Trabalhos pendentes</button>
                             <button onclick="window.location.href='{{ turma.google_drive_url }}'">Pasta no Google Drive</button>
-                            <button class="cancel" onclick="cancelarInscricao({{ turma.id }})">Cancelar inscrição</button>
+                            <button class="cancel" data-id="{{ turma.id }}">Cancelar inscrição</button>
                         </div>
                     </div>
                 {% endfor %}
@@ -114,28 +114,84 @@
     </div>
 </div>
 
+<!-- Modal de Confirmação para Cancelar Inscrição -->
+<div id="cancel-class-modal" class="modal">
+    <div class="modal-content">
+        <h2>Você sairá da turma</h2>
+        <p>Deseja continuar?</p>
+        <div class="modal-actions">
+            <button id="confirm-cancel-class-btn" class="btn-confirm">Sim</button>
+            <button id="cancel-cancel-class-btn" class="btn-cancel">Não</button>
+        </div>
+    </div>
+</div>
+
+
 <script>
     document.addEventListener("DOMContentLoaded", function () {
-        const accountModal = document.getElementById("account-modal");
-        const confirmationModal = document.getElementById("confirmation-modal");
-        const removeConfirmationModal = document.getElementById("remove-confirmation-modal");
-        const closeModal = document.getElementById("close-modal");
-        const changeAccountButton = document.querySelector(".change-account");
-        const accountList = document.querySelector(".account-list");
-        const newAccountInput = document.getElementById("new-account");
-        const addAccountButton = document.getElementById("add-account-btn");
-        const userEmailElement = document.querySelector(".user-email");
-        const confirmChangeButton = document.getElementById("confirm-change-btn");
-        const cancelChangeButton = document.getElementById("cancel-change-btn");
-        const confirmRemoveButton = document.getElementById("confirm-remove-btn");
-        const cancelRemoveButton = document.getElementById("cancel-remove-btn");
-        const submitButton = document.getElementById("submit-codigo-turma");
-        const inputCodigoTurma = document.getElementById("codigo-turma");
+        // Declaração de variáveis
+        var accountModal = document.getElementById("account-modal");
+        var confirmationModal = document.getElementById("confirmation-modal");
+        var removeConfirmationModal = document.getElementById("remove-confirmation-modal");
+        var closeModal = document.getElementById("close-modal");
+        var changeAccountButton = document.querySelector(".change-account");
+        var accountList = document.querySelector(".account-list");
+        var newAccountInput = document.getElementById("new-account");
+        var addAccountButton = document.getElementById("add-account-btn");
+        var userEmailElement = document.querySelector(".user-email");
+        var confirmChangeButton = document.getElementById("confirm-change-btn");
+        var cancelChangeButton = document.getElementById("cancel-change-btn");
+        var confirmRemoveButton = document.getElementById("confirm-remove-btn");
+        var cancelRemoveButton = document.getElementById("cancel-remove-btn");
+        var submitButton = document.getElementById("submit-codigo-turma");
+        var inputCodigoTurma = document.getElementById("codigo-turma");
+        var cancelClassModal = document.getElementById("cancel-class-modal");
 
-        let accounts = [];
-        const MAX_ACCOUNTS = 3;
-        let selectedEmail = null;
-        let currentEmail = null;
+        var accounts = [];
+        var MAX_ACCOUNTS = 3;
+        var selectedEmail = null;
+        var currentEmail = null;
+        var turmaIdToCancel = null;
+
+        function renderTurma(turma) {
+            const cardsContainer = document.querySelector(".cards");
+            const noTurmasMessage = document.getElementById("no-turmas-message");
+
+            // Remover mensagem de "Não há turmas cadastradas para esta conta."
+            if (noTurmasMessage) {
+                noTurmasMessage.remove();
+            }
+
+            const existingCard = document.querySelector(`.card[data-id="${turma.id}"]`);
+
+            if (existingCard) {
+                existingCard.style.display = "block";
+            } else {
+                const turmaCard = document.createElement("div");
+                turmaCard.classList.add("card"); // Classe padrão para o card
+                turmaCard.setAttribute("data-id", turma.id);
+
+                turmaCard.innerHTML = `
+                    <div class="card-header">
+                        <h3>${turma.nome}</h3>
+                        <p>${turma.descricao}</p>
+                    </div>
+                    <p>Professor: ${turma.professor__username || "Desconhecido"}</p>
+                    <div class="card-actions">
+                        <button onclick="window.location.href='/turmas/${turma.id}/pendentes/'">Trabalhos pendentes</button>
+                        <button onclick="window.location.href='${turma.google_drive_url}'">Pasta no Google Drive</button>
+                        <button class="cancel" data-id="${turma.id}">Cancelar inscrição</button>
+                    </div>
+                `;
+
+                cardsContainer.appendChild(turmaCard);
+
+                // Forçar recalculação de estilos
+                turmaCard.offsetHeight;
+            }
+        }
+
+
 
         function loadTurmasAluno() {
             fetch("/turmas/listar_turmas/")
@@ -154,71 +210,55 @@
                 });
         }
 
-        function renderTurmasAluno(turmas) {
-            const cardsContainer = document.querySelector(".cards");
-            cardsContainer.innerHTML = ""; // Limpar turmas existentes
-
-            turmas.forEach((turma) => {
-                const turmaCard = `
-                    <div class="card">
-                        <div class="card-header">
-                            <h3>${turma.nome}</h3>
-                            <p>${turma.descricao}</p>
-                        </div>
-                        <p>Professor: ${turma.professor__username || "Desconhecido"}</p>
-                        <div class="card-actions">
-                            <button onclick="window.location.href='/turmas/${turma.id}/pendentes/'">Trabalhos pendentes</button>
-                            <button onclick="window.location.href='${turma.google_drive_url}'">Pasta no Google Drive</button>
-                            <button class="cancel" onclick="window.location.href='/turmas/${turma.id}/cancelar/'">Cancelar inscrição</button>
-                        </div>
-                    </div>
-                `;
-                cardsContainer.innerHTML += turmaCard;
-            });
-        }
-
-        // Chamar ao carregar a página
-        document.addEventListener("DOMContentLoaded", loadTurmasAluno);
-
-
         // Função para renderizar turmas
         function renderTurma(turma) {
             const cardsContainer = document.querySelector(".cards");
             const noTurmasMessage = document.getElementById("no-turmas-message");
 
-            // Remover a mensagem de "Nenhuma turma" se houver turmas
+            // Remover mensagem de "Não há turmas cadastradas para esta conta."
             if (noTurmasMessage) {
-                noTurmasMessage.style.display = "none";
+                noTurmasMessage.remove();
             }
 
-            const turmaCard = `
-                <div class="card">
+            const existingCard = document.querySelector(`.card[data-id="${turma.id}"]`);
+
+            if (existingCard) {
+                existingCard.style.display = "block";
+            } else {
+                const turmaCard = document.createElement("div");
+                turmaCard.classList.add("card"); // Adiciona a classe de estilo
+                turmaCard.setAttribute("data-id", turma.id);
+
+                turmaCard.innerHTML = `
                     <div class="card-header">
                         <h3>${turma.nome}</h3>
                         <p>${turma.descricao}</p>
                     </div>
-                    <p>Professor: ${turma.professor__username}</p>
+                    <p>Professor: ${turma.professor__username || "Desconhecido"}</p>
                     <div class="card-actions">
                         <button onclick="window.location.href='/turmas/${turma.id}/pendentes/'">Trabalhos pendentes</button>
-                        <button onclick="window.location.href='/google-drive/${turma.id}/'">Abrir pasta no Google Drive</button>
-                        <button class="cancel" onclick="window.location.href='/turmas/${turma.id}/cancelar/'">Cancelar inscrição</button>
+                        <button onclick="window.location.href='${turma.google_drive_url}'">Pasta no Google Drive</button>
+                        <button class="cancel" data-id="${turma.id}">Cancelar inscrição</button>
                     </div>
-                </div>
-            `;
-            cardsContainer.innerHTML += turmaCard; // Adicionar a nova turma
+                `;
+
+                // Adicionar o card ao contêiner
+                cardsContainer.appendChild(turmaCard);
+                window.getComputedStyle(turmaCard);
+
+                // Forçar reprocessamento de estilos
+                turmaCard.offsetHeight; // Trigger reflow
+            }
         }
 
-        // Chamar a função ao carregar a página
-        document.addEventListener("DOMContentLoaded", () => {
-            const serverRenderedTurmas = JSON.parse('{{ turmas|safe }}'.replace(/&quot;/g, '"'));
-            if (serverRenderedTurmas.length > 0) {
-                renderTurmas(serverRenderedTurmas); // Renderizar turmas carregadas do backend
-            } else {
-                loadTurmas(); // Carregar turmas via API caso necessário
-            }
+
+
+
+        function closeAllModals() {
+        document.querySelectorAll(".modal").forEach(function (modal) {
+            modal.style.display = "none";
         });
-
-
+    }
 
         // Abrir modal de gerenciamento de contas
         changeAccountButton.addEventListener("click", () => {
@@ -242,13 +282,6 @@
                 removeConfirmationModal.style.display = "none";
             }
         });
-
-        // Fechar todos os modais
-        function closeAllModals() {
-            accountModal.style.display = "none";
-            confirmationModal.style.display = "none";
-            removeConfirmationModal.style.display = "none";
-        }
 
         // Adicionar nova conta
         addAccountButton.addEventListener("click", () => {
@@ -475,7 +508,7 @@
             fetch("{% url 'verificar_codigo_turma' %}", {
                 method: "POST",
                 headers: {
-                    "X-CSRFToken": "{{ csrf_token }}",
+                    "X-CSRFToken": document.querySelector('[name="csrf-token"]').content,
                     "Content-Type": "application/json",
                 },
                 body: JSON.stringify({ codigo_turma: codigoTurma }),
@@ -483,9 +516,8 @@
                 .then((response) => response.json())
                 .then((data) => {
                     if (data.success) {
-                        // Atualizar a lista de turmas na interface
-                        renderTurma(data.turma); // Renderizar apenas a nova turma
-                        alert(`Você foi adicionado à turma: ${data.turma.nome}`);
+                        renderTurma(data.turma);
+                        alert(data.message);
                     } else {
                         alert(data.message);
                     }
@@ -495,6 +527,7 @@
                     alert("Erro ao verificar o código da turma. Tente novamente.");
                 });
         });
+    });
 
     function cancelarInscricao(turmaId) {
         const csrfToken = document.querySelector('[name=csrf-token]').content;
@@ -524,7 +557,86 @@
         });
     }
 
-});
+    function closeAllModals() {
+        document.querySelectorAll(".modal").forEach(function (modal) {
+            modal.style.display = "none";
+        });
+    }
+
+    var cancelClassModal = document.getElementById("cancel-class-modal");
+    function openCancelClassModal(turmaId) {
+        console.log("Abrindo modal para turma:", turmaId);
+        turmaIdToCancel = turmaId;
+        closeAllModals();
+        if (cancelClassModal) {
+            cancelClassModal.style.display = "block";
+        } else {
+            console.error("cancelClassModal não encontrado.");
+        }
+    }
+
+    document.querySelectorAll(".cancel").forEach(function (button) {
+        button.addEventListener("click", function (event) {
+            event.preventDefault();
+            var turmaId = button.getAttribute("data-id");
+            openCancelClassModal(turmaId);
+        });
+    });
+
+    var confirmCancelClassBtn = document.getElementById("confirm-cancel-class-btn");
+    if (confirmCancelClassBtn) {
+        confirmCancelClassBtn.addEventListener("click", function () {
+            if (turmaIdToCancel) {
+                fetch(`/turmas/${turmaIdToCancel}/cancelar/`, {
+                    method: "POST",
+                    headers: {
+                        "X-CSRFToken": document.querySelector('[name="csrf-token"]').content,
+                    },
+                })
+                    .then(function (response) {
+                        return response.json();
+                    })
+                    .then(function (data) {
+                        if (data.success) {
+                            alert(data.message);
+                            var turmaCard = document.querySelector(`.card[data-id="${turmaIdToCancel}"]`);
+                            if (turmaCard) {
+                                turmaCard.style.display = "none"; // Oculta o card visualmente
+                            }
+                        } else {
+                            alert(data.message);
+                        }
+                    })
+                    .catch(function (error) {
+                        console.error("Erro ao cancelar inscrição:", error);
+                        alert("Erro ao cancelar inscrição. Tente novamente.");
+                    })
+                    .finally(function () {
+                        turmaIdToCancel = null;
+                        closeAllModals();
+                    });
+            }
+        });
+    } else {
+        console.error("confirmCancelClassBtn não encontrado.");
+    }
+    var cancelCancelClassBtn = document.getElementById("cancel-cancel-class-btn");
+    // Cancelar o fechamento do modal
+    if (cancelCancelClassBtn) {
+        cancelCancelClassBtn.addEventListener("click", function () {
+            closeAllModals();
+            turmaIdToCancel = null;
+        });
+    } else {
+        console.error("cancelCancelClassBtn não encontrado.");
+    }
+
+    // Fechar o modal ao clicar fora dele
+    window.addEventListener("click", function (event) {
+        if (event.target === cancelClassModal) {
+            closeAllModals();
+        }
+    });
 </script>
 
 </body>

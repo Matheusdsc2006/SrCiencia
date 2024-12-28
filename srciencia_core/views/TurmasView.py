@@ -3,7 +3,7 @@ from django.http import JsonResponse
 import json
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
-from srciencia_core.models.Turma import Turma
+from srciencia_core.models.Turma import Turma, TurmaAluno
 
 @login_required
 def turmas_view(request):
@@ -166,4 +166,3 @@ def cancelar_inscricao(request, turma_id):
         except TurmaAluno.DoesNotExist:
             return JsonResponse({"success": False, "message": "Você não está inscrito nesta turma."})
     return JsonResponse({"success": False, "message": "Método inválido."})
-

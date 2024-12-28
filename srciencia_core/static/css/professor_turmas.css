@@ -22,7 +22,7 @@ body {
 }
 
 .main-container {
-    margin-left: 330px; /* Compensa a largura do menu lateral */
+    margin-left: 430px; /* Compensa a largura do menu lateral */
     padding: 2rem;
     display: flex;
     flex-direction: column;

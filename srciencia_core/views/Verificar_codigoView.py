@@ -1,6 +1,6 @@
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
-from srciencia_core.models import Turma
+from srciencia_core.models.Turma import Turma, TurmaAluno
 import json
 
 def verificar_codigo_turma(request):
@@ -15,14 +15,32 @@ def verificar_codigo_turma(request):
             # Buscar a turma pelo código
             turma = get_object_or_404(Turma, codigo=codigo_turma)
 
-            # Adicionar o aluno à turma
-            if turma.alunos.filter(id=request.user.id).exists():
-                return JsonResponse({"success": False, "message": "Você já está inscrito nesta turma."})
+            # Verificar se o aluno já está inscrito na turma
+            turma_aluno, created = TurmaAluno.objects.get_or_create(
+                aluno=request.user, turma=turma
+            )
 
-            turma.alunos.add(request.user)
-            turma.save()
+            if not created:
+                # Caso já exista, torná-la visível novamente
+                turma_aluno.visivel = True
+                turma_aluno.save()
 
-            # Retornar os dados da turma, incluindo o professor
+                return JsonResponse({
+                    "success": True,
+                    "message": "Você já estava inscrito nesta turma. Ela foi exibida novamente.",
+                    "turma": {
+                        "id": turma.id,
+                        "nome": turma.nome,
+                        "descricao": turma.descricao,
+                        "codigo": turma.codigo,
+                        "professor__username": turma.professor.username if turma.professor else "Desconhecido",
+                    }
+                })
+
+            # Se foi uma nova inscrição
+            turma_aluno.visivel = True
+            turma_aluno.save()
+
             return JsonResponse({
                 "success": True,
                 "message": "Você foi adicionado à turma.",
@@ -31,9 +49,11 @@ def verificar_codigo_turma(request):
                     "nome": turma.nome,
                     "descricao": turma.descricao,
                     "codigo": turma.codigo,
-                    "professor__username": turma.professor.username,
+                    "professor__username": turma.professor.username if turma.professor else "Desconhecido",
                 }
             })
+
         except Exception as e:
             return JsonResponse({"success": False, "message": f"Erro: {str(e)}"})
+
     return JsonResponse({"success": False, "message": "Método inválido."})
