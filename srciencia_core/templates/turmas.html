@@ -152,7 +152,7 @@
         var closeCancelClassModal = document.getElementById("close-cancel-class-modal");
 
         var accounts = [];
-        var MAX_ACCOUNTS = 3;
+        var MAX_ACCOUNTS = 4;
         var selectedEmail = null;
         var currentEmail = null;
         var turmaIdToCancel = null;
@@ -320,72 +320,57 @@
         initializeAccounts();
 
         function renderAccounts() {
-            accountList.innerHTML = ""; // Limpa a lista de contas
+    accountList.innerHTML = ""; // Limpa a lista de contas
 
-            if (accounts.length === 0) {
-                const emptyMessage = document.createElement("li");
-                emptyMessage.classList.add("empty");
-                emptyMessage.textContent = "Nenhuma conta adicionada.";
-                accountList.appendChild(emptyMessage);
-            } else {
-                accounts.forEach((account) => {
-                    const listItem = document.createElement("li");
-                    listItem.textContent = account;
+    if (accounts.length === 0) {
+        const emptyMessage = document.createElement("li");
+        emptyMessage.classList.add("empty");
+        emptyMessage.textContent = "Nenhuma conta adicionada.";
+        accountList.appendChild(emptyMessage);
+    } else {
+        accounts.forEach((account) => {
+            const listItem = document.createElement("li");
+            listItem.textContent = account;
 
-                    // Verifica se é a conta atual
-                    if (account === currentEmail) {
-                        listItem.classList.add("current-account");
-                        listItem.textContent += " (atual)";
+            // Verifica se é a conta atual
+            if (account === currentEmail) {
+                listItem.classList.add("current-account");
+                listItem.textContent += " (atual)";
 
-                        // Exibe pop-up ao clicar na conta atual
-                        listItem.addEventListener("click", (event) => {
-                            event.stopPropagation(); // Evita eventos duplicados
-                            alert("Essa conta já está em andamento!");
-                        });
-
-                        // Botão "Remover" para a conta atual
-                        const removeButton = document.createElement("button");
-                        removeButton.textContent = "Remover";
-                        removeButton.style.marginLeft = "10px";
-                        removeButton.style.color = "#e72427";
-                        removeButton.style.cursor = "pointer";
-
-                        // Adicionar evento para abrir o modal de remoção da conta atual
-                        removeButton.addEventListener("click", (event) => {
-                            event.stopPropagation();
-                            closeAllModals(); // Fecha outros modais
-                            selectedEmail = account; // Define a conta atual para remoção
-                            removeConfirmationModal.style.display = "block"; // Abre o modal
-                        });
-
-                        listItem.appendChild(removeButton);
-                    } else {
-                        // Permite seleção de outras contas
-                        listItem.addEventListener("click", () => {
-                            closeAllModals();
-                            selectedEmail = account;
-                            confirmationModal.style.display = "block";
-                        });
-
-                        // Botão "Remover" para contas não atuais
-                        const removeButton = document.createElement("button");
-                        removeButton.textContent = "Remover";
-                        removeButton.style.marginLeft = "10px";
-                        removeButton.style.color = "#e72427";
-                        removeButton.style.cursor = "pointer";
-
-                        removeButton.addEventListener("click", (event) => {
-                            event.stopPropagation();
-                            removeAccount(account); // Remove diretamente
-                        });
-
-                        listItem.appendChild(removeButton);
-                    }
-
-                    accountList.appendChild(listItem);
+                // Exibe pop-up ao clicar na conta atual
+                listItem.addEventListener("click", (event) => {
+                    event.stopPropagation(); // Evita eventos duplicados
+                    alert("Essa conta já está em andamento!");
                 });
+
+                // Não exibe o botão "Remover" para a conta atual
+            } else {
+                // Permite seleção de outras contas
+                listItem.addEventListener("click", () => {
+                    closeAllModals();
+                    selectedEmail = account;
+                    confirmationModal.style.display = "block";
+                });
+
+                // Botão "Remover" para contas não atuais
+                const removeButton = document.createElement("button");
+                removeButton.textContent = "Remover";
+                removeButton.style.marginLeft = "10px";
+                removeButton.style.color = "#e72427";
+                removeButton.style.cursor = "pointer";
+
+                removeButton.addEventListener("click", (event) => {
+                    event.stopPropagation();
+                    removeAccount(account); // Remove diretamente
+                });
+
+                listItem.appendChild(removeButton);
             }
-        }
+
+            accountList.appendChild(listItem);
+        });
+    }
+}
 
 
 
@@ -423,7 +408,7 @@
             const newAccount = newAccountInput.value.trim();
 
             if (accounts.length >= MAX_ACCOUNTS) {
-                alert("Você atingiu o limite de 3 contas. Remova uma conta para adicionar outra.");
+                alert("Você atingiu o limite de 4 contas. Remova uma conta para adicionar outra.");
                 return;
             }
 
