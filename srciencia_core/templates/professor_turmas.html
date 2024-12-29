@@ -59,7 +59,7 @@
                             </div>
                             <p>{{ turma.codigo }}</p>
                             <div class="card-actions">
-                                <button onclick="window.location.href='{% url 'alunos_turma' turma.id %}'">Ver alunos</button>
+                                <button data-turma-id="{{ turma.id }}">Ver alunos</button>
                                 <button onclick="window.location.href='{{ turma.google_drive_url }}'">Abrir pasta no Google Drive</button>
                                 <button class="cancel" data-turma-id="{{ turma.id }}" data-turma-name="{{ turma.nome }}">Excluir turma</button>
 
@@ -131,6 +131,17 @@
         </div>
     </div>
 </div>
+
+<!-- Modal para listar alunos -->
+<div id="students-modal" class="modal">
+    <div class="modal-content">
+        <span id="close-students-modal" class="close-icon">&times;</span>
+        <h2>Alunos Inscritos</h2>
+        <ul id="students-list" class="students-list">
+        </ul>
+    </div>
+</div>
+
     <script>
         document.addEventListener("DOMContentLoaded", function () {
         var createClassModal = document.getElementById("create-class-modal");
@@ -150,15 +161,19 @@
         var confirmationModal = document.createElement("div");
         var logoutConfirmationModal = document.createElement("div");
         var closeConfirmationModal = document.getElementById("close-confirmation-modal");
+        var studentsModal = document.getElementById("students-modal");
+        var closeStudentsModal = document.getElementById("close-students-modal");
+        var studentsList = document.getElementById("students-list");
+        var confirmLogoutButton = document.getElementById("confirm-logout-btn");
+        var cancelLogoutButton = document.getElementById("cancel-logout-btn");
+        var confirmChangeButton = document.getElementById("confirm-change-btn");
+        var cancelChangeButton = document.getElementById("cancel-change-btn");
+        var studentsModal = document.getElementById("students-modal");
+        var closeStudentsModal = document.getElementById("close-students-modal");
+        var studentsList = document.getElementById("students-list");
 
         let turmaIdToDelete = null;
         let selectedEmail = null;
-
-        var confirmChangeButton = document.getElementById("confirm-change-btn");
-        var cancelChangeButton = document.getElementById("cancel-change-btn");
-
-        var confirmLogoutButton = document.getElementById("confirm-logout-btn");
-        var cancelLogoutButton = document.getElementById("cancel-logout-btn");
 
         window.addEventListener("click", (event) => {
             if (event.target === logoutConfirmationModal) {
@@ -500,7 +515,60 @@ addAccountButton.addEventListener("click", (event) => {
                 console.error("Erro ao remover conta:", error);
             });
     }
+    // Fechar modal de alunos ao clicar no "X"
+    closeStudentsModal.addEventListener("click", () => {
+        studentsModal.style.display = "none";
+    });
+
+    // Fechar modal de alunos ao clicar fora do modal
+    window.addEventListener("click", (event) => {
+        if (event.target === studentsModal) {
+            studentsModal.style.display = "none";
+        }
+    });
+
+    // Função para abrir modal e carregar alunos
+    function openStudentsModal(turmaId) {
+        // Limpa a lista antes de carregar os dados
+        studentsList.innerHTML = "<li>Carregando...</li>";
+
+        // Faz a requisição para obter os alunos
+        fetch(`/alunos_turma/${turmaId}/`)
+            .then((response) => response.json())
+            .then((data) => {
+                if (data.success) {
+                    // Preenche a lista com os dados retornados
+                    studentsList.innerHTML = "";
+                    data.alunos.forEach((aluno) => {
+                        var listItem = document.createElement("li");
+                        listItem.textContent = `${aluno.nome} - ${aluno.email}`;
+                        studentsList.appendChild(listItem);
+                    });
+                } else {
+                    studentsList.innerHTML = "<li>Erro ao carregar alunos.</li>";
+                }
+            })
+            .catch((error) => {
+                console.error("Erro ao carregar alunos:", error);
+                studentsList.innerHTML = "<li>Erro ao carregar alunos.</li>";
+            });
+
+        // Exibe o modal
+        studentsModal.style.display = "block";
+    }
+
+    // Adicionar evento para os botões "Ver alunos"
+    document.querySelectorAll(".card-actions button").forEach((button) => {
+        if (button.textContent.includes("Ver alunos")) {
+            button.addEventListener("click", (event) => {
+                event.preventDefault();
+                var turmaId = button.closest(".card").getAttribute("data-turma-id");
+                openStudentsModal(turmaId);
+            });
+        }
+    });
 });
+
 
 </script>
 </body>

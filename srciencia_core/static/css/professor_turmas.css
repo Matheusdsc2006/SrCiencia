@@ -654,3 +654,17 @@ button:hover {
     height: 16px;
     filter: brightness(0) invert(1);
 }
+
+.students-list {
+    max-height: 300px;
+    overflow-y: auto;
+    padding: 0;
+    margin: 0;
+    list-style: none;
+}
+
+.students-list li {
+    padding: 10px;
+    border-bottom: 1px solid #ccc;
+}
+

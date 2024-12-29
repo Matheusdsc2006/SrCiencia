@@ -141,9 +141,7 @@
         var addAccountButton = document.getElementById("add-account-btn");
         var userEmailElement = document.querySelector(".user-email");
         var confirmChangeButton = document.getElementById("confirm-change-btn");
-        var cancelChangeButton = document.getElementById("cancel-change-btn");
         var confirmRemoveButton = document.getElementById("confirm-remove-btn");
-        var cancelRemoveButton = document.getElementById("cancel-remove-btn");
         var submitButton = document.getElementById("submit-codigo-turma");
         var inputCodigoTurma = document.getElementById("codigo-turma");
         var cancelClassModal = document.getElementById("cancel-class-modal");
@@ -476,17 +474,6 @@
                 alert("Nenhuma conta foi selecionada."); // Garantia de controle caso algo falhe
             }
         });
-        
-       // Cancelar troca de conta
-        cancelChangeButton.addEventListener("click", () => {
-            closeAllModals(); // Fechar todos os modais
-            selectedEmail = null; // Limpar o e-mail selecionado para evitar erros
-        });
-
-        // Cancelar remoção de conta atual
-        cancelRemoveButton.addEventListener("click", () => {
-            closeAllModals();
-        });
 
         // Remover conta
         function removeAccount(email) {
@@ -533,6 +520,7 @@
 
 
         submitButton.addEventListener("click", () => {
+            console.log("Botão de submeter código da turma clicado.");
             const codigoTurma = inputCodigoTurma.value.trim();
 
             if (!codigoTurma) {
