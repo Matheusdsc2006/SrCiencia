@@ -553,32 +553,41 @@
     });
 
     function cancelarInscricao(turmaId) {
-        const csrfToken = document.querySelector('[name=csrf-token]').content;
-
         fetch(`/turmas/${turmaId}/cancelar/`, {
             method: "POST",
             headers: {
-                "X-CSRFToken": csrfToken,
+                "X-CSRFToken": document.querySelector('[name="csrf-token"]').content,
                 "Content-Type": "application/json",
             },
         })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                alert(data.message);
-                const turmaCard = document.querySelector(`.card[data-id="${turmaId}"]`);
-                if (turmaCard) {
-                    turmaCard.style.display = "none"; // Oculta o card
+            .then((response) => response.json())
+            .then((data) => {
+                if (data.success) {
+                    alert(data.message);
+                    // Remover o card da turma ou ocultá-lo
+                    const turmaCard = document.querySelector(`.card[data-id="${turmaId}"]`);
+                    if (turmaCard) {
+                        turmaCard.style.display = "none"; // Oculta o card visualmente
+                    }
+                } else {
+                    alert(data.message);
                 }
-            } else {
-                alert(data.message);
-            }
-        })
-        .catch(error => {
-            console.error("Erro ao cancelar inscrição:", error);
-            alert("Erro ao cancelar a inscrição. Tente novamente.");
-        });
+            })
+            .catch((error) => {
+                console.error("Erro ao cancelar inscrição:", error);
+                alert("Erro ao cancelar a inscrição. Tente novamente.");
+            });
     }
+
+    // Adicionar evento ao botão de cancelamento
+    document.querySelectorAll(".cancel").forEach((button) => {
+        button.addEventListener("click", function (event) {
+            event.preventDefault();
+            var turmaId = button.getAttribute("data-id");
+            cancelarInscricao(turmaId);
+        });
+    });
+
 
     function closeAllModals() {
         document.querySelectorAll(".modal").forEach(function (modal) {

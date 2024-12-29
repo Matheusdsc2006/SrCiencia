@@ -20,6 +20,7 @@ from django.conf import settings
 from django.urls import path
 from django.conf.urls import include
 from django.contrib.auth import views as auth_views
+from srciencia_core.views.Visualizar_alunosView import *
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -28,4 +29,5 @@ urlpatterns = [
     path('pagina_inicial/', include('srciencia_core.urls.Pagina_inicialUrls')),
     path('turmas/', include('srciencia_core.urls.TurmasUrls')),  # Turmas de alunos
     path('professor_turmas/', include('srciencia_core.urls.Professor_turmasUrls')),  # Turmas de professores
+    path('turmas/<int:turma_id>/alunos/', listar_alunos_turma, name='listar_alunos_turma'),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

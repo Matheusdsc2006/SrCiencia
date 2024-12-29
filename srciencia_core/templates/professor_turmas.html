@@ -59,7 +59,7 @@
                             </div>
                             <p>{{ turma.codigo }}</p>
                             <div class="card-actions">
-                                <button data-turma-id="{{ turma.id }}">Ver alunos</button>
+                                <button class="view-students" data-turma-id="{{ turma.id }}">Ver alunos</button>
                                 <button onclick="window.location.href='{{ turma.google_drive_url }}'">Abrir pasta no Google Drive</button>
                                 <button class="cancel" data-turma-id="{{ turma.id }}" data-turma-name="{{ turma.nome }}">Excluir turma</button>
 
@@ -132,13 +132,12 @@
     </div>
 </div>
 
-<!-- Modal para listar alunos -->
+<!-- Modal de Alunos -->
 <div id="students-modal" class="modal">
     <div class="modal-content">
         <span id="close-students-modal" class="close-icon">&times;</span>
-        <h2>Alunos Inscritos</h2>
-        <ul id="students-list" class="students-list">
-        </ul>
+        <h2>Lista de Alunos</h2>
+        <ul class="students-list"></ul>
     </div>
 </div>
 
@@ -180,6 +179,103 @@
                 logoutConfirmationModal.style.display = "none";
             }
         });
+
+        // Fechar modal de alunos ao clicar no "X"
+document.getElementById("close-students-modal").addEventListener("click", () => {
+    document.getElementById("students-modal").style.display = "none";
+});
+
+// Fechar modal de alunos ao clicar fora do modal
+window.addEventListener("click", (event) => {
+    const studentsModal = document.getElementById("students-modal");
+    if (event.target === studentsModal) {
+        studentsModal.style.display = "none";
+    }
+});
+
+// Função para abrir modal e carregar alunos
+function openStudentsModal(turmaId) {
+    if (!turmaId) {
+        alert("ID da turma não encontrado.");
+        return;
+    }
+
+    fetch(`/turmas/${turmaId}/alunos/`)
+        .then((response) => {
+            if (!response.ok) {
+                throw new Error("Erro ao carregar alunos");
+            }
+            return response.json();
+        })
+        .then((data) => {
+            const studentsList = document.querySelector(".students-list");
+            if (data.success) {
+                studentsList.innerHTML = "";
+                if (data.alunos.length > 0) {
+                    data.alunos.forEach((aluno) => {
+                        const listItem = document.createElement("li");
+                        listItem.textContent = `${aluno.nome} - ${aluno.email}`;
+                        studentsList.appendChild(listItem);
+                    });
+                } else {
+                    studentsList.innerHTML = "<li>Nenhum aluno encontrado para esta turma.</li>";
+                }
+            } else {
+                studentsList.innerHTML = "<li>Erro ao carregar alunos.</li>";
+            }
+            document.getElementById("students-modal").style.display = "block";
+        })
+        .catch((error) => {
+            console.error("Erro ao carregar alunos:", error);
+            alert("Erro ao carregar a lista de alunos.");
+        });
+}
+
+
+// Adicionar evento para os botões "Ver alunos"
+document.querySelectorAll(".view-students").forEach((button) => {
+    button.addEventListener("click", () => {
+        const turmaId = button.getAttribute("data-turma-id");
+
+        if (!turmaId) {
+            alert("ID da turma não encontrado.");
+            return;
+        }
+
+        fetch(`/turmas/${turmaId}/alunos/`)
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error("Erro ao carregar alunos");
+                }
+                return response.json();
+            })
+            .then((data) => {
+                if (data.success && data.alunos.length > 0) {
+                    const studentsList = document.querySelector(".students-list");
+                    studentsList.innerHTML = ""; // Limpa a lista antes de renderizar
+                    data.alunos.forEach((aluno) => {
+                        const li = document.createElement("li");
+                        li.textContent = `${aluno.nome} (${aluno.email})`;
+                        studentsList.appendChild(li);
+                    });
+
+
+                    const studentsModal = document.getElementById("students-modal");
+                    studentsModal.style.display = "block";
+                } else if (data.success && data.alunos.length === 0) {
+                    alert("Nenhum aluno encontrado para esta turma.");
+                } else {
+                    alert("Erro ao carregar alunos: " + data.message);
+                }
+            })
+            .catch((error) => {
+                console.error("Erro ao carregar alunos:", error);
+                alert("Erro ao carregar a lista de alunos.");
+            });
+    });
+});
+
+
 
         // Função para fechar todos os modais
         function closeAllModals() {
@@ -469,24 +565,6 @@ addAccountButton.addEventListener("click", (event) => {
         }
     });
 
-        // Cancelar mudança de conta
-        cancelChangeButton.addEventListener("click", () => {
-            confirmationModal.style.display = "none";
-            selectedEmail = null;
-        });
-
-        // Confirmar remoção da conta atual
-        confirmLogoutButton.addEventListener("click", () => {
-            logoutConfirmationModal.style.display = "none";
-            window.location.href = "{% url 'login' %}"; // Redirecionar para login ao remover conta atual
-        });
-
-        // Cancelar remoção da conta atual
-        cancelLogoutButton.addEventListener("click", () => {
-            logoutConfirmationModal.style.display = "none";
-            selectedEmail = null;
-        });
-
         // Remover conta
         function removeAccount(email) {
         fetch("{% url 'remover_conta' %}", {
@@ -515,60 +593,7 @@ addAccountButton.addEventListener("click", (event) => {
                 console.error("Erro ao remover conta:", error);
             });
     }
-    // Fechar modal de alunos ao clicar no "X"
-    closeStudentsModal.addEventListener("click", () => {
-        studentsModal.style.display = "none";
-    });
-
-    // Fechar modal de alunos ao clicar fora do modal
-    window.addEventListener("click", (event) => {
-        if (event.target === studentsModal) {
-            studentsModal.style.display = "none";
-        }
-    });
-
-    // Função para abrir modal e carregar alunos
-    function openStudentsModal(turmaId) {
-        // Limpa a lista antes de carregar os dados
-        studentsList.innerHTML = "<li>Carregando...</li>";
-
-        // Faz a requisição para obter os alunos
-        fetch(`/alunos_turma/${turmaId}/`)
-            .then((response) => response.json())
-            .then((data) => {
-                if (data.success) {
-                    // Preenche a lista com os dados retornados
-                    studentsList.innerHTML = "";
-                    data.alunos.forEach((aluno) => {
-                        var listItem = document.createElement("li");
-                        listItem.textContent = `${aluno.nome} - ${aluno.email}`;
-                        studentsList.appendChild(listItem);
-                    });
-                } else {
-                    studentsList.innerHTML = "<li>Erro ao carregar alunos.</li>";
-                }
-            })
-            .catch((error) => {
-                console.error("Erro ao carregar alunos:", error);
-                studentsList.innerHTML = "<li>Erro ao carregar alunos.</li>";
-            });
-
-        // Exibe o modal
-        studentsModal.style.display = "block";
-    }
-
-    // Adicionar evento para os botões "Ver alunos"
-    document.querySelectorAll(".card-actions button").forEach((button) => {
-        if (button.textContent.includes("Ver alunos")) {
-            button.addEventListener("click", (event) => {
-                event.preventDefault();
-                var turmaId = button.closest(".card").getAttribute("data-turma-id");
-                openStudentsModal(turmaId);
-            });
-        }
-    });
 });
-
 
 </script>
 </body>

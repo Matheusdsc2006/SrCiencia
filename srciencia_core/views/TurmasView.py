@@ -39,9 +39,6 @@ def turmas_view(request):
         "conta_atual": conta_atual,
     })
 
-
-
-
 @login_required
 def listar_turmas(request):
     if not request.user.is_authenticated:
@@ -55,10 +52,6 @@ def listar_turmas(request):
     )
 
     return JsonResponse({"success": True, "turmas": list(turmas)})
-
-
-
-
 
 def mudar_conta(request):
     if request.method == "POST":
@@ -99,8 +92,6 @@ def mudar_conta(request):
 
     return JsonResponse({"success": False, "message": "Método inválido."})
 
-
-
 def remover_conta(request):
     if request.method == "POST":
         body = json.loads(request.body.decode("utf-8"))
@@ -137,8 +128,6 @@ def remover_conta(request):
 
     return JsonResponse({"success": False, "message": "Método inválido."})
 
-
-
 def listar_contas(request):
     contas = request.session.get("contas", [])
     conta_atual = request.session.get("conta_atual", request.user.email)
@@ -149,10 +138,6 @@ def listar_contas(request):
         request.session["contas"] = contas  # Atualizar a sessão
 
     return JsonResponse({"contas": contas, "conta_atual": conta_atual})
-
-
-
-
 
 def pendentes_view(request, turma_id):
     return render(request, "paginas/pendentes.html", {"turma_id": turma_id})
