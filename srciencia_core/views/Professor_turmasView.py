@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
 from django.http import JsonResponse
-from srciencia_core.models import Turma
+from srciencia_core.models.Turma import Turma, Arquivo
 import random
 import string
 from django.http import HttpResponseForbidden
@@ -66,5 +66,51 @@ def criar_turma(request):
         })
 
     return JsonResponse({"success": False, "message": "Método inválido."})
+
+from django.shortcuts import render, get_object_or_404
+from django.http import JsonResponse
+
+@login_required
+def upload_arquivo(request, turma_id):
+    if request.method == 'POST':
+        turma = get_object_or_404(Turma, id=turma_id, professor=request.user)
+        arquivo = request.FILES.get('arquivo')  # Verifica se o arquivo foi enviado
+        if not arquivo:
+            return JsonResponse({'success': False, 'message': 'Nenhum arquivo enviado.'})
+
+        nome = arquivo.name
+        Arquivo.objects.create(turma=turma, arquivo=arquivo, nome=nome)
+
+        return JsonResponse({'success': True, 'message': 'Arquivo enviado com sucesso!'})
+    return JsonResponse({'success': False, 'message': 'Método inválido.'})
+
+@login_required
+def listar_arquivos(request, turma_id):
+    turma = get_object_or_404(Turma, id=turma_id, professor=request.user)
+    arquivos = Arquivo.objects.filter(turma=turma)
+
+    arquivos_data = [
+        {
+            "id": arquivo.id,
+            "nome": arquivo.nome,
+            "url": arquivo.arquivo.url, 
+            "size": arquivo.arquivo.size,  
+        }
+        for arquivo in arquivos
+    ]
+
+    return JsonResponse({"success": True, "arquivos": arquivos_data})
+
+
+@login_required
+def remover_arquivo(request, arquivo_id):
+    if request.method == "POST":
+        arquivo = get_object_or_404(Arquivo, id=arquivo_id, turma__professor=request.user)
+        arquivo.delete()
+        return JsonResponse({"success": True, "message": "Arquivo removido com sucesso!"})
+    return JsonResponse({"success": False, "message": "Método inválido."})
+
+
+
 
 

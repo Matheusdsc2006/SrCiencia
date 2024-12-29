@@ -7,23 +7,28 @@ from django.contrib.auth.decorators import login_required
 @login_required
 def listar_alunos_turma(request, turma_id):
     try:
-        # Filtrar os alunos visíveis inscritos na turma
         alunos_visiveis = TurmaAluno.objects.filter(
             turma_id=turma_id, visivel=True
         ).select_related('aluno')
         
-        # Preparar os dados dos alunos
         alunos_data = [
             {
-                "nome": aluno.aluno.get_full_name() or aluno.aluno.username,  # Nome completo ou username
-                "email": aluno.aluno.email  # Email do aluno
+                "nome": aluno.aluno.get_full_name() or aluno.aluno.username,
+                "email": aluno.aluno.email
             }
             for aluno in alunos_visiveis
         ]
 
-        return JsonResponse({"success": True, "alunos": alunos_data})
+        total_alunos = alunos_visiveis.count()  # Conta os alunos visíveis
+
+        return JsonResponse({"success": True, "alunos": alunos_data, "total": total_alunos})
     except Exception as e:
         return JsonResponse({"success": False, "message": str(e)})
+
+
+
+
+
 
 
 

@@ -60,7 +60,7 @@
                             <p>{{ turma.codigo }}</p>
                             <div class="card-actions">
                                 <button class="view-students" data-turma-id="{{ turma.id }}">Ver alunos</button>
-                                <button onclick="window.location.href='{{ turma.google_drive_url }}'">Abrir pasta no Google Drive</button>
+                                <button class="attach-files" data-turma-id="{{ turma.id }}">Anexar Arquivos</button>
                                 <button class="cancel" data-turma-id="{{ turma.id }}" data-turma-name="{{ turma.nome }}">Excluir turma</button>
 
                             </div>
@@ -141,6 +141,23 @@
     </div>
 </div>
 
+<!-- Modal de Upload de Arquivos -->
+<div id="upload-modal" class="modal">
+    <div class="modal-content">
+        <span id="close-upload-modal" class="close-icon">&times;</span>
+        <h2>Arquivos Anexados</h2>
+        <ul id="file-list" class="account-list">
+        </ul>
+        <div class="add-file">
+            <form id="upload-form" method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <input type="file" name="arquivo" id="arquivo">
+                <button type="submit" class="btn-confirm">Anexar Arquivo</button>
+            </form>            
+        </div>
+    </div>
+</div>
+
     <script>
         document.addEventListener("DOMContentLoaded", function () {
         var createClassModal = document.getElementById("create-class-modal");
@@ -167,9 +184,15 @@
         var cancelLogoutButton = document.getElementById("cancel-logout-btn");
         var confirmChangeButton = document.getElementById("confirm-change-btn");
         var cancelChangeButton = document.getElementById("cancel-change-btn");
-        var studentsModal = document.getElementById("students-modal");
         var closeStudentsModal = document.getElementById("close-students-modal");
-        var studentsList = document.getElementById("students-list");
+        var totalStudentsElement = document.getElementById("total-students");
+        var uploadModal = document.getElementById("upload-modal");
+        var closeUploadModal = document.getElementById("close-upload-modal");
+        var attachButtons = document.querySelectorAll(".attach-files");
+        var uploadForm = document.getElementById("upload-form");
+        var fileList = document.getElementById("file-list");
+        var listItem = document.createElement("li");
+
 
         let turmaIdToDelete = null;
         let selectedEmail = null;
@@ -180,6 +203,134 @@
             }
         });
 
+        function getCsrfToken() {
+            const csrfCookie = document.cookie.split("; ").find(row => row.startsWith("csrftoken="));
+            return csrfCookie ? csrfCookie.split("=")[1] : null;
+        }
+
+     // Abrir o modal de upload
+    document.querySelectorAll(".attach-files").forEach((button) => {
+        button.addEventListener("click", () => {
+            const turmaId = button.getAttribute("data-turma-id");
+            uploadForm.setAttribute("action", `/professor_turmas/upload_arquivo/${turmaId}/`);
+            uploadModal.style.display = "block";
+            carregarArquivos(turmaId);
+        });
+    });
+
+    // Fechar modal
+    closeUploadModal.addEventListener("click", () => {
+        uploadModal.style.display = "none";
+    });
+
+    // Carregar arquivos anexados
+    function carregarArquivos(turmaId) {
+        fetch(`/professor_turmas/listar_arquivos/${turmaId}/`)
+            .then((response) => response.json())
+            .then((data) => {
+                fileList.innerHTML = ""; // Limpar lista
+                if (data.success && data.arquivos.length > 0) {
+                    data.arquivos.forEach((arquivo) => {
+                        const listItem = document.createElement("li");
+
+                        // Nome do arquivo como link para download
+                        const fileLink = document.createElement("a");
+                        fileLink.href = arquivo.url; // URL do arquivo para download
+                        fileLink.textContent = arquivo.nome;
+                        fileLink.target = "_blank"; // Abre o download em uma nova aba
+                        fileLink.style.marginRight = "10px";
+                        fileLink.style.color = "#666";
+
+                        listItem.appendChild(fileLink);
+
+                        // Exibir tamanho do arquivo
+                        const fileSize = document.createElement("span");
+                        fileSize.textContent = `(${formatFileSize(arquivo.size)})`;
+                        fileSize.style.color = "#666";
+
+                        listItem.appendChild(fileSize);
+
+                        // Botão "Remover"
+                        const removeButton = document.createElement("button");
+                        removeButton.textContent = "Remover";
+                        removeButton.style.color = "#e72427";
+                        removeButton.style.cursor = "pointer";
+                        removeButton.addEventListener("click", () => {
+                            removerArquivo(arquivo.id, turmaId);
+                        });
+
+                        listItem.appendChild(removeButton);
+                        fileList.appendChild(listItem);
+                    });
+                } else {
+                    fileList.innerHTML = "<li class='empty'>Nenhum arquivo anexado.</li>";
+                }
+            })
+            .catch((error) => console.error("Erro ao carregar arquivos:", error));
+    }
+
+    // Função para remover arquivo
+    function removerArquivo(arquivoId, turmaId) {
+        if (confirm("Deseja realmente remover este arquivo?")) {
+            fetch(`/professor_turmas/remover_arquivo/${arquivoId}/`, {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": document.querySelector('[name="csrfmiddlewaretoken"]').value,
+                },
+            })
+                .then((response) => response.json())
+                .then((data) => {
+                    if (data.success) {
+                        alert(data.message);
+                        carregarArquivos(turmaId); // Atualiza a lista de arquivos
+                    } else {
+                        alert("Erro ao remover o arquivo: " + data.message);
+                    }
+                })
+                .catch((error) => {
+                    console.error("Erro ao remover o arquivo:", error);
+                    alert("Erro ao remover o arquivo. Tente novamente.");
+                });
+        }
+    }
+
+    // Submeter formulário de upload
+    uploadForm.addEventListener("submit", function (e) {
+        e.preventDefault();
+
+        const formData = new FormData(this);
+        const turmaId = this.getAttribute("action").split("/")[3]; // Extrair o ID da turma do atributo action
+
+        fetch(this.getAttribute("action"), {
+            method: "POST",
+            body: formData,
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                if (data.success) {
+                    alert(data.message);
+                    carregarArquivos(turmaId); // Recarregar arquivos após o envio
+                } else {
+                    alert("Erro ao anexar arquivo: " + data.message);
+                }
+            })
+            .catch((error) => console.error("Erro ao anexar arquivo:", error));
+    });
+
+    // Função para formatar tamanho do arquivo
+    function formatFileSize(size) {
+        const units = ["B", "KB", "MB", "GB", "TB"];
+        let unitIndex = 0;
+
+        while (size >= 1024 && unitIndex < units.length - 1) {
+            size /= 1024;
+            unitIndex++;
+        }
+
+        return `${size.toFixed(2)} ${units[unitIndex]}`;
+    }
+});
+
         // Fechar modal de alunos ao clicar no "X"
 document.getElementById("close-students-modal").addEventListener("click", () => {
     document.getElementById("students-modal").style.display = "none";
@@ -187,7 +338,7 @@ document.getElementById("close-students-modal").addEventListener("click", () => 
 
 // Fechar modal de alunos ao clicar fora do modal
 window.addEventListener("click", (event) => {
-    const studentsModal = document.getElementById("students-modal");
+    var studentsModal = document.getElementById("students-modal");
     if (event.target === studentsModal) {
         studentsModal.style.display = "none";
     }
@@ -195,34 +346,44 @@ window.addEventListener("click", (event) => {
 
 // Função para abrir modal e carregar alunos
 function openStudentsModal(turmaId) {
-    if (!turmaId) {
-        alert("ID da turma não encontrado.");
-        return;
-    }
-
     fetch(`/turmas/${turmaId}/alunos/`)
-        .then((response) => {
-            if (!response.ok) {
-                throw new Error("Erro ao carregar alunos");
-            }
-            return response.json();
-        })
+        .then((response) => response.json())
         .then((data) => {
-            const studentsList = document.querySelector(".students-list");
-            if (data.success) {
-                studentsList.innerHTML = "";
-                if (data.alunos.length > 0) {
-                    data.alunos.forEach((aluno) => {
-                        const listItem = document.createElement("li");
-                        listItem.textContent = `${aluno.nome} - ${aluno.email}`;
-                        studentsList.appendChild(listItem);
-                    });
-                } else {
-                    studentsList.innerHTML = "<li>Nenhum aluno encontrado para esta turma.</li>";
-                }
-            } else {
-                studentsList.innerHTML = "<li>Erro ao carregar alunos.</li>";
+            console.log("Dados recebidos do backend:", data); // Verifica os dados recebidos
+
+            var studentsList = document.querySelector(".students-list");
+            var totalStudentsElement = document.getElementById("total-students");
+
+            // Verifica se há alunos
+            if (!data.success) {
+                alert("Erro ao carregar alunos.");
+                return;
             }
+
+            studentsList.innerHTML = "";
+            totalStudentsElement.textContent = `Total de alunos: ${data.total}`; // Atualiza o total
+
+            if (data.alunos.length > 0) {
+                data.alunos.forEach((aluno, index) => {
+                    var listItem = document.createElement("li");
+                    var alunoInfo = document.createElement("span");
+                    alunoInfo.textContent = `${aluno.nome} (${aluno.email})`;
+
+                    var alunoNumero = document.createElement("span");
+                    alunoNumero.textContent = `${index + 1}`;
+                    alunoNumero.classList.add("student-number");
+
+                    listItem.appendChild(alunoInfo);
+                    listItem.appendChild(alunoNumero);
+
+                    studentsList.appendChild(listItem);
+                });
+            } else {
+                var noStudentsItem = document.createElement("li");
+                noStudentsItem.textContent = "Nenhum aluno encontrado para esta turma.";
+                studentsList.appendChild(noStudentsItem);
+            }
+
             document.getElementById("students-modal").style.display = "block";
         })
         .catch((error) => {
@@ -231,12 +392,11 @@ function openStudentsModal(turmaId) {
         });
 }
 
-
 // Adicionar evento para os botões "Ver alunos"
 document.querySelectorAll(".view-students").forEach((button) => {
     button.addEventListener("click", () => {
-        const turmaId = button.getAttribute("data-turma-id");
-
+        var turmaId = button.getAttribute("data-turma-id");
+        console.log(`Botão clicado para a turma: ${turmaId}`); // Depuração
         if (!turmaId) {
             alert("ID da turma não encontrado.");
             return;
@@ -251,16 +411,16 @@ document.querySelectorAll(".view-students").forEach((button) => {
             })
             .then((data) => {
                 if (data.success && data.alunos.length > 0) {
-                    const studentsList = document.querySelector(".students-list");
+                    var studentsList = document.querySelector(".students-list");
                     studentsList.innerHTML = ""; // Limpa a lista antes de renderizar
                     data.alunos.forEach((aluno) => {
-                        const li = document.createElement("li");
+                        var li = document.createElement("li");
                         li.textContent = `${aluno.nome} (${aluno.email})`;
                         studentsList.appendChild(li);
                     });
 
 
-                    const studentsModal = document.getElementById("students-modal");
+                    var studentsModal = document.getElementById("students-modal");
                     studentsModal.style.display = "block";
                 } else if (data.success && data.alunos.length === 0) {
                     alert("Nenhum aluno encontrado para esta turma.");
@@ -284,13 +444,14 @@ document.querySelectorAll(".view-students").forEach((button) => {
             logoutConfirmationModal.style.display = "none";
             deleteClassModal.style.display = "none";
         }
-
+        var createClassBtn = document.getElementById("create-class-btn");
         // Abrir modal de criação de turma
         createClassBtn.addEventListener("click", () => {
             closeAllModals();
             createClassModal.style.display = "block";
         });
 
+        var closeCreateModal = document.getElementById("close-create-modal");
         // Fechar modal de criação
         closeCreateModal.addEventListener("click", () => {
             createClassModal.style.display = "none";
@@ -303,7 +464,7 @@ document.querySelectorAll(".view-students").forEach((button) => {
             }
         });
 
-
+        var closeModalButton = document.getElementById("close-modal");
         // Fechar modal ao clicar no "X"
         closeModalButton.addEventListener("click", (event) => {
             event.stopPropagation();
@@ -317,6 +478,7 @@ document.querySelectorAll(".view-students").forEach((button) => {
             deleteClassModal.style.display = "block";
         }
 
+        var closeDeleteModal = document.getElementById("close-delete-modal");
         // Fechar modal de exclusão
         closeDeleteModal.addEventListener("click", () => {
             deleteClassModal.style.display = "none";
@@ -331,6 +493,7 @@ document.querySelectorAll(".view-students").forEach((button) => {
             }
         });
 
+        var createClassForm = document.getElementById("create-class-form");
         // Submeter formulário de criação de turma
         createClassForm.addEventListener("submit", (event) => {
             event.preventDefault();
@@ -360,6 +523,7 @@ document.querySelectorAll(".view-students").forEach((button) => {
                 });
         });
 
+        var deleteClassForm = document.getElementById("delete-class-form");
         deleteClassForm.addEventListener("submit", (event) => {
             event.preventDefault();
 
@@ -410,6 +574,7 @@ document.querySelectorAll(".view-students").forEach((button) => {
             });
         });
 
+        var changeAccountButton = document.getElementById("change-account-btn");
         // Abrir modal ao clicar no botão "Mudar conta"
         changeAccountButton.addEventListener("click", () => {
             fetch("{% url 'listar_contas' %}")
@@ -470,15 +635,16 @@ document.querySelectorAll(".view-students").forEach((button) => {
     }
 }
 
-
+var confirmChangeButton = document.getElementById("confirm-change-btn");
 confirmChangeButton.addEventListener("click", () => {
     document.getElementById("confirmation-modal").style.display = "none"; // Fecha o modal de confirmação
     if (selectedEmail) {
-        const loginUrl = `{% url 'login' %}?email=${encodeURIComponent(selectedEmail)}`;
+        var loginUrl = `{% url 'login' %}?email=${encodeURIComponent(selectedEmail)}`;
         window.location.href = loginUrl; // Redireciona para a tela de login com o email selecionado
     }
 });
 
+var closeConfirmationModal = document.getElementById("close-confirmation-modal");
 // Fechar modal ao clicar no "X"
 closeConfirmationModal.addEventListener("click", (event) => {
     event.stopPropagation();
@@ -487,8 +653,8 @@ closeConfirmationModal.addEventListener("click", (event) => {
 
 // Fechar modal ao clicar fora dele
 window.addEventListener("click", (event) => {
-    const confirmationModal = document.getElementById("confirmation-modal");
-    const accountModal = document.getElementById("account-modal");
+    var confirmationModal = document.getElementById("confirmation-modal");
+    var accountModal = document.getElementById("account-modal");
     if (event.target === confirmationModal) {
         confirmationModal.style.display = "none";
     } else if (event.target === accountModal) {
@@ -497,10 +663,10 @@ window.addEventListener("click", (event) => {
 });
 
 // Adicionar uma nova conta ao clicar no botão "Adicionar conta"
-// Adicionar uma nova conta ao clicar no botão "Adicionar conta"
+var addAccountButton = document.getElementById("add-account-btn");
 addAccountButton.addEventListener("click", (event) => {
     event.preventDefault(); // Evita comportamento padrão
-    const newAccount = newAccountInput.value.trim();
+    var newAccount = newAccountInput.value.trim();
     if (!newAccount) {
         alert("Por favor, insira um e-mail válido.");
         return;
@@ -592,8 +758,7 @@ addAccountButton.addEventListener("click", (event) => {
             .catch((error) => {
                 console.error("Erro ao remover conta:", error);
             });
-    }
-});
+    };
 
 </script>
 </body>

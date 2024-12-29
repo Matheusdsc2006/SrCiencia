@@ -66,7 +66,6 @@
                         <p>Professor: {{ turma.professor__username }}</p>
                         <div class="card-actions">
                             <button onclick="window.location.href='/turmas/{{ turma.id }}/pendentes/'">Trabalhos pendentes</button>
-                            <button onclick="window.location.href='{{ turma.google_drive_url }}'">Pasta no Google Drive</button>
                             <button class="cancel" data-id="{{ turma.id }}">Cancelar inscrição</button>
                         </div>
                     </div>
@@ -222,7 +221,6 @@
                     <p>Professor: ${turma.professor__username || "Desconhecido"}</p>
                     <div class="card-actions">
                         <button onclick="window.location.href='/turmas/${turma.id}/pendentes/'">Trabalhos pendentes</button>
-                        <button onclick="window.location.href='${turma.google_drive_url}'">Pasta no Google Drive</button>
                         <button class="cancel" data-id="${turma.id}">Cancelar inscrição</button>
                     </div>
                 `;
@@ -280,7 +278,6 @@
                     <p>Professor: ${turma.professor__username || "Desconhecido"}</p>
                     <div class="card-actions">
                         <button onclick="window.location.href='/turmas/${turma.id}/pendentes/'">Trabalhos pendentes</button>
-                        <button onclick="window.location.href='${turma.google_drive_url}'">Pasta no Google Drive</button>
                         <button class="cancel" data-id="${turma.id}">Cancelar inscrição</button>
                     </div>
                 `;

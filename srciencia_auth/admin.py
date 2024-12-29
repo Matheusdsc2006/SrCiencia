@@ -12,7 +12,7 @@ admin.site.register(Usuario, UsuarioAdmin)
 
 @admin.register(Turma)
 class TurmaAdmin(admin.ModelAdmin):
-    list_display = ('nome', 'professor', 'codigo', 'criado_em')  
+    list_display = ('id', 'nome', 'professor', 'codigo', 'criado_em')  
     search_fields = ('nome', 'professor__username', 'codigo') 
     list_filter = ('criado_em',) 
     ordering = ('-criado_em',)  

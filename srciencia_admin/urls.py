@@ -21,6 +21,8 @@ from django.urls import path
 from django.conf.urls import include
 from django.contrib.auth import views as auth_views
 from srciencia_core.views.Visualizar_alunosView import *
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -31,3 +33,6 @@ urlpatterns = [
     path('professor_turmas/', include('srciencia_core.urls.Professor_turmasUrls')),  # Turmas de professores
     path('turmas/<int:turma_id>/alunos/', listar_alunos_turma, name='listar_alunos_turma'),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+if settings.DEBUG: 
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -24,3 +24,9 @@ class Turma(models.Model):
 
     def __str__(self):
         return self.nome
+    
+class Arquivo(models.Model):
+    turma = models.ForeignKey('Turma', on_delete=models.CASCADE, related_name='arquivos')
+    arquivo = models.FileField(upload_to='uploads/%Y/%m/%d/')
+    nome = models.CharField(max_length=255)
+    enviado_em = models.DateTimeField(auto_now_add=True)
