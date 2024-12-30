@@ -121,9 +121,9 @@
 </div>
 
 <!-- Modal de Confirmação para Mudar de Conta -->
-<div id="confirmation-modal" class="modal">
+<div id="account-confirmation-modal" class="modal">
     <div class="modal-content">
-        <span class="close-icon" id="close-confirmation-modal">&times;</span>
+        <span class="close-icon" id="close-account-confirmation-modal">&times;</span>
         <h2>Deseja realmente mudar de conta?</h2>
         <p style="font-size: 20px;">Você será redirecionado para a tela de login.</p>
         <div class="modal-actions">
@@ -192,26 +192,103 @@
         var uploadForm = document.getElementById("upload-form");
         var fileList = document.getElementById("file-list");
         var listItem = document.createElement("li");
+        var accountConfirmationModal = document.getElementById("account-confirmation-modal");
+        var closeAccountConfirmationModal = document.getElementById("close-account-confirmation-modal");
 
 
         let turmaIdToDelete = null;
         let selectedEmail = null;
+    
 
+        var confirmChangeButton = document.getElementById("confirm-change-btn");
+        confirmChangeButton.addEventListener("click", () => {
+            console.log("Confirmando mudança para:", selectedEmail); // Log para depuração
+            if (selectedEmail) {
+                const accountConfirmationModal = document.getElementById("account-confirmation-modal");
+                accountConfirmationModal.style.display = "none";
+                const loginUrl = `/login?email=${encodeURIComponent(selectedEmail)}`;
+                console.log("Redirecionando para:", loginUrl); // Log para depuração
+                window.location.href = loginUrl; // Redireciona
+            } else {
+                alert("Erro: Nenhum e-mail foi selecionado para redirecionamento.");
+            }
+        });
+
+        
         window.addEventListener("click", (event) => {
             if (event.target === logoutConfirmationModal) {
                 logoutConfirmationModal.style.display = "none";
             }
         });
 
+        // Fechar modal de confirmação de mudança de conta
+        var accountConfirmationModal = document.getElementById("account-confirmation-modal");
+        var closeAccountConfirmationModal = document.getElementById("close-account-confirmation-modal");
+
+            closeAccountConfirmationModal.addEventListener("click", () => {
+                accountConfirmationModal.style.display = "none";
+            });
+
+            window.addEventListener("click", (event) => {
+                if (event.target === accountConfirmationModal) {
+                    accountConfirmationModal.style.display = "none";
+                }
+            });
+
+            // Fechar modal de gerenciamento de contas
+            var accountModal = document.getElementById("account-modal");
+            var closeAccountModal = document.getElementById("close-account-modal");
+
+            if (closeAccountModal) {
+                closeAccountModal.addEventListener("click", () => {
+                    accountModal.style.display = "none";
+                });
+            }
+
+            window.addEventListener("click", (event) => {
+                if (event.target === accountModal) {
+                    accountModal.style.display = "none";
+                }
+            });
+
+            // Selecionar conta e abrir modal de confirmação
+            var accountListItems = document.querySelectorAll(".account-list li");
+            document.querySelectorAll(".account-list li").forEach((item) => {
+                item.addEventListener("click", () => {
+                    selectedEmail = item.getAttribute("data-email"); // Captura o email do atributo
+                    console.log("Email selecionado:", selectedEmail); // Para depuração
+                    if (selectedEmail) {
+                        document.getElementById("account-modal").style.display = "none";
+                        document.getElementById("account-confirmation-modal").style.display = "block";
+                    } else {
+                        alert("Erro: Não foi possível obter o email selecionado.");
+                    }
+                });
+            });
+
+
+            accountListItems.forEach((item) => {
+                item.addEventListener("click", () => {
+                    var selectedEmail = item.getAttribute("data-email");
+                    if (selectedEmail) {
+                        // Fechar o modal de contas antes de abrir o modal de confirmação
+                        accountModal.style.display = "none";
+
+                        // Exibir o modal de confirmação
+                        accountConfirmationModal.style.display = "block";
+                    }
+                });
+            });
+
         function getCsrfToken() {
-            const csrfCookie = document.cookie.split("; ").find(row => row.startsWith("csrftoken="));
+            var csrfCookie = document.cookie.split("; ").find(row => row.startsWith("csrftoken="));
             return csrfCookie ? csrfCookie.split("=")[1] : null;
         }
 
      // Abrir o modal de upload
     document.querySelectorAll(".attach-files").forEach((button) => {
         button.addEventListener("click", () => {
-            const turmaId = button.getAttribute("data-turma-id");
+            var turmaId = button.getAttribute("data-turma-id");
             uploadForm.setAttribute("action", `/professor_turmas/upload_arquivo/${turmaId}/`);
             uploadModal.style.display = "block";
             carregarArquivos(turmaId);
@@ -231,10 +308,10 @@
                 fileList.innerHTML = ""; // Limpar lista
                 if (data.success && data.arquivos.length > 0) {
                     data.arquivos.forEach((arquivo) => {
-                        const listItem = document.createElement("li");
+                        var listItem = document.createElement("li");
 
                         // Nome do arquivo como link para download
-                        const fileLink = document.createElement("a");
+                        var fileLink = document.createElement("a");
                         fileLink.href = arquivo.url; // URL do arquivo para download
                         fileLink.textContent = arquivo.nome;
                         fileLink.target = "_blank"; // Abre o download em uma nova aba
@@ -244,14 +321,14 @@
                         listItem.appendChild(fileLink);
 
                         // Exibir tamanho do arquivo
-                        const fileSize = document.createElement("span");
+                        var fileSize = document.createElement("span");
                         fileSize.textContent = `(${formatFileSize(arquivo.size)})`;
                         fileSize.style.color = "#666";
 
                         listItem.appendChild(fileSize);
 
                         // Botão "Remover"
-                        const removeButton = document.createElement("button");
+                        var removeButton = document.createElement("button");
                         removeButton.textContent = "Remover";
                         removeButton.style.color = "#e72427";
                         removeButton.style.cursor = "pointer";
@@ -268,6 +345,66 @@
             })
             .catch((error) => console.error("Erro ao carregar arquivos:", error));
     }
+
+    // Adicionar uma nova conta ao clicar no botão "Adicionar conta"
+var addAccountButton = document.getElementById("add-account-btn");
+var newAccountInput = document.getElementById("new-account");
+addAccountButton.addEventListener("click", (event) => {
+    event.preventDefault(); // Evita comportamento padrão
+    var newAccount = newAccountInput.value.trim();
+    if (!newAccount) {
+        alert("Por favor, insira um e-mail válido.");
+        return;
+    }else{
+        alert("Conta adicionada com sucesso!");
+    };
+
+    fetch("{% url 'listar_contas' %}")
+        .then((response) => response.json())
+        .then((data) => {
+            // Verifica se a conta já existe na lista
+            if (data.contas.includes(newAccount)) {
+                alert("Essa conta já está na lista.");
+                return;
+            }
+
+            // Verifica o limite de contas
+            if (data.contas.length >= 4) {
+                alert("Você atingiu o limite de 4 contas. Remova uma conta para adicionar outra.");
+                return;
+            }
+
+            // Adiciona a nova conta
+            fetch("{% url 'mudar_conta' %}", {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": document.querySelector('[name="csrfmiddlewaretoken"]').value,
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ nova_conta: newAccount }),
+            })
+                .then((response) => response.json())
+                .then((data) => {
+                    if (data.success) {
+                        newAccountInput.value = ""; // Limpar o campo de entrada
+                        fetch("{% url 'listar_contas' %}")
+                            .then((response) => response.json())
+                            .then((updatedData) => {
+                                renderAccounts(updatedData.contas, updatedData.conta_atual);
+                                accountModal.style.display = "block"; // Certifique-se de que o modal de contas permanece aberto
+                            });
+                    } else {
+                        alert(data.message);
+                    }
+                })
+                .catch((error) => {
+                    console.error("Erro ao adicionar conta:", error);
+                });
+        })
+        .catch((error) => {
+            console.error("Erro ao verificar limite de contas:", error);
+        });
+});
 
     // Função para remover arquivo
     function removerArquivo(arquivoId, turmaId) {
@@ -298,8 +435,8 @@
     uploadForm.addEventListener("submit", function (e) {
         e.preventDefault();
 
-        const formData = new FormData(this);
-        const turmaId = this.getAttribute("action").split("/")[3]; // Extrair o ID da turma do atributo action
+        var formData = new FormData(this);
+        var turmaId = this.getAttribute("action").split("/")[3]; // Extrair o ID da turma do atributo action
 
         fetch(this.getAttribute("action"), {
             method: "POST",
@@ -317,9 +454,17 @@
             .catch((error) => console.error("Erro ao anexar arquivo:", error));
     });
 
+    // Fechar modal de alunos ao clicar fora do modal
+    window.addEventListener("click", (event) => {
+        var uploadModal = document.getElementById("upload-modal");
+        if (event.target === uploadModal) {
+            uploadModal.style.display = "none";
+        }
+    });
+
     // Função para formatar tamanho do arquivo
     function formatFileSize(size) {
-        const units = ["B", "KB", "MB", "GB", "TB"];
+        var units = ["B", "KB", "MB", "GB", "TB"];
         let unitIndex = 0;
 
         while (size >= 1024 && unitIndex < units.length - 1) {
@@ -435,8 +580,9 @@ document.querySelectorAll(".view-students").forEach((button) => {
     });
 });
 
-
-
+        var logoutConfirmationModal = document.createElement("div");    
+        var accountModal = document.getElementById("account-modal");
+        var confirmationModal = document.createElement("div");
         // Função para fechar todos os modais
         function closeAllModals() {
             accountModal.style.display = "none";
@@ -457,6 +603,7 @@ document.querySelectorAll(".view-students").forEach((button) => {
             createClassModal.style.display = "none";
         });
 
+        var createClassModal = document.getElementById("create-class-modal");
         // Fechar modal de criação ao clicar fora
         window.addEventListener("click", (event) => {
             if (event.target === createClassModal) {
@@ -469,6 +616,18 @@ document.querySelectorAll(".view-students").forEach((button) => {
         closeModalButton.addEventListener("click", (event) => {
             event.stopPropagation();
             document.getElementById("account-modal").style.display = "none";
+        });
+
+        window.addEventListener("click", (event) => {
+            if (event.target === accountModal) {
+                accountModal.style.display = "none";
+            }
+        });
+
+        window.addEventListener("click", (event) => {
+            if (event.target === confirmationModal) {
+                confirmationModal.style.display = "none";
+            }
         });
 
         // Abrir modal de exclusão
@@ -485,6 +644,16 @@ document.querySelectorAll(".view-students").forEach((button) => {
             turmaIdToDelete = null;
         });
 
+        var deleteClassModal = document.getElementById("delete-class-modal");
+        // Fechar modal de exclusão ao clicar fora
+        window.addEventListener("click", (event) => {
+            if (event.target === deleteClassModal) {
+                deleteClassModal.style.display = "none";
+                turmaIdToDelete = null;
+            }
+        });
+
+        var deleteClassModal = document.getElementById("delete-class-modal");
         // Fechar modal de exclusão ao clicar fora
         window.addEventListener("click", (event) => {
             if (event.target === deleteClassModal) {
@@ -527,6 +696,7 @@ document.querySelectorAll(".view-students").forEach((button) => {
         deleteClassForm.addEventListener("submit", (event) => {
             event.preventDefault();
 
+            var deletePasswordInput = document.getElementById("delete-password-input");
             var password = deletePasswordInput.value.trim();
             if (!password) {
                 alert("Por favor, insira sua senha.");
@@ -574,24 +744,10 @@ document.querySelectorAll(".view-students").forEach((button) => {
             });
         });
 
-        var changeAccountButton = document.getElementById("change-account-btn");
-        // Abrir modal ao clicar no botão "Mudar conta"
-        changeAccountButton.addEventListener("click", () => {
-            fetch("{% url 'listar_contas' %}")
-                .then((response) => response.json())
-                .then((data) => {
-                    var { contas, conta_atual } = data;
-                    renderAccounts(contas, conta_atual);
-                    closeAllModals();
-                    accountModal.style.display = "block";
-                })
-                .catch((error) => {
-                    console.error("Erro ao carregar contas:", error);
-                });
-        });
 
         // Função para renderizar a lista de contas no modal
-        function renderAccounts(accounts, currentEmail) {
+        var accountList = document.querySelector(".account-list");
+function renderAccounts(accounts, currentEmail) {
     accountList.innerHTML = ""; // Limpa a lista atual
     if (accounts.length === 0) {
         accountList.innerHTML = "<li class='empty'>Nenhuma conta adicionada.</li>";
@@ -599,6 +755,7 @@ document.querySelectorAll(".view-students").forEach((button) => {
         accounts.forEach((account) => {
             var listItem = document.createElement("li");
             listItem.textContent = account;
+            listItem.setAttribute("data-email", account);
 
             // Indicar qual é a conta atual
             if (account === currentEmail) {
@@ -626,7 +783,7 @@ document.querySelectorAll(".view-students").forEach((button) => {
                 } else {
                     selectedEmail = account;
                     closeAllModals();
-                    document.getElementById("confirmation-modal").style.display = "block"; // Exibe o modal de confirmação
+                    document.getElementById("account-confirmation-modal").style.display = "block"; // Exibe o modal de confirmação
                 }
             });
 
@@ -635,104 +792,28 @@ document.querySelectorAll(".view-students").forEach((button) => {
     }
 }
 
-var confirmChangeButton = document.getElementById("confirm-change-btn");
-confirmChangeButton.addEventListener("click", () => {
-    document.getElementById("confirmation-modal").style.display = "none"; // Fecha o modal de confirmação
-    if (selectedEmail) {
-        var loginUrl = `{% url 'login' %}?email=${encodeURIComponent(selectedEmail)}`;
-        window.location.href = loginUrl; // Redireciona para a tela de login com o email selecionado
-    }
-});
 
-var closeConfirmationModal = document.getElementById("close-confirmation-modal");
-// Fechar modal ao clicar no "X"
-closeConfirmationModal.addEventListener("click", (event) => {
-    event.stopPropagation();
-    document.getElementById("confirmation-modal").style.display = "none";
-});
-
-// Fechar modal ao clicar fora dele
-window.addEventListener("click", (event) => {
-    var confirmationModal = document.getElementById("confirmation-modal");
-    var accountModal = document.getElementById("account-modal");
-    if (event.target === confirmationModal) {
-        confirmationModal.style.display = "none";
-    } else if (event.target === accountModal) {
-        accountModal.style.display = "none";
-    }
-});
-
-// Adicionar uma nova conta ao clicar no botão "Adicionar conta"
-var addAccountButton = document.getElementById("add-account-btn");
-addAccountButton.addEventListener("click", (event) => {
-    event.preventDefault(); // Evita comportamento padrão
-    var newAccount = newAccountInput.value.trim();
-    if (!newAccount) {
-        alert("Por favor, insira um e-mail válido.");
-        return;
-    }
-
-    fetch("{% url 'listar_contas' %}")
-        .then((response) => response.json())
-        .then((data) => {
-            // Verifica se a conta já existe na lista
-            if (data.contas.includes(newAccount)) {
-                alert("Essa conta já está na lista.");
-                return;
-            }
-
-            // Verifica o limite de contas
-            if (data.contas.length >= 4) {
-                alert("Você atingiu o limite de 4 contas. Remova uma conta para adicionar outra.");
-                return;
-            }
-
-            // Adiciona a nova conta
-            fetch("{% url 'mudar_conta' %}", {
-                method: "POST",
-                headers: {
-                    "X-CSRFToken": document.querySelector('[name="csrfmiddlewaretoken"]').value,
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ nova_conta: newAccount }),
-            })
-                .then((response) => response.json())
-                .then((data) => {
-                    if (data.success) {
-                        alert("Conta adicionada com sucesso.");
-                        newAccountInput.value = ""; // Limpar o campo de entrada
-                        fetch("{% url 'listar_contas' %}")
-                            .then((response) => response.json())
-                            .then((updatedData) => {
-                                renderAccounts(updatedData.contas, updatedData.conta_atual);
-                                accountModal.style.display = "block"; // Certifique-se de que o modal de contas permanece aberto
-                            });
-                    } else {
-                        alert(data.message);
-                    }
-                })
-                .catch((error) => {
-                    console.error("Erro ao adicionar conta:", error);
-                });
-        })
-        .catch((error) => {
-            console.error("Erro ao verificar limite de contas:", error);
-        });
-});
+// Abrir modal de gerenciamento de contas
+var changeAccountButton = document.getElementById("change-account-btn");
+changeAccountButton.addEventListener("click", () => {
+    closeAllModals(); // Fecha outros modais abertos
+    accountModal.style.display = "block"; // Exibe o modal de contas
 
 
-    closeConfirmationModal.addEventListener("click", () => {
-        confirmationModal.style.display = "none";
-    });
-
-    window.addEventListener("click", (event) => {
-        if (event.target === confirmationModal) {
-            confirmationModal.style.display = "none";
+    fetch("/turmas/listar-contas/")
+    .then((response) => response.json())
+    .then((data) => {
+        console.log("Dados recebidos do servidor:", data); // Adicione este log
+        if (data.success) {
+            renderAccounts(data.contas, data.conta_atual);
+        } else {
+            alert("Erro ao carregar contas: " + data.message);
         }
-    });
+    })
+    .catch((error) => console.error("Erro ao carregar contas:", error));
 
-        // Remover conta
-        function removeAccount(email) {
+    // Remover conta
+function removeAccount(email) {
         fetch("{% url 'remover_conta' %}", {
             method: "POST",
             headers: {
@@ -758,7 +839,34 @@ addAccountButton.addEventListener("click", (event) => {
             .catch((error) => {
                 console.error("Erro ao remover conta:", error);
             });
-    };
+
+
+var closeConfirmationModal = document.getElementById("close-confirmation-modal");
+// Fechar modal ao clicar no "X"
+closeConfirmationModal.addEventListener("click", (event) => {
+    event.stopPropagation();
+    document.getElementById("account-confirmation-modal").style.display = "none";
+});
+
+// Verificar se o clique foi fora do modal
+if (confirmationModal && !confirmationModal.contains(event.target)) {
+        confirmationModal.style.display = "none";
+    }
+    if (accountModal && !accountModal.contains(event.target)) {
+        accountModal.style.display = "none";
+    }
+
+
+    closeConfirmationModal.addEventListener("click", () => {
+        confirmationModal.style.display = "none";
+    });
+
+    window.addEventListener("click", (event) => {
+        if (event.target === confirmationModal) {
+            confirmationModal.style.display = "none";
+        }
+    });
+}});
 
 </script>
 </body>

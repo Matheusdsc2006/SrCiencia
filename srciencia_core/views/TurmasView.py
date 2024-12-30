@@ -132,12 +132,16 @@ def listar_contas(request):
     contas = request.session.get("contas", [])
     conta_atual = request.session.get("conta_atual", request.user.email)
 
-    # Adicionar a conta atual à lista, se não estiver presente
     if conta_atual not in contas:
         contas.append(conta_atual)
-        request.session["contas"] = contas  # Atualizar a sessão
+        request.session["contas"] = contas
 
-    return JsonResponse({"contas": contas, "conta_atual": conta_atual})
+    return JsonResponse({
+        "success": True,
+        "contas": contas,
+        "conta_atual": conta_atual
+    })
+
 
 def pendentes_view(request, turma_id):
     return render(request, "paginas/pendentes.html", {"turma_id": turma_id})
