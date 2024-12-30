@@ -65,7 +65,7 @@
                         </div>
                         <p>Professor: {{ turma.professor__username }}</p>
                         <div class="card-actions">
-                            <button onclick="window.location.href='/turmas/{{ turma.id }}/pendentes/'">Trabalhos pendentes</button>
+                            <button class="view-files" data-id="{{ turma.id }}">Arquivos da turma</button>
                             <button class="cancel" data-id="{{ turma.id }}">Cancelar inscrição</button>
                         </div>
                     </div>
@@ -126,6 +126,17 @@
     </div>
 </div>
 
+<!-- Modal de Arquivos -->
+<div id="view-files-modal" class="modal">
+    <div class="modal-content">
+        <span id="close-view-files-modal" class="close-icon">&times;</span>
+        <h2>Arquivos da turma</h2>
+        <ul id="student-file-list" class="account-list">
+        </ul>
+    </div>
+</div>
+
+
 
 <script>
     document.addEventListener("DOMContentLoaded", function () {
@@ -147,6 +158,9 @@
         var closeConfirmationModal = document.getElementById("close-confirmation-modal");
         var closeRemoveConfirmationModal = document.getElementById("close-remove-confirmation-modal");
         var closeCancelClassModal = document.getElementById("close-cancel-class-modal");
+        var viewFilesModal = document.getElementById("view-files-modal");
+        var closeViewFilesModal = document.getElementById("close-view-files-modal");
+        var studentFileList = document.getElementById("student-file-list");
 
         var accounts = [];
         var MAX_ACCOUNTS = 4;
@@ -195,15 +209,15 @@
 
         // Redirecionar para a tela de login
         function redirectToLogin(email) {
-            const loginUrl = email 
+            var loginUrl = email 
                 ? `{% url 'login' %}?email=${encodeURIComponent(email)}`
                 : `{% url 'login' %}`;
             window.location.href = loginUrl;
         }
 
         function renderTurma(turma) {
-            const cardsContainer = document.querySelector(".cards");
-            const noTurmasMessage = document.getElementById("no-turmas-message");
+            var cardsContainer = document.querySelector(".cards");
+            var noTurmasMessage = document.getElementById("no-turmas-message");
             closeAllModals();
 
             // Remover mensagem de "Não há turmas cadastradas para esta conta."
@@ -211,12 +225,12 @@
                 noTurmasMessage.remove();
             }
 
-            const existingCard = document.querySelector(`.card[data-id="${turma.id}"]`);
+            var existingCard = document.querySelector(`.card[data-id="${turma.id}"]`);
 
             if (existingCard) {
                 existingCard.style.display = "block";
             } else {
-                const turmaCard = document.createElement("div");
+                var turmaCard = document.createElement("div");
                 turmaCard.classList.add("card"); // Classe padrão para o card
                 turmaCard.setAttribute("data-id", turma.id);
 
@@ -227,7 +241,7 @@
                     </div>
                     <p>Professor: ${turma.professor__username || "Desconhecido"}</p>
                     <div class="card-actions">
-                        <button onclick="window.location.href='/turmas/${turma.id}/pendentes/'">Trabalhos pendentes</button>
+                        <button class="view-files" data-id="${ turma.id }">Arquivos da turma</button>
                         <button class="cancel" data-id="${turma.id}">Cancelar inscrição</button>
                     </div>
                 `;
@@ -260,20 +274,20 @@
 
         // Função para renderizar turmas
         function renderTurma(turma) {
-            const cardsContainer = document.querySelector(".cards");
-            const noTurmasMessage = document.getElementById("no-turmas-message");
+            var cardsContainer = document.querySelector(".cards");
+            var noTurmasMessage = document.getElementById("no-turmas-message");
 
             // Remover mensagem de "Não há turmas cadastradas para esta conta."
             if (noTurmasMessage) {
                 noTurmasMessage.remove();
             }
 
-            const existingCard = document.querySelector(`.card[data-id="${turma.id}"]`);
+            var existingCard = document.querySelector(`.card[data-id="${turma.id}"]`);
 
             if (existingCard) {
                 existingCard.style.display = "block";
             } else {
-                const turmaCard = document.createElement("div");
+                var turmaCard = document.createElement("div");
                 turmaCard.classList.add("card"); // Adiciona a classe de estilo
                 turmaCard.setAttribute("data-id", turma.id);
 
@@ -284,7 +298,7 @@
                     </div>
                     <p>Professor: ${turma.professor__username || "Desconhecido"}</p>
                     <div class="card-actions">
-                        <button onclick="window.location.href='/turmas/${turma.id}/pendentes/'">Trabalhos pendentes</button>
+                        <button class="view-files" data-id="${ turma.id }">Arquivos da turma</button>
                         <button class="cancel" data-id="${turma.id}">Cancelar inscrição</button>
                     </div>
                 `;
@@ -325,13 +339,13 @@
     accountList.innerHTML = ""; // Limpa a lista de contas
 
     if (accounts.length === 0) {
-        const emptyMessage = document.createElement("li");
+        var emptyMessage = document.createElement("li");
         emptyMessage.classList.add("empty");
         emptyMessage.textContent = "Nenhuma conta adicionada.";
         accountList.appendChild(emptyMessage);
     } else {
         accounts.forEach((account) => {
-            const listItem = document.createElement("li");
+            var listItem = document.createElement("li");
             listItem.textContent = account;
 
             // Verifica se é a conta atual
@@ -355,7 +369,7 @@
                 });
 
                 // Botão "Remover" para contas não atuais
-                const removeButton = document.createElement("button");
+                var removeButton = document.createElement("button");
                 removeButton.textContent = "Remover";
                 removeButton.style.marginLeft = "10px";
                 removeButton.style.color = "#e72427";
@@ -407,7 +421,7 @@
 
         // Adicionar nova conta
         addAccountButton.addEventListener("click", () => {
-            const newAccount = newAccountInput.value.trim();
+            var newAccount = newAccountInput.value.trim();
 
             if (accounts.length >= MAX_ACCOUNTS) {
                 alert("Você atingiu o limite de 4 contas. Remova uma conta para adicionar outra.");
@@ -518,14 +532,14 @@
 
         // Validar e-mail
         function validateEmail(email) {
-            const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+            var emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
             return emailRegex.test(email);
         }
 
 
         submitButton.addEventListener("click", () => {
             console.log("Botão de submeter código da turma clicado.");
-            const codigoTurma = inputCodigoTurma.value.trim();
+            var codigoTurma = inputCodigoTurma.value.trim();
 
             if (!codigoTurma) {
                 alert("Por favor, insira um código de turma.");
@@ -569,7 +583,7 @@
                 if (data.success) {
                     alert(data.message);
                     // Remover o card da turma ou ocultá-lo
-                    const turmaCard = document.querySelector(`.card[data-id="${turmaId}"]`);
+                    var turmaCard = document.querySelector(`.card[data-id="${turmaId}"]`);
                     if (turmaCard) {
                         turmaCard.style.display = "none"; // Oculta o card visualmente
                     }
@@ -619,7 +633,7 @@
                         if (data.success) {
                             alert(data.message);
                             // Ocultar o card da turma cancelada
-                            const turmaCard = document.querySelector(`.card[data-id="${turmaIdToCancel}"]`);
+                            var turmaCard = document.querySelector(`.card[data-id="${turmaIdToCancel}"]`);
                             if (turmaCard) {
                                 turmaCard.style.display = "none";
                             }
@@ -655,13 +669,83 @@
         console.log("Botão 'Sim' clicado");
         closeAllModals();
         if (selectedEmail === currentEmail) {
-            const loginUrl = `{% url 'login' %}?email=${encodeURIComponent(selectedEmail)}`;
+            var loginUrl = `{% url 'login' %}?email=${encodeURIComponent(selectedEmail)}`;
             console.log("Redirecionando para:", loginUrl);
             window.location.href = loginUrl;
         } else {
             alert("Erro: A conta selecionada para remoção não é a conta atual.");
         }
     });
+    // Abrir modal de arquivos
+    document.querySelectorAll(".view-files").forEach((button) => {
+        button.addEventListener("click", () => {
+            const turmaId = button.getAttribute("data-id");
+            carregarArquivosAluno(turmaId);
+            viewFilesModal.style.display = "block";
+        });
+    });
+
+    var closeViewFilesModal = document.getElementById("close-view-files-modal");
+    // Fechar modal de arquivos
+    closeViewFilesModal.addEventListener("click", () => {
+        viewFilesModal.style.display = "none";
+    });
+
+    var viewFilesModal = document.getElementById("view-files-modal");
+    // Fechar modal ao clicar fora
+    window.addEventListener("click", (event) => {
+        if (event.target === viewFilesModal) {
+            viewFilesModal.style.display = "none";
+        }
+    });
+
+    var studentFileList = document.getElementById("student-file-list");
+    function carregarArquivosAluno(turmaId) {
+        fetch(`/professor_turmas/listar_arquivos/${turmaId}/`)
+            .then((response) => response.json())
+            .then((data) => {
+                studentFileList.innerHTML = ""; // Limpar lista
+                if (data.success && data.arquivos.length > 0) {
+                    data.arquivos.forEach((arquivo) => {
+                        const listItem = document.createElement("li");
+
+                        // Nome do arquivo como link para download
+                        const fileLink = document.createElement("a");
+                        fileLink.href = arquivo.url;
+                        fileLink.textContent = arquivo.nome;
+                        fileLink.target = "_blank";
+                        fileLink.style.marginRight = "10px";
+
+                        // Exibir tamanho do arquivo
+                        const fileSize = document.createElement("span");
+                        fileSize.textContent = `(${formatFileSize(arquivo.size)})`;
+                        fileSize.style.color = "#666";
+
+                        listItem.appendChild(fileLink);
+                        listItem.appendChild(fileSize);
+                        studentFileList.appendChild(listItem);
+                    });
+                } else {
+                    studentFileList.innerHTML = "<li class='empty'>Nenhum arquivo anexado.</li>";
+                }
+            })
+            .catch((error) => {
+                console.error("Erro ao carregar arquivos:", error);
+                alert("Erro ao carregar os arquivos da turma.");
+            });
+    }
+
+    function formatFileSize(size) {
+        const units = ["B", "KB", "MB", "GB", "TB"];
+        let unitIndex = 0;
+
+        while (size >= 1024 && unitIndex < units.length - 1) {
+            size /= 1024;
+            unitIndex++;
+        }
+
+        return `${size.toFixed(2)} ${units[unitIndex]}`;
+    }
 
 </script>
 

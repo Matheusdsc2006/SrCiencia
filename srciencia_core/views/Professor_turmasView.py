@@ -86,15 +86,18 @@ def upload_arquivo(request, turma_id):
 
 @login_required
 def listar_arquivos(request, turma_id):
-    turma = get_object_or_404(Turma, id=turma_id, professor=request.user)
+    turma = get_object_or_404(Turma, id=turma_id)
+    if not (request.user == turma.professor or turma.alunos.filter(id=request.user.id).exists()):
+        return JsonResponse({"success": False, "message": "Acesso negado."}, status=403)
+
     arquivos = Arquivo.objects.filter(turma=turma)
 
     arquivos_data = [
         {
             "id": arquivo.id,
             "nome": arquivo.nome,
-            "url": arquivo.arquivo.url, 
-            "size": arquivo.arquivo.size,  
+            "url": arquivo.arquivo.url,
+            "size": arquivo.arquivo.size,
         }
         for arquivo in arquivos
     ]
