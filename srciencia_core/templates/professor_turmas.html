@@ -176,7 +176,6 @@
         var newAccountInput = document.getElementById("new-account");
         var confirmationModal = document.createElement("div");
         var logoutConfirmationModal = document.createElement("div");
-        var closeConfirmationModal = document.getElementById("close-confirmation-modal");
         var studentsModal = document.getElementById("students-modal");
         var closeStudentsModal = document.getElementById("close-students-modal");
         var studentsList = document.getElementById("students-list");
@@ -198,22 +197,47 @@
 
         let turmaIdToDelete = null;
         let selectedEmail = null;
-    
+
+        function adicionarItemNaLista(email) {
+            var listItem = document.createElement("li");
+            listItem.setAttribute("data-email", email); // Define o atributo data-email
+            listItem.textContent = email; // Exibe o e-mail no item
+            accountList.appendChild(listItem); // Adiciona o item à lista
+        }
+
+
+        var accountListItems = document.querySelectorAll(".account-list li");
+        // Adiciona o evento ao contêiner
+        accountList.addEventListener("click", (event) => {
+            // Verifica se o elemento clicado é um item da lista (<li>)
+            if (event.target && event.target.tagName === "LI") {
+                selectedEmail = event.target.getAttribute("data-email"); // Captura o e-mail da conta
+                console.log("Conta selecionada (dinâmica):", selectedEmail); // Log para depuração
+
+                if (selectedEmail) {
+                    // Fecha o modal de contas e abre o modal de confirmação
+                    accountModal.style.display = "none";
+                    accountConfirmationModal.style.display = "block";
+                } else {
+                    console.warn("Nenhum e-mail foi selecionado.");
+                }
+            }
+        });
 
         var confirmChangeButton = document.getElementById("confirm-change-btn");
+
         confirmChangeButton.addEventListener("click", () => {
             console.log("Confirmando mudança para:", selectedEmail); // Log para depuração
+
             if (selectedEmail) {
-                const accountConfirmationModal = document.getElementById("account-confirmation-modal");
                 accountConfirmationModal.style.display = "none";
-                const loginUrl = `/login?email=${encodeURIComponent(selectedEmail)}`;
+                const loginUrl = "/auth/login/" + `?email=${encodeURIComponent(selectedEmail)}`;
                 console.log("Redirecionando para:", loginUrl); // Log para depuração
                 window.location.href = loginUrl; // Redireciona
             } else {
                 alert("Erro: Nenhum e-mail foi selecionado para redirecionamento.");
             }
         });
-
         
         window.addEventListener("click", (event) => {
             if (event.target === logoutConfirmationModal) {
@@ -249,35 +273,6 @@
                 if (event.target === accountModal) {
                     accountModal.style.display = "none";
                 }
-            });
-
-            // Selecionar conta e abrir modal de confirmação
-            var accountListItems = document.querySelectorAll(".account-list li");
-            document.querySelectorAll(".account-list li").forEach((item) => {
-                item.addEventListener("click", () => {
-                    selectedEmail = item.getAttribute("data-email"); // Captura o email do atributo
-                    console.log("Email selecionado:", selectedEmail); // Para depuração
-                    if (selectedEmail) {
-                        document.getElementById("account-modal").style.display = "none";
-                        document.getElementById("account-confirmation-modal").style.display = "block";
-                    } else {
-                        alert("Erro: Não foi possível obter o email selecionado.");
-                    }
-                });
-            });
-
-
-            accountListItems.forEach((item) => {
-                item.addEventListener("click", () => {
-                    var selectedEmail = item.getAttribute("data-email");
-                    if (selectedEmail) {
-                        // Fechar o modal de contas antes de abrir o modal de confirmação
-                        accountModal.style.display = "none";
-
-                        // Exibir o modal de confirmação
-                        accountConfirmationModal.style.display = "block";
-                    }
-                });
             });
 
         function getCsrfToken() {
@@ -745,6 +740,7 @@ document.querySelectorAll(".view-students").forEach((button) => {
         });
 
 
+
         // Função para renderizar a lista de contas no modal
         var accountList = document.querySelector(".account-list");
 function renderAccounts(accounts, currentEmail) {
@@ -812,8 +808,27 @@ changeAccountButton.addEventListener("click", () => {
     })
     .catch((error) => console.error("Erro ao carregar contas:", error));
 
-    // Remover conta
-function removeAccount(email) {
+});
+
+// Verificar se o clique foi fora do modal
+if (confirmationModal && !confirmationModal.contains(event.target)) {
+        confirmationModal.style.display = "none";
+    }
+    if (accountModal && !accountModal.contains(event.target)) {
+        accountModal.style.display = "none";
+    }
+
+
+    closeConfirmationModal.addEventListener("click", () => {
+        confirmationModal.style.display = "none";
+    });
+
+    window.addEventListener("click", (event) => {
+        if (event.target === confirmationModal) {
+            confirmationModal.style.display = "none";
+        }
+    });
+    function removeAccount(email) {
         fetch("{% url 'remover_conta' %}", {
             method: "POST",
             headers: {
@@ -840,33 +855,7 @@ function removeAccount(email) {
                 console.error("Erro ao remover conta:", error);
             });
 
-
-var closeConfirmationModal = document.getElementById("close-confirmation-modal");
-// Fechar modal ao clicar no "X"
-closeConfirmationModal.addEventListener("click", (event) => {
-    event.stopPropagation();
-    document.getElementById("account-confirmation-modal").style.display = "none";
-});
-
-// Verificar se o clique foi fora do modal
-if (confirmationModal && !confirmationModal.contains(event.target)) {
-        confirmationModal.style.display = "none";
-    }
-    if (accountModal && !accountModal.contains(event.target)) {
-        accountModal.style.display = "none";
-    }
-
-
-    closeConfirmationModal.addEventListener("click", () => {
-        confirmationModal.style.display = "none";
-    });
-
-    window.addEventListener("click", (event) => {
-        if (event.target === confirmationModal) {
-            confirmationModal.style.display = "none";
-        }
-    });
-}});
+};
 
 </script>
 </body>
