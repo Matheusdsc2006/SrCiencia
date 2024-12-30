@@ -4,6 +4,7 @@ import json
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
 from srciencia_core.models.Turma import Turma, TurmaAluno
+from django.views.decorators.http import require_POST
 
 @login_required
 def turmas_view(request):
@@ -146,6 +147,7 @@ def listar_contas(request):
 def pendentes_view(request, turma_id):
     return render(request, "paginas/pendentes.html", {"turma_id": turma_id})
 
+@require_POST
 @login_required
 def cancelar_inscricao(request, turma_id):
     if request.method == "POST":

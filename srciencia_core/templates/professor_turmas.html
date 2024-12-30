@@ -141,8 +141,6 @@
     </div>
 </div>
 
-
-
 <!-- Modal de Upload de Arquivos -->
 <div id="upload-modal" class="modal">
     <div class="modal-content">
@@ -159,7 +157,6 @@
         </div>
     </div>
 </div>
-
 
     <script>
         document.addEventListener("DOMContentLoaded", function () {
@@ -187,6 +184,7 @@
         var confirmChangeButton = document.getElementById("confirm-change-btn");
         var cancelChangeButton = document.getElementById("cancel-change-btn");
         var closeStudentsModal = document.getElementById("close-students-modal");
+        var totalStudentsElement = document.getElementById("total-students");
         var uploadModal = document.getElementById("upload-modal");
         var closeUploadModal = document.getElementById("close-upload-modal");
         var attachButtons = document.querySelectorAll(".attach-files");
@@ -233,7 +231,7 @@
 
             if (selectedEmail) {
                 accountConfirmationModal.style.display = "none";
-                var loginUrl = "/auth/login/" + `?email=${encodeURIComponent(selectedEmail)}`;
+                const loginUrl = "/auth/login/" + `?email=${encodeURIComponent(selectedEmail)}`;
                 console.log("Redirecionando para:", loginUrl); // Log para depuração
                 window.location.href = loginUrl; // Redireciona
             } else {
@@ -471,7 +469,7 @@ addAccountButton.addEventListener("click", (event) => {
 
         return `${size.toFixed(2)} ${units[unitIndex]}`;
     }
-
+});
 
         // Fechar modal de alunos ao clicar no "X"
 document.getElementById("close-students-modal").addEventListener("click", () => {
@@ -487,45 +485,45 @@ window.addEventListener("click", (event) => {
 });
 
 // Função para abrir modal e carregar alunos
-// Função para abrir modal e carregar alunos
 function openStudentsModal(turmaId) {
     fetch(`/turmas/${turmaId}/alunos/`)
         .then((response) => response.json())
         .then((data) => {
-            console.log("Dados recebidos do backend:", data); // Log dos dados recebidos para depuração
+            console.log("Dados recebidos do backend:", data); // Verifica os dados recebidos
 
             var studentsList = document.querySelector(".students-list");
             var totalStudentsElement = document.getElementById("total-students");
 
-            if (!studentsList || !totalStudentsElement) {
-                console.error("Os elementos necessários não foram encontrados no DOM.");
+            // Verifica se há alunos
+            if (!data.success) {
+                alert("Erro ao carregar alunos.");
                 return;
             }
 
-            // Limpar lista existente
             studentsList.innerHTML = "";
+            totalStudentsElement.textContent = `Total de alunos: ${data.total}`; // Atualiza o total
 
-            if (data.success && data.alunos.length > 0) {
-                // Adicionar cada aluno à lista
-                data.alunos.forEach((aluno) => {
+            if (data.alunos.length > 0) {
+                data.alunos.forEach((aluno, index) => {
                     var listItem = document.createElement("li");
-                    listItem.textContent = `${aluno.nome} (${aluno.email})`;
+                    var alunoInfo = document.createElement("span");
+                    alunoInfo.textContent = `${aluno.nome} (${aluno.email})`;
+
+                    var alunoNumero = document.createElement("span");
+                    alunoNumero.textContent = `${index + 1}`;
+                    alunoNumero.classList.add("student-number");
+
+                    listItem.appendChild(alunoInfo);
+                    listItem.appendChild(alunoNumero);
+
                     studentsList.appendChild(listItem);
                 });
             } else {
-                // Adicionar mensagem de lista vazia
                 var noStudentsItem = document.createElement("li");
                 noStudentsItem.textContent = "Nenhum aluno encontrado para esta turma.";
-                noStudentsItem.classList.add("empty");
                 studentsList.appendChild(noStudentsItem);
             }
 
-            // **TÓPICO 1**: Atualizar a contagem de alunos
-            var totalStudents = studentsList.querySelectorAll("li:not(.empty)").length;
-            console.log("Total de alunos calculado:", totalStudents); // Log do total de alunos
-            totalStudentsElement.textContent = `Total de alunos: ${totalStudents}`;
-
-            // Exibir modal
             document.getElementById("students-modal").style.display = "block";
         })
         .catch((error) => {
@@ -533,10 +531,6 @@ function openStudentsModal(turmaId) {
             alert("Erro ao carregar a lista de alunos.");
         });
 }
-
-
-
-
 
 // Adicionar evento para os botões "Ver alunos"
 document.querySelectorAll(".view-students").forEach((button) => {
@@ -749,7 +743,7 @@ document.querySelectorAll(".view-students").forEach((button) => {
 
         // Função para renderizar a lista de contas no modal
         var accountList = document.querySelector(".account-list");
-function renderAccounts(accounts, currentEmail) {
+        function renderAccounts(accounts, currentEmail) {
     accountList.innerHTML = ""; // Limpa a lista atual
     if (accounts.length === 0) {
         accountList.innerHTML = "<li class='empty'>Nenhuma conta adicionada.</li>";
@@ -763,6 +757,12 @@ function renderAccounts(accounts, currentEmail) {
             if (account === currentEmail) {
                 listItem.textContent += " (atual)";
                 listItem.classList.add("current-account");
+
+                // Prevenir a exibição do modal de confirmação ao clicar na conta atual
+                listItem.addEventListener("click", () => {
+                    alert("Você já está logado com essa conta.");
+                    event.stopPropagation()
+                });
             } else {
                 // Botão "Remover" para contas que não são a atual
                 var removeButton = document.createElement("button");
@@ -777,22 +777,21 @@ function renderAccounts(accounts, currentEmail) {
                 });
 
                 listItem.appendChild(removeButton);
-            }
 
-            listItem.addEventListener("click", () => {
-                if (account === currentEmail) {
-                    alert("Você já está logado com essa conta.");
-                } else {
+                // Exibir modal de confirmação ao clicar em contas diferentes da atual
+                listItem.addEventListener("click", () => {
                     selectedEmail = account;
                     closeAllModals();
-                    document.getElementById("account-confirmation-modal").style.display = "block"; // Exibe o modal de confirmação
-                }
-            });
+                    document.getElementById("account-confirmation-modal").style.display = "block";
+                });
+            }
 
             accountList.appendChild(listItem);
         });
     }
 }
+
+
 
 
 // Abrir modal de gerenciamento de contas
@@ -823,6 +822,11 @@ if (confirmationModal && !confirmationModal.contains(event.target)) {
     if (accountModal && !accountModal.contains(event.target)) {
         accountModal.style.display = "none";
     }
+
+
+    closeConfirmationModal.addEventListener("click", () => {
+        confirmationModal.style.display = "none";
+    });
 
     window.addEventListener("click", (event) => {
         if (event.target === confirmationModal) {
@@ -857,7 +861,6 @@ if (confirmationModal && !confirmationModal.contains(event.target)) {
             });
 
 };
-        });
 
 </script>
 </body>

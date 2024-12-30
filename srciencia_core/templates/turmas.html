@@ -167,6 +167,13 @@
             cancelClassModal.style.display = "none";
         });
 
+        if (closeCancelClassModal) {
+        closeCancelClassModal.addEventListener("click", function () {
+            turmaIdToCancel = null; // Resetar o ID da turma
+            cancelClassModal.style.display = "none"; // Fechar o modal
+        });
+    }
+
         // Fechar modal ao clicar fora dele
         window.addEventListener("click", (event) => {
             if (event.target === confirmationModal) {
@@ -576,12 +583,13 @@
             });
     }
 
-    // Adicionar evento ao botão de cancelamento
+    var cancelClassModal = document.getElementById("cancel-class-modal");
+    // Função para abrir o modal de confirmação ao clicar no botão "Cancelar inscrição"
     document.querySelectorAll(".cancel").forEach((button) => {
         button.addEventListener("click", function (event) {
-            event.preventDefault();
-            var turmaId = button.getAttribute("data-id");
-            cancelarInscricao(turmaId);
+            event.preventDefault(); // Impede comportamento padrão
+            turmaIdToCancel = button.getAttribute("data-id"); // Captura o ID da turma
+            cancelClassModal.style.display = "block"; // Exibe o modal
         });
     });
 
@@ -592,27 +600,10 @@
         });
     }
 
-    var cancelClassModal = document.getElementById("cancel-class-modal");
-    function openCancelClassModal(turmaId) {
-        console.log("Abrindo modal para turma:", turmaId);
-        turmaIdToCancel = turmaId;
-        closeAllModals();
-        if (cancelClassModal) {
-            cancelClassModal.style.display = "block";
-        } else {
-            console.error("cancelClassModal não encontrado.");
-        }
-    }
 
-    document.querySelectorAll(".cancel").forEach(function (button) {
-        button.addEventListener("click", function (event) {
-            event.preventDefault();
-            var turmaId = button.getAttribute("data-id");
-            openCancelClassModal(turmaId);
-        });
-    });
 
     var confirmCancelClassBtn = document.getElementById("confirm-cancel-class-btn");
+    // Confirmar o cancelamento
     if (confirmCancelClassBtn) {
         confirmCancelClassBtn.addEventListener("click", function () {
             if (turmaIdToCancel) {
@@ -620,34 +611,32 @@
                     method: "POST",
                     headers: {
                         "X-CSRFToken": document.querySelector('[name="csrf-token"]').content,
+                        "Content-Type": "application/json",
                     },
                 })
-                    .then(function (response) {
-                        return response.json();
-                    })
-                    .then(function (data) {
+                    .then((response) => response.json())
+                    .then((data) => {
                         if (data.success) {
                             alert(data.message);
-                            var turmaCard = document.querySelector(`.card[data-id="${turmaIdToCancel}"]`);
+                            // Ocultar o card da turma cancelada
+                            const turmaCard = document.querySelector(`.card[data-id="${turmaIdToCancel}"]`);
                             if (turmaCard) {
-                                turmaCard.style.display = "none"; // Oculta o card visualmente
+                                turmaCard.style.display = "none";
                             }
                         } else {
                             alert(data.message);
                         }
                     })
-                    .catch(function (error) {
+                    .catch((error) => {
                         console.error("Erro ao cancelar inscrição:", error);
                         alert("Erro ao cancelar inscrição. Tente novamente.");
                     })
-                    .finally(function () {
-                        turmaIdToCancel = null;
-                        closeAllModals();
+                    .finally(() => {
+                        turmaIdToCancel = null; // Resetar o ID da turma
+                        cancelClassModal.style.display = "none"; // Fechar o modal
                     });
             }
         });
-    } else {
-        console.error("confirmCancelClassBtn não encontrado.");
     }
     var cancelCancelClassBtn = document.getElementById("cancel-cancel-class-btn");
     // Cancelar o fechamento do modal
