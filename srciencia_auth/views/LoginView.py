@@ -7,9 +7,9 @@ from django.utils.encoding import force_bytes
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
 from django.views import View
-from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth.forms import SetPasswordForm
+
 
 def login_view(request):
     if request.method == 'POST':
@@ -20,13 +20,20 @@ def login_view(request):
             user = authenticate(username=username, password=password)
             if user is not None:
                 login(request, user)
-                return redirect('home')  # redirecionar para a página inicial ou outra página
+                # Salvar o email da conta atual na sessão
+                request.session['conta_atual'] = user.email
+                request.session.modified = True
+                return redirect('pagina_inicial')
+            else:
+                messages.error(request, "Credenciais inválidas. Por favor, tente novamente.")
     else:
         form = UsuarioLoginForm()
     return render(request, './auth/login.html', {'form': form})
 
+
 def password_reset_done(request):
     return render(request, './auth/password_reset_done.html')
+
 
 class CustomPasswordResetView(View):
     def get(self, request):
@@ -65,9 +72,10 @@ class PasswordResetConfirmView(View):
 
     def post(self, request, uidb64, token):
         # Verifique o token novamente e redefina a senha
+        user = get_user_model()._default_manager.get(pk=urlsafe_base64_decode(uidb64).decode())
         form = SetPasswordForm(user, request.POST)
         if form.is_valid():
-            user = form.save()
+            form.save()
             messages.success(request, "Sua senha foi redefinida com sucesso.")
             return redirect('login')
         return render(request, 'auth/password_reset_confirm.html', {'form': form})

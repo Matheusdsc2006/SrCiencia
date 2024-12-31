@@ -10,7 +10,7 @@ PERFIL=(
 )
 
 class Usuario(AbstractUser):
-    nome = models.CharField(max_length=255)
+    nome = models.CharField(max_length=255, blank=False, null=False, verbose_name="Nome Completo")
     perfil = models.IntegerField(choices=PERFIL, default=2) 
     email = models.EmailField(unique=True)
     foto = models.BinaryField(blank=True, null=True)

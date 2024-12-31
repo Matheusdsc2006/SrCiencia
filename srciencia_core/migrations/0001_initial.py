@@ -3,13 +3,15 @@
 from django.db import migrations, models
 import django.db.models.deletion
 import django_ckeditor_5.fields
-
+import django.db.models.deletion
+from django.conf import settings
 
 class Migration(migrations.Migration):
 
     initial = True
 
     dependencies = [
+        migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
     operations = [
@@ -73,6 +75,17 @@ class Migration(migrations.Migration):
                 ('data_criacao', models.DateTimeField(auto_now_add=True)),
                 ('data_atualizacao', models.DateTimeField(auto_now=True)),
                 ('questao', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='alternativas', to='srciencia_core.questao')),
+            ]
+        ),
+        migrations.Turma(
+            name='Turma',
+            fields=[
+                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('nome', models.CharField(max_length=100)),
+                ('descricao', models.TextField(blank=True, null=True)),
+                ('codigo', models.CharField(max_length=8, unique=True)),
+                ('criado_em', models.DateTimeField(auto_now_add=True)),
+                ('professor', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='turmas', to=settings.AUTH_USER_MODEL)),
             ],
         ),
-    ]
+    ],

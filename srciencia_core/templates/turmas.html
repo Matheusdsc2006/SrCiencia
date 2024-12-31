@@ -1,0 +1,753 @@
+{% load static %}   
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token }}">
+    <title>SR. Ciência - Turmas</title>
+    <link rel="stylesheet" href="{% static 'css/turmas.css' %}">
+</head>
+<body>
+    <div class="container">
+        <!-- Menu Lateral -->
+            <aside class="sidebar">
+                <div class="logo">
+                <img src="{% static 'assets/sr_ciencia.svg' %}" alt="SR. Ciência">
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="{% url 'pagina_inicial' %}"><img src="{% static 'assets/home.svg' %}" alt="">Página inicial</a></li>
+                    <li><a href="#"><img src="{% static 'assets/profile.svg' %}" alt="">Meu perfil</a></li>
+                    <li><a href="#"><img src="{% static 'assets/practice.svg' %}" alt="">Praticar</a></li>
+                    <li><a href="{% if user.is_staff %}{% url 'turmas' %}{% else %}{% url 'turmas' %}{% endif %}" class="{% if active_menu == 'turmas' %}active{% endif %}"><img src="{% static 'assets/classes.svg' %}" alt="">Turmas</a></li>
+                    <li><a href="#"><img src="{% static 'assets/forum.svg' %}" alt="">Fórum</a></li>
+                    <li><a href="#"><img src="{% static 'assets/help.svg' %}" alt="">Ajuda</a></li>
+                    <li><a href="{% url 'login' %}" class="logout" style="color: #e72427;"><img src="{% static 'assets/logout.svg' %}" alt="">Sair</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Conteúdo Principal -->
+        <main class="main-container">
+            <div class="header">
+                <div class="header-input">
+                    <label for="codigo-turma">Código da turma:</label>
+                    <div class="input-wrapper">
+                        <input type="text" id="codigo-turma" placeholder="Peça ao seu professor o código da turma e digite aqui">
+                        <button id="submit-codigo-turma" class="btn-submit">
+                            <img src="{% static 'assets/arrow-right.svg' %}" alt="Enviar" class="submit-icon">
+                        </button>                        
+                    </div>
+                </div>                
+                <div class="header-user">
+                    <div class="user-info">
+                        <div class="user-avatar">
+                            <figure>
+                                <img src="{% static 'assets/user.avif' %}" alt="Usuário">
+                            </figure>
+                        </div>
+                        <div>
+                            <p class="user-name">{{ user.username }}</p>
+                            <p class="user-email">{{ conta_atual }}</p>
+                        </div>
+                    </div>
+                    <button id="change-account-btn" class="change-account">Mudar de conta</button>
+                </div>
+            </div>
+            <div class="cards">
+                {% if turmas %}
+                    {% for turma in turmas %}
+                    <div class="card {{ turma.cor }}" data-id="{{ turma.id }}">
+                        <div class="card-header">
+                            <h3>{{ turma.nome }}</h3>
+                            <p>{{ turma.descricao }}</p>
+                        </div>
+                        <p>Professor: {{ turma.professor__username }}</p>
+                        <div class="card-actions">
+                            <button class="view-files" data-id="{{ turma.id }}">Arquivos da turma</button>
+                            <button class="cancel" data-id="{{ turma.id }}">Cancelar inscrição</button>
+                        </div>
+                    </div>
+                {% endfor %}
+                {% else %}
+                    <p id="no-turmas-message">Não há turmas cadastradas para esta conta.</p>
+                {% endif %}
+            </div>            
+        </main>
+    </div>
+<!-- Modal de Confirmação para Mudar de Conta -->
+<div id="confirmation-modal" class="modal">
+    <div class="modal-content">
+        <span id="close-confirmation-modal" class="close-icon">&times;</span>
+        <h2>Deseja realmente mudar de conta?</h2>
+        <p style="font-size: 20px;">Você sairá da conta atual.</p>
+        <div class="modal-actions">
+            <button id="confirm-change-btn" class="btn-confirm">Sim</button>
+        </div>
+    </div>
+</div>
+
+
+<div id="account-modal" class="modal">
+    <div class="modal-content">
+        <span id="close-modal" class="close-icon">&times;</span>
+        <h2>Selecione ou remova uma conta</h2>
+        <ul class="account-list">
+        </ul>
+        <div class="add-account">
+            <label for="new-account">E-mail:</label>
+            <input type="email" id="new-account" class="email" placeholder="Digite um e-mail" required />
+            <button id="add-account-btn" class="btn-confirm">Adicionar Conta</button>
+        </div>        
+    </div>
+</div>
+
+<!-- Modal de Confirmação para Remover Conta Atual -->
+<div id="remove-confirmation-modal" class="modal">
+    <div class="modal-content">
+        <span id="close-remove-confirmation-modal" class="close-icon">&times;</span>
+        <h2>Deseja realmente remover a conta atual?</h2>
+        <p style="font-size: 20px;">Você será deslogado.</p>
+        <div class="modal-actions">
+            <button id="confirm-remove-btn" class="btn-confirm">Sim</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Confirmação para Cancelar Inscrição -->
+<div id="cancel-class-modal" class="modal">
+    <div class="modal-content">
+        <span id="close-cancel-class-modal" class="close-icon">&times;</span>
+        <h2>Deseja realmente sair da turma?</h2>
+        <div class="modal-actions">
+            <button id="confirm-cancel-class-btn" class="btn-confirm">Sim</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Arquivos -->
+<div id="view-files-modal" class="modal">
+    <div class="modal-content">
+        <span id="close-view-files-modal" class="close-icon">&times;</span>
+        <h2>Arquivos da turma</h2>
+        <ul id="student-file-list" class="account-list">
+        </ul>
+    </div>
+</div>
+
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Declaração de variáveis
+        var accountModal = document.getElementById("account-modal");
+        var confirmationModal = document.getElementById("confirmation-modal");
+        var removeConfirmationModal = document.getElementById("remove-confirmation-modal");
+        var closeModal = document.getElementById("close-modal");
+        var changeAccountButton = document.querySelector(".change-account");
+        var accountList = document.querySelector(".account-list");
+        var newAccountInput = document.getElementById("new-account");
+        var addAccountButton = document.getElementById("add-account-btn");
+        var userEmailElement = document.querySelector(".user-email");
+        var confirmChangeButton = document.getElementById("confirm-change-btn");
+        var confirmRemoveButton = document.getElementById("confirm-remove-btn");
+        var submitButton = document.getElementById("submit-codigo-turma");
+        var inputCodigoTurma = document.getElementById("codigo-turma");
+        var cancelClassModal = document.getElementById("cancel-class-modal");
+        var closeConfirmationModal = document.getElementById("close-confirmation-modal");
+        var closeRemoveConfirmationModal = document.getElementById("close-remove-confirmation-modal");
+        var closeCancelClassModal = document.getElementById("close-cancel-class-modal");
+        var viewFilesModal = document.getElementById("view-files-modal");
+        var closeViewFilesModal = document.getElementById("close-view-files-modal");
+        var studentFileList = document.getElementById("student-file-list");
+
+        var accounts = [];
+        var MAX_ACCOUNTS = 4;
+        var selectedEmail = null;
+        var currentEmail = null;
+        var turmaIdToCancel = null;
+
+        // Fechar modal ao clicar no "X"
+        closeConfirmationModal.addEventListener("click", () => {
+            confirmationModal.style.display = "none";
+        });
+
+        closeRemoveConfirmationModal.addEventListener("click", () => {
+            removeConfirmationModal.style.display = "none";
+        });
+
+        closeCancelClassModal.addEventListener("click", () => {
+            cancelClassModal.style.display = "none";
+        });
+
+        if (closeCancelClassModal) {
+        closeCancelClassModal.addEventListener("click", function () {
+            turmaIdToCancel = null; // Resetar o ID da turma
+            cancelClassModal.style.display = "none"; // Fechar o modal
+        });
+    }
+
+        // Fechar modal ao clicar fora dele
+        window.addEventListener("click", (event) => {
+            if (event.target === confirmationModal) {
+                confirmationModal.style.display = "none";
+            }
+            if (event.target === removeConfirmationModal) {
+                removeConfirmationModal.style.display = "none";
+            }
+            if (event.target === cancelClassModal) {
+                cancelClassModal.style.display = "none";
+            }
+        });
+
+        function closeAllModals() {
+            document.querySelectorAll(".modal").forEach((modal) => {
+                modal.style.display = "none"; // Fecha todos os modais
+            });
+        }
+
+        // Redirecionar para a tela de login
+        function redirectToLogin(email) {
+            var loginUrl = email 
+                ? `{% url 'login' %}?email=${encodeURIComponent(email)}`
+                : `{% url 'login' %}`;
+            window.location.href = loginUrl;
+        }
+
+        function renderTurma(turma) {
+            var cardsContainer = document.querySelector(".cards");
+            var noTurmasMessage = document.getElementById("no-turmas-message");
+            closeAllModals();
+
+            // Remover mensagem de "Não há turmas cadastradas para esta conta."
+            if (noTurmasMessage) {
+                noTurmasMessage.remove();
+            }
+
+            var existingCard = document.querySelector(`.card[data-id="${turma.id}"]`);
+
+            if (existingCard) {
+                existingCard.style.display = "block";
+            } else {
+                var turmaCard = document.createElement("div");
+                turmaCard.classList.add("card"); // Classe padrão para o card
+                turmaCard.setAttribute("data-id", turma.id);
+
+                turmaCard.innerHTML = `
+                    <div class="card-header">
+                        <h3>${turma.nome}</h3>
+                        <p>${turma.descricao}</p>
+                    </div>
+                    <p>Professor: ${turma.professor__username || "Desconhecido"}</p>
+                    <div class="card-actions">
+                        <button class="view-files" data-id="${ turma.id }">Arquivos da turma</button>
+                        <button class="cancel" data-id="${turma.id}">Cancelar inscrição</button>
+                    </div>
+                `;
+
+                cardsContainer.appendChild(turmaCard);
+
+                // Forçar recalculação de estilos
+                turmaCard.offsetHeight;
+            }
+        }
+
+
+
+        function loadTurmasAluno() {
+            fetch("/turmas/listar_turmas/")
+                .then((response) => response.json())
+                .then((data) => {
+                    if (data.success) {
+                        renderTurmasAluno(data.turmas); // Renderizar turmas de alunos
+                    } else {
+                        console.error("Erro ao carregar turmas:", data.message);
+                        document.querySelector(".cards").innerHTML =
+                            "<p>Nenhuma turma encontrada para esta conta.</p>";
+                    }
+                })
+                .catch((error) => {
+                    console.error("Erro ao carregar turmas:", error);
+                });
+        }
+
+        // Função para renderizar turmas
+        function renderTurma(turma) {
+            var cardsContainer = document.querySelector(".cards");
+            var noTurmasMessage = document.getElementById("no-turmas-message");
+
+            // Remover mensagem de "Não há turmas cadastradas para esta conta."
+            if (noTurmasMessage) {
+                noTurmasMessage.remove();
+            }
+
+            var existingCard = document.querySelector(`.card[data-id="${turma.id}"]`);
+
+            if (existingCard) {
+                existingCard.style.display = "block";
+            } else {
+                var turmaCard = document.createElement("div");
+                turmaCard.classList.add("card"); // Adiciona a classe de estilo
+                turmaCard.setAttribute("data-id", turma.id);
+
+                turmaCard.innerHTML = `
+                    <div class="card-header">
+                        <h3>${turma.nome}</h3>
+                        <p>${turma.descricao}</p>
+                    </div>
+                    <p>Professor: ${turma.professor__username || "Desconhecido"}</p>
+                    <div class="card-actions">
+                        <button class="view-files" data-id="${ turma.id }">Arquivos da turma</button>
+                        <button class="cancel" data-id="${turma.id}">Cancelar inscrição</button>
+                    </div>
+                `;
+
+                // Adicionar o card ao contêiner
+                cardsContainer.appendChild(turmaCard);
+                window.getComputedStyle(turmaCard);
+
+                // Forçar reprocessamento de estilos
+                turmaCard.offsetHeight; // Trigger reflow
+            }
+        }
+
+
+        function initializeAccounts() {
+            fetch("{% url 'listar_contas' %}")
+                .then((response) => response.json())
+                .then((data) => {
+                    accounts = data.contas || [];
+                    currentEmail = data.conta_atual; // Define a conta atual
+
+                    // Adiciona a conta atual à lista de contas, se ainda não estiver incluída
+                    if (!accounts.includes(currentEmail)) {
+                        accounts.push(currentEmail);
+                    }
+
+                    userEmailElement.textContent = currentEmail; // Atualiza o e-mail no cabeçalho
+                    renderAccounts(); // Renderiza as contas no modal
+                })
+                .catch((error) => {
+                    console.error("Erro ao carregar contas:", error);
+                });
+        }
+
+        initializeAccounts();
+
+        function renderAccounts() {
+    accountList.innerHTML = ""; // Limpa a lista de contas
+
+    if (accounts.length === 0) {
+        var emptyMessage = document.createElement("li");
+        emptyMessage.classList.add("empty");
+        emptyMessage.textContent = "Nenhuma conta adicionada.";
+        accountList.appendChild(emptyMessage);
+    } else {
+        accounts.forEach((account) => {
+            var listItem = document.createElement("li");
+            listItem.textContent = account;
+
+            // Verifica se é a conta atual
+            if (account === currentEmail) {
+                listItem.classList.add("current-account");
+                listItem.textContent += " (atual)";
+
+                // Exibe pop-up ao clicar na conta atual
+                listItem.addEventListener("click", (event) => {
+                    event.stopPropagation(); // Evita eventos duplicados
+                    alert("Essa conta já está em andamento!");
+                });
+
+                // Não exibe o botão "Remover" para a conta atual
+            } else {
+                // Permite seleção de outras contas
+                listItem.addEventListener("click", () => {
+                    closeAllModals();
+                    selectedEmail = account;
+                    confirmationModal.style.display = "block";
+                });
+
+                // Botão "Remover" para contas não atuais
+                var removeButton = document.createElement("button");
+                removeButton.textContent = "Remover";
+                removeButton.style.marginLeft = "10px";
+                removeButton.style.color = "#e72427";
+                removeButton.style.cursor = "pointer";
+
+                removeButton.addEventListener("click", (event) => {
+                    event.stopPropagation();
+                    removeAccount(account); // Remove diretamente
+                });
+
+                listItem.appendChild(removeButton);
+            }
+
+            accountList.appendChild(listItem);
+        });
+    }
+}
+
+
+
+        function closeAllModals() {
+        document.querySelectorAll(".modal").forEach(function (modal) {
+            modal.style.display = "none";
+        });
+    }
+
+        // Abrir modal de gerenciamento de contas
+        changeAccountButton.addEventListener("click", () => {
+            closeAllModals();
+            accountModal.style.display = "block";
+            renderAccounts();
+        });
+
+        // Fechar modal de contas
+        closeModal.addEventListener("click", () => {
+            accountModal.style.display = "none";
+        });
+
+        // Fechar modal ao clicar fora
+        window.addEventListener("click", (event) => {
+            if (event.target === accountModal) {
+                accountModal.style.display = "none";
+            } else if (event.target === confirmationModal) {
+                confirmationModal.style.display = "none";
+            } else if (event.target === removeConfirmationModal) {
+                removeConfirmationModal.style.display = "none";
+            }
+        });
+
+        // Adicionar nova conta
+        addAccountButton.addEventListener("click", () => {
+            var newAccount = newAccountInput.value.trim();
+
+            if (accounts.length >= MAX_ACCOUNTS) {
+                alert("Você atingiu o limite de 4 contas. Remova uma conta para adicionar outra.");
+                return;
+            }
+
+            if (!newAccount || !validateEmail(newAccount)) {
+                alert("Por favor, insira um e-mail válido.");
+                return;
+            }
+
+            if (accounts.includes(newAccount)) {
+                alert("Esta conta já foi adicionada.");
+                return;
+            }
+
+            fetch("{% url 'mudar_conta' %}", {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": "{{ csrf_token }}",
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ nova_conta: newAccount }),
+            })
+                .then((response) => response.json())
+                .then((data) => {
+                    if (data.success) {
+                        accounts.push(newAccount);
+                        renderAccounts();
+                        newAccountInput.value = "";
+                        alert("Conta adicionada com sucesso.");
+                    } else {
+                        alert(data.message);
+                    }
+                })
+                .catch((error) => {
+                    console.error("Erro ao adicionar conta:", error);
+                    alert("Erro ao adicionar a conta. Tente novamente.");
+                });
+        });
+        // Renderizar lista de contas
+        
+
+        confirmChangeButton.addEventListener("click", () => { 
+            closeAllModals(); // Fechar todos os modais
+            if (selectedEmail) { // Verificar se há uma conta selecionada
+                fetch("{% url 'mudar_conta' %}", {
+                    method: "POST",
+                    headers: {
+                        "X-CSRFToken": "{{ csrf_token }}",
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ nova_conta: selectedEmail }),
+                })
+                    .then((response) => response.json())
+                    .then((data) => {
+                        if (data.success) {
+                            redirectToLogin(selectedEmail); // Redirecionar para a tela de login com o e-mail
+                        } else {
+                            alert(data.message);
+                        }
+                    })
+                    .catch((error) => {
+                        console.error("Erro ao mudar conta:", error);
+                        alert("Ocorreu um erro ao tentar alterar a conta. Tente novamente.");
+                    });
+            } else {
+                alert("Nenhuma conta foi selecionada."); // Garantia de controle caso algo falhe
+            }
+        });
+
+        // Remover conta
+        function removeAccount(email) {
+            fetch("{% url 'remover_conta' %}", {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": "{{ csrf_token }}",
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ conta: email }),
+            })
+                .then((response) => response.json())
+                .then((data) => {
+                    if (data.success) {
+                        // Remover a conta do frontend
+                        accounts = accounts.filter((account) => account !== email);
+                        renderAccounts();
+                        alert("Conta removida com sucesso.");
+                    } else {
+                        if (data.message === "Confirme a remoção da conta atual.") {
+                            closeAllModals();
+                            removeConfirmationModal.style.display = "block";
+                        } else if (
+                            data.message ===
+                            "Você não pode remover uma conta que acabou de adicionar. Para isso, adicione outra conta."
+                        ) {
+                            alert(data.message);
+                        } else {
+                            alert(data.message);
+                        }
+                    }
+                })
+                .catch((error) => {
+                    console.error("Erro ao remover conta:", error);
+                    alert("Erro ao remover a conta. Tente novamente.");
+                });
+        }
+
+        // Validar e-mail
+        function validateEmail(email) {
+            var emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+            return emailRegex.test(email);
+        }
+
+
+        submitButton.addEventListener("click", () => {
+            console.log("Botão de submeter código da turma clicado.");
+            var codigoTurma = inputCodigoTurma.value.trim();
+
+            if (!codigoTurma) {
+                alert("Por favor, insira um código de turma.");
+                return;
+            }
+
+            fetch("{% url 'verificar_codigo_turma' %}", {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": document.querySelector('[name="csrf-token"]').content,
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ codigo_turma: codigoTurma }),
+            })
+                .then((response) => response.json())
+                .then((data) => {
+                    if (data.success) {
+                        renderTurma(data.turma);
+                        alert(data.message);
+                    } else {
+                        alert(data.message);
+                    }
+                })
+                .catch((error) => {
+                    console.error("Erro ao verificar o código da turma:", error);
+                    alert("Erro ao verificar o código da turma. Tente novamente.");
+                });
+        });
+    });
+
+    function cancelarInscricao(turmaId) {
+        fetch(`/turmas/${turmaId}/cancelar/`, {
+            method: "POST",
+            headers: {
+                "X-CSRFToken": document.querySelector('[name="csrf-token"]').content,
+                "Content-Type": "application/json",
+            },
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                if (data.success) {
+                    alert(data.message);
+                    // Remover o card da turma ou ocultá-lo
+                    var turmaCard = document.querySelector(`.card[data-id="${turmaId}"]`);
+                    if (turmaCard) {
+                        turmaCard.style.display = "none"; // Oculta o card visualmente
+                    }
+                } else {
+                    alert(data.message);
+                }
+            })
+            .catch((error) => {
+                console.error("Erro ao cancelar inscrição:", error);
+                alert("Erro ao cancelar a inscrição. Tente novamente.");
+            });
+    }
+
+    var cancelClassModal = document.getElementById("cancel-class-modal");
+    // Função para abrir o modal de confirmação ao clicar no botão "Cancelar inscrição"
+    document.querySelectorAll(".cancel").forEach((button) => {
+        button.addEventListener("click", function (event) {
+            event.preventDefault(); // Impede comportamento padrão
+            turmaIdToCancel = button.getAttribute("data-id"); // Captura o ID da turma
+            cancelClassModal.style.display = "block"; // Exibe o modal
+        });
+    });
+
+
+    function closeAllModals() {
+        document.querySelectorAll(".modal").forEach(function (modal) {
+            modal.style.display = "none";
+        });
+    }
+
+
+
+    var confirmCancelClassBtn = document.getElementById("confirm-cancel-class-btn");
+    // Confirmar o cancelamento
+    if (confirmCancelClassBtn) {
+        confirmCancelClassBtn.addEventListener("click", function () {
+            if (turmaIdToCancel) {
+                fetch(`/turmas/${turmaIdToCancel}/cancelar/`, {
+                    method: "POST",
+                    headers: {
+                        "X-CSRFToken": document.querySelector('[name="csrf-token"]').content,
+                        "Content-Type": "application/json",
+                    },
+                })
+                    .then((response) => response.json())
+                    .then((data) => {
+                        if (data.success) {
+                            alert(data.message);
+                            // Ocultar o card da turma cancelada
+                            var turmaCard = document.querySelector(`.card[data-id="${turmaIdToCancel}"]`);
+                            if (turmaCard) {
+                                turmaCard.style.display = "none";
+                            }
+                        } else {
+                            alert(data.message);
+                        }
+                    })
+                    .catch((error) => {
+                        console.error("Erro ao cancelar inscrição:", error);
+                        alert("Erro ao cancelar inscrição. Tente novamente.");
+                    })
+                    .finally(() => {
+                        turmaIdToCancel = null; // Resetar o ID da turma
+                        cancelClassModal.style.display = "none"; // Fechar o modal
+                    });
+            }
+        });
+    }
+    var cancelCancelClassBtn = document.getElementById("cancel-cancel-class-btn");
+    // Cancelar o fechamento do modal
+    if (cancelCancelClassBtn) {
+        cancelCancelClassBtn.addEventListener("click", function () {
+            closeAllModals();
+            turmaIdToCancel = null;
+        });
+
+    };
+
+    let selectedEmail = null;
+    var confirmRemoveButton = document.getElementById("confirm-remove-btn");
+    // Confirmar remoção da conta atual
+    confirmRemoveButton.addEventListener("click", () => {
+        console.log("Botão 'Sim' clicado");
+        closeAllModals();
+        if (selectedEmail === currentEmail) {
+            var loginUrl = `{% url 'login' %}?email=${encodeURIComponent(selectedEmail)}`;
+            console.log("Redirecionando para:", loginUrl);
+            window.location.href = loginUrl;
+        } else {
+            alert("Erro: A conta selecionada para remoção não é a conta atual.");
+        }
+    });
+    // Abrir modal de arquivos
+    document.querySelectorAll(".view-files").forEach((button) => {
+        button.addEventListener("click", () => {
+            const turmaId = button.getAttribute("data-id");
+            carregarArquivosAluno(turmaId);
+            viewFilesModal.style.display = "block";
+        });
+    });
+
+    var closeViewFilesModal = document.getElementById("close-view-files-modal");
+    // Fechar modal de arquivos
+    closeViewFilesModal.addEventListener("click", () => {
+        viewFilesModal.style.display = "none";
+    });
+
+    var viewFilesModal = document.getElementById("view-files-modal");
+    // Fechar modal ao clicar fora
+    window.addEventListener("click", (event) => {
+        if (event.target === viewFilesModal) {
+            viewFilesModal.style.display = "none";
+        }
+    });
+
+    var studentFileList = document.getElementById("student-file-list");
+    function carregarArquivosAluno(turmaId) {
+        fetch(`/professor_turmas/listar_arquivos/${turmaId}/`)
+            .then((response) => response.json())
+            .then((data) => {
+                studentFileList.innerHTML = ""; // Limpar lista
+                if (data.success && data.arquivos.length > 0) {
+                    data.arquivos.forEach((arquivo) => {
+                        const listItem = document.createElement("li");
+
+                        // Nome do arquivo como link para download
+                        const fileLink = document.createElement("a");
+                        fileLink.href = arquivo.url;
+                        fileLink.textContent = arquivo.nome;
+                        fileLink.target = "_blank";
+                        fileLink.style.marginRight = "10px";
+
+                        // Exibir tamanho do arquivo
+                        const fileSize = document.createElement("span");
+                        fileSize.textContent = `(${formatFileSize(arquivo.size)})`;
+                        fileSize.style.color = "#666";
+
+                        listItem.appendChild(fileLink);
+                        listItem.appendChild(fileSize);
+                        studentFileList.appendChild(listItem);
+                    });
+                } else {
+                    studentFileList.innerHTML = "<li class='empty'>Nenhum arquivo anexado.</li>";
+                }
+            })
+            .catch((error) => {
+                console.error("Erro ao carregar arquivos:", error);
+                alert("Erro ao carregar os arquivos da turma.");
+            });
+    }
+
+    function formatFileSize(size) {
+        const units = ["B", "KB", "MB", "GB", "TB"];
+        let unitIndex = 0;
+
+        while (size >= 1024 && unitIndex < units.length - 1) {
+            size /= 1024;
+            unitIndex++;
+        }
+
+        return `${size.toFixed(2)} ${units[unitIndex]}`;
+    }
+
+</script>
+
+</body>
+</html>

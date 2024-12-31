@@ -1,0 +1,578 @@
+:root {
+    --light-purple: #f3eaff;
+    --dark-purple: #5e4b8a;
+    --primary-purple: #7d5baa;
+    --white: #ffffff;
+    --gray: #666666;
+    --light-gray: #cccccc;
+    --danger-red: #ff4d4d;
+    --green: #4caf50;
+    --orange: #ff9800;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: var(--light-purple);
+    color: var(--gray);
+}
+
+.container {
+    display: flex;
+}
+
+.main-container {
+    margin-left: 310px;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    max-width: 1200px;
+}
+
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: var(--white);
+    padding: 1.5rem 2rem;
+    border-radius: 10px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    width: 94.1%;
+    max-width: 1200px;
+}
+
+.header-input {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.header-input label {
+    font-size: 1rem;
+    font-weight: bold;
+    color: var(--gray);
+}
+
+.header-input input {
+    padding: 0.8rem;
+    border: 1px solid var(--light-gray);
+    border-radius: 5px;
+    font-size: 1rem;
+    width: 385px;
+}
+
+.header-user {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+}
+
+.user-avatar img {
+    border-radius: 50%;
+    width: 50px;
+    margin-right: -40px;
+    margin-left: 10px;
+}
+
+.user-name {
+    font-size: 1rem;
+    font-weight: bold;
+    color: var(--gray);
+    margin: 0;
+}
+
+.user-email {
+    font-size: 0.9rem;
+    max-width: 200px;
+    color: var(--gray);
+    margin: 0;
+}
+
+.change-account {
+    padding: 0.8rem 1.5rem;
+    font-size: 1rem;
+    color: var(--primary-purple);
+    background-color: var(--white);
+    border: 2px solid var(--primary-purple);
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s;
+    margin-left: 10px;
+    margin-right: 30px;
+    width: 170px;
+    margin-left: 40px;
+}
+
+.change-account:hover {
+    background-color: var(--primary-purple);
+    color: var(--white);
+}
+
+button {
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+    background-color: var(--primary-purple);
+    color: var(--white);
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+button:hover {
+    background-color: var(--dark-purple);
+}
+
+.cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* Cada card terá pelo menos 300px */
+    gap: 1.5rem; /* Espaçamento entre os cards */
+    width: 100%; /* O grid ocupará toda a largura do container */
+    max-width: 1200px; /* Largura máxima igual à do header */
+    margin: 0 auto; /* Centraliza o grid horizontalmente */
+}
+
+
+.card {
+    background-color: var(--white);
+    border-radius: 10px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    height: auto; /* Altura ajustável conforme o conteúdo */
+    min-height: 200px; /* Altura mínima para consistência */
+}
+
+.desc{
+    margin: 20px;
+}
+
+.card-header {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+}
+
+.card-header h3 {
+    margin: 0;
+    color: var(--primary-purple);
+    font-size: 1.2rem;
+}
+
+.card-header p {
+    margin: 0;
+    font-size: 0.9rem;
+    color: var(--gray);
+}
+
+
+.card-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.card-actions .cancel {
+    background-color: var(--danger-red);
+    color: var(--white);
+}
+
+.card-actions .cancel:hover {
+    background-color: darkred;
+}
+
+.fisica {
+    border-top: 4px solid var(--primary-purple);
+}
+
+.quimica {
+    border-top: 4px solid var(--dark-purple);
+}
+
+.biologia {
+    border-top: 4px solid var(--green);
+}
+
+.astronomia {
+    border-top: 4px solid var(--orange);
+}
+
+/* Menu Lateral */
+.sidebar {
+    width: 240px; /* Define a largura fixa do menu lateral */
+    background-color: var(--white);
+    height: 100vh;
+    position: fixed; /* Mantém o menu fixado à esquerda */
+    padding: 20px;
+    box-shadow: 2px 0 6px rgba(0, 0, 0, 0.1);
+}
+
+.logo img {
+    width: 100%;
+    max-width: 200px;
+    margin: 15px 0px 10px 10px;
+}
+
+.sidebar nav ul {
+    list-style: none;
+    padding: 0;
+}
+
+.sidebar nav ul li {
+    margin-bottom: 20px;
+}
+
+.sidebar nav ul li a {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 10px;
+    text-decoration: none;
+    color: var(--gray);
+    border-radius: 8px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.sidebar nav ul li a img {
+    width: 20px;
+    height: 20px;
+}
+
+.sidebar nav ul li a:hover {
+    background-color: var(--light-purple);
+    color: var(--dark-purple);
+}
+
+.sidebar nav ul li a.active {
+    background-color: var(--light-purple);
+    color: var(--dark-purple);
+    font-weight: bold;
+}
+
+.sidebar nav ul li a.logout {
+    color: var(--danger-red);
+    font-weight: bold;
+}
+
+/* Estilos para o Modal */
+/* Atualização para o design dos modais */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 10;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.4);
+}
+
+.modal-content {
+    position: relative;
+    width: 50%; /* Largura do modal */
+    max-width: 600px;
+    margin: auto;
+    top: 50%;
+    transform: translateY(-50%);
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem; /* Espaçamento entre elementos */
+}
+
+.modal-content h2 {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--primary-purple);
+    text-align: left;
+}
+
+/* Estilo dos botões "Sim" e "Não" */
+.modal-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem; /* Espaçamento entre os botões */
+    width: 100%;
+}
+
+.modal-actions button {
+    width: 100%; /* Ocupa toda a largura */
+    padding: 0.8rem;
+    border: none;
+    border-radius: 5px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.modal-actions button#confirm-change-btn, /* Botão "Sim" */
+.modal-actions button#confirm-remove-btn {
+    background-color: var(--primary-purple);
+    color: var(--white);
+}
+
+.modal-actions button#confirm-change-btn:hover, 
+.modal-actions button#confirm-remove-btn:hover {
+    background-color: var(--dark-purple);
+}
+
+.modal-actions button#cancel-change-btn, /* Botão "Não" */
+.modal-actions button#cancel-remove-btn {
+    background-color: #6a4d90; /* Roxo mais escuro */
+    color: var(--white);
+}
+
+.modal-actions button#cancel-change-btn:hover, 
+.modal-actions button#cancel-remove-btn:hover {
+    background-color: #533774; /* Roxo ainda mais escuro ao hover */
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .modal-content {
+        width: 90%;
+    }
+    .modal-actions button {
+        width: 100%;
+    }
+}
+
+
+.account-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem; 
+    padding: 0;
+    list-style: none;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.account-list::-webkit-scrollbar {
+    width: 8px;
+}
+
+.account-list::-webkit-scrollbar-thumb {
+    background-color: #ccc;
+    border-radius: 4px; 
+}
+
+.account-list::-webkit-scrollbar-thumb:hover {
+    background-color: #aaa; 
+}
+
+.account-list li {
+    padding: 0.5rem;
+    font-size: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--light-gray);
+    border-radius: 6px;
+}
+
+.account-list li:hover {
+    background-color: #f0f0f0;
+}
+
+.account-list li button {
+    background: none;
+    border: none;
+    color: #e72427;
+    font-size: 0.9em;
+    margin-left: 5px;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.account-list li button:hover {
+    color: #c60000; /* Vermelho mais intenso ao passar o mouse */
+}
+
+.account-list li.empty {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.2em;
+    color: #aaa;
+    font-style: italic;
+    height: 100%;
+    text-align: center;
+}
+
+.close-icon {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 1.5em;
+    font-weight: bold;
+    color: #333;
+    cursor: pointer;
+    transition: color 0.3s ease;
+    z-index: 1000;
+}
+
+.close-icon:hover {
+    color: #e72427; /* Vermelho ao passar o mouse */
+}
+
+#confirm-remove-btn{
+    height: 40px;
+}
+
+#cancel-remove-btn{
+    height: 40px;
+}
+
+.add-account{
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    width: 100%;
+    align-items: center; 
+}
+
+#add-account-btn{
+    width: 100%;
+}
+
+.add-account input {
+    width: 80%;
+    padding: 0.8rem;
+    border: 1px solid var(--light-gray);
+    border-radius: 5px;
+    margin-bottom: 10px;
+    font-size: 15px;
+}
+
+.add-account button {
+    width: 100%;
+    padding: 0.8rem;
+    background-color: var(--primary-purple);
+    color: var(--white);
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    font-size: 15px;
+}
+
+.add-account button:hover {
+    background-color: var(--dark-purple);
+}
+
+.modal-content label {
+    font-size: 1rem;
+    font-weight: bold;
+    color: var(--gray);
+    align-self: flex-start;
+    margin-left: 7.5%;
+}
+
+
+/* Estilo do novo modal */
+#name-modal .modal-content {
+    position: relative;
+    width: 40%;
+    margin: auto;
+    top: 50%;
+    transform: translateY(-50%);
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+#name-modal input {
+    width: 80%;
+    padding: 10px;
+    margin: 10px 0;
+    font-size: 1em;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+#name-modal .modal-actions {
+    margin-top: 20px;
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+#name-modal .modal-actions button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#name-modal .modal-actions button#save-name-btn {
+    background-color: #7d5baa;
+    color: white;
+}
+
+#name-modal .modal-actions button#cancel-name-btn {
+    background-color: #e72427;
+    color: white;
+}
+
+.input-wrapper {
+    position: relative; /* Permite posicionar o botão dentro do campo */
+    display: flex;
+    align-items: center;
+    width: 465px;
+}
+
+.input-wrapper input {
+    width: 100%; /* O input ocupa todo o espaço disponível */
+    padding-right: 50px; /* Deixa espaço suficiente para o botão */
+    font-size: 1rem;
+    border: 1px solid var(--light-gray);
+    border-radius: 5px;
+    height: 40px;
+}
+
+.input-wrapper button {
+    position: absolute;
+    right: 5px; /* Alinha o botão à direita dentro do input */
+    top: 50%;
+    transform: translateY(-50%); /* Centraliza verticalmente */
+    background-color: var(--primary-purple);
+    border: none;
+    width: 35px;
+    height: 35px;
+    border-radius: 50%; /* Forma um botão circular */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-right: 10px;
+}
+
+.input-wrapper button:hover {
+    background-color: var(--dark-purple);
+}
+
+.submit-icon {
+    width: 16px; /* Ajuste o tamanho do ícone */
+    height: 16px;
+    filter: brightness(0) invert(1);
+}
+
+

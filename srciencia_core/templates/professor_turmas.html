@@ -1,0 +1,867 @@
+{% load static %}   
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SR. Ciência - Professor</title>
+    <link rel="stylesheet" href="{% static 'css/professor_turmas.css' %}">
+</head>
+<body>
+    <div class="container">
+        <!-- Menu Lateral -->
+        <aside class="sidebar">
+            <div class="logo">
+                <img src="{% static 'assets/sr_ciencia.svg' %}" alt="SR. Ciência">
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="{% url 'pagina_inicial' %}"><img src="{% static 'assets/home.svg' %}" alt="">Página inicial</a></li>
+                    <li><a href="#"><img src="{% static 'assets/profile.svg' %}" alt="">Meu perfil</a></li>
+                    <li><a href="#"><img src="{% static 'assets/practice.svg' %}" alt="">Praticar</a></li>
+                    <li><a href="{% if user.is_staff %}{% url 'professor_turmas' %}{% else %}{% url 'turmas' %}{% endif %}" class="active"><img src="{% static 'assets/classes.svg' %}" alt="">Turmas</a></li>
+                    <li><a href="#"><img src="{% static 'assets/forum.svg' %}" alt="">Fórum</a></li>
+                    <li><a href="#"><img src="{% static 'assets/help.svg' %}" alt="">Ajuda</a></li>
+                    <li><a href="{% url 'login' %}" class="logout" style="color: #e72427;"><img src="{% static 'assets/logout.svg' %}" alt="">Sair</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Conteúdo Principal -->
+        <main class="main-container">
+            <div class="header">
+                <div class="header-input">
+                    <p class="cod">* Repasse o código aos alunos</p>
+                    <button id="create-class-btn" class="btn-create">Criar turma</button>
+                </div>
+                <div class="header-user">
+                    <div class="user-info">
+                        <div class="user-avatar">
+                            <figure>
+                                <img src="{% static 'assets/user.avif' %}" alt="Usuário">
+                            </figure>
+                        </div>
+                        <div>
+                            <p class="user-name">{{ user.username }}</p>
+                            <p class="user-email">{{ user.email }}</p>
+                        </div>
+                    </div>
+                </div>
+                <button id="change-account-btn" class="change-account">Mudar de conta</button>
+            </div>
+            <div class="cards">
+                {% if turmas %}
+                    {% for turma in turmas %}
+                        <div class="card {{ turma.cor }}">
+                            <div class="card-header">
+                                <h3>{{ turma.nome }}</h3>
+                                <p>{{ turma.descricao }}</p>
+                            </div>
+                            <p>{{ turma.codigo }}</p>
+                            <div class="card-actions">
+                                <button class="view-students" data-turma-id="{{ turma.id }}">Ver alunos</button>
+                                <button class="attach-files" data-turma-id="{{ turma.id }}">Anexar Arquivos</button>
+                                <button class="cancel" data-turma-id="{{ turma.id }}" data-turma-name="{{ turma.nome }}">Excluir turma</button>
+
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <p>Você ainda não criou nenhuma turma.</p>
+                {% endif %}
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal de Criação de Turma -->
+    <div id="create-class-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-icon" id="close-create-modal">&times;</span>
+            <h2>Criar nova turma</h2>
+            <form id="create-class-form">
+                <label for="class-name" class="disciplina">Disciplina:</label>
+                <input type="text" id="class-name" name="class_name" placeholder="Digite a disciplina" required />
+
+                <label for="class-description" class="turma">Turma/Turno:</label>
+                <input id="class-description" name="class_description" placeholder="Ex. Eletrotécnica - 2V" required />
+
+                <button type="submit" class="btn-confirm">Criar turma</button>
+            </form>
+        </div>
+    </div>
+    
+
+<!-- Modal de Confirmação para Excluir Turma -->
+<div id="delete-class-modal" class="modal">
+    <div class="modal-content">
+        <span class="close-icon" id="close-delete-modal">&times;</span>
+        <h2>Como segurança, confirme sua senha</h2>
+        <form id="delete-class-form">
+            {% csrf_token %}
+            <input type="password" id="delete-password-input" placeholder="Digite sua senha" class="senha" required>
+            <button type="submit" class="btn-confirm">Confirmar</button>
+        </form>
+        
+    </div>
+</div>
+
+<!-- Modal de Mudar conta -->
+<div id="account-modal" class="modal">
+    <div class="modal-content">
+        <span id="close-modal" class="close-icon">&times;</span>
+        <h2 class="selecione">Selecione ou remova uma conta</h2>
+        <ul class="account-list">
+        </ul>
+        <form id="add-account-form">
+            <label for="new-account" class="email">E-mail:</label>
+            <input type="email" id="new-account" placeholder="Digite um e-mail" required />
+            <button id="add-account-btn" class="btn-confirm">Adicionar Conta</button>
+        </form>
+    </div>
+</div>
+
+<!-- Modal de Confirmação para Mudar de Conta -->
+<div id="account-confirmation-modal" class="modal">
+    <div class="modal-content">
+        <span class="close-icon" id="close-account-confirmation-modal">&times;</span>
+        <h2>Deseja realmente mudar de conta?</h2>
+        <p style="font-size: 20px;">Você será redirecionado para a tela de login.</p>
+        <div class="modal-actions">
+            <button id="confirm-change-btn" class="btn-confirm">Sim</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Alunos -->
+<div id="students-modal" class="modal">
+    <div class="modal-content">
+        <span id="close-students-modal" class="close-icon">&times;</span>
+        <h2>Lista de Alunos</h2>
+        <ul class="students-list"></ul>
+    </div>
+</div>
+
+<!-- Modal de Upload de Arquivos -->
+<div id="upload-modal" class="modal">
+    <div class="modal-content">
+        <span id="close-upload-modal" class="close-icon">&times;</span>
+        <h2>Arquivos Anexados</h2>
+        <ul id="file-list" class="account-list">
+        </ul>
+        <div class="add-file">
+            <form id="upload-form" method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <input type="file" name="arquivo" id="arquivo">
+                <button type="submit" class="btn-confirm">Anexar Arquivo</button>
+            </form>            
+        </div>
+    </div>
+</div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+        var createClassModal = document.getElementById("create-class-modal");
+        var deleteClassModal = document.getElementById("delete-class-modal");
+        var closeCreateModal = document.getElementById("close-create-modal");
+        var closeDeleteModal = document.getElementById("close-delete-modal");
+        var createClassForm = document.getElementById("create-class-form");
+        var deleteClassForm = document.getElementById("delete-class-form");
+        var deletePasswordInput = document.getElementById("delete-password-input");
+        var createClassBtn = document.getElementById("create-class-btn");
+        var accountModal = document.getElementById("account-modal");
+        var changeAccountButton = document.getElementById("change-account-btn");
+        var closeModalButton = document.getElementById("close-modal");
+        var accountList = document.querySelector(".account-list");
+        var addAccountButton = document.getElementById("add-account-btn");
+        var newAccountInput = document.getElementById("new-account");
+        var confirmationModal = document.createElement("div");
+        var logoutConfirmationModal = document.createElement("div");
+        var studentsModal = document.getElementById("students-modal");
+        var closeStudentsModal = document.getElementById("close-students-modal");
+        var studentsList = document.getElementById("students-list");
+        var confirmLogoutButton = document.getElementById("confirm-logout-btn");
+        var cancelLogoutButton = document.getElementById("cancel-logout-btn");
+        var confirmChangeButton = document.getElementById("confirm-change-btn");
+        var cancelChangeButton = document.getElementById("cancel-change-btn");
+        var closeStudentsModal = document.getElementById("close-students-modal");
+        var totalStudentsElement = document.getElementById("total-students");
+        var uploadModal = document.getElementById("upload-modal");
+        var closeUploadModal = document.getElementById("close-upload-modal");
+        var attachButtons = document.querySelectorAll(".attach-files");
+        var uploadForm = document.getElementById("upload-form");
+        var fileList = document.getElementById("file-list");
+        var listItem = document.createElement("li");
+        var accountConfirmationModal = document.getElementById("account-confirmation-modal");
+        var closeAccountConfirmationModal = document.getElementById("close-account-confirmation-modal");
+
+
+        let turmaIdToDelete = null;
+        let selectedEmail = null;
+
+        function adicionarItemNaLista(email) {
+            var listItem = document.createElement("li");
+            listItem.setAttribute("data-email", email); // Define o atributo data-email
+            listItem.textContent = email; // Exibe o e-mail no item
+            accountList.appendChild(listItem); // Adiciona o item à lista
+        }
+
+
+        var accountListItems = document.querySelectorAll(".account-list li");
+        // Adiciona o evento ao contêiner
+        accountList.addEventListener("click", (event) => {
+            // Verifica se o elemento clicado é um item da lista (<li>)
+            if (event.target && event.target.tagName === "LI") {
+                selectedEmail = event.target.getAttribute("data-email"); // Captura o e-mail da conta
+                console.log("Conta selecionada (dinâmica):", selectedEmail); // Log para depuração
+
+                if (selectedEmail) {
+                    // Fecha o modal de contas e abre o modal de confirmação
+                    accountModal.style.display = "none";
+                    accountConfirmationModal.style.display = "block";
+                } else {
+                    console.warn("Nenhum e-mail foi selecionado.");
+                }
+            }
+        });
+
+        var confirmChangeButton = document.getElementById("confirm-change-btn");
+
+        confirmChangeButton.addEventListener("click", () => {
+            console.log("Confirmando mudança para:", selectedEmail); // Log para depuração
+
+            if (selectedEmail) {
+                accountConfirmationModal.style.display = "none";
+                const loginUrl = "/auth/login/" + `?email=${encodeURIComponent(selectedEmail)}`;
+                console.log("Redirecionando para:", loginUrl); // Log para depuração
+                window.location.href = loginUrl; // Redireciona
+            } else {
+                alert("Erro: Nenhum e-mail foi selecionado para redirecionamento.");
+            }
+        });
+        
+        window.addEventListener("click", (event) => {
+            if (event.target === logoutConfirmationModal) {
+                logoutConfirmationModal.style.display = "none";
+            }
+        });
+
+        // Fechar modal de confirmação de mudança de conta
+        var accountConfirmationModal = document.getElementById("account-confirmation-modal");
+        var closeAccountConfirmationModal = document.getElementById("close-account-confirmation-modal");
+
+            closeAccountConfirmationModal.addEventListener("click", () => {
+                accountConfirmationModal.style.display = "none";
+            });
+
+            window.addEventListener("click", (event) => {
+                if (event.target === accountConfirmationModal) {
+                    accountConfirmationModal.style.display = "none";
+                }
+            });
+
+            // Fechar modal de gerenciamento de contas
+            var accountModal = document.getElementById("account-modal");
+            var closeAccountModal = document.getElementById("close-account-modal");
+
+            if (closeAccountModal) {
+                closeAccountModal.addEventListener("click", () => {
+                    accountModal.style.display = "none";
+                });
+            }
+
+            window.addEventListener("click", (event) => {
+                if (event.target === accountModal) {
+                    accountModal.style.display = "none";
+                }
+            });
+
+        function getCsrfToken() {
+            var csrfCookie = document.cookie.split("; ").find(row => row.startsWith("csrftoken="));
+            return csrfCookie ? csrfCookie.split("=")[1] : null;
+        }
+
+     // Abrir o modal de upload
+    document.querySelectorAll(".attach-files").forEach((button) => {
+        button.addEventListener("click", () => {
+            var turmaId = button.getAttribute("data-turma-id");
+            uploadForm.setAttribute("action", `/professor_turmas/upload_arquivo/${turmaId}/`);
+            uploadModal.style.display = "block";
+            carregarArquivos(turmaId);
+        });
+    });
+
+    // Fechar modal
+    closeUploadModal.addEventListener("click", () => {
+        uploadModal.style.display = "none";
+    });
+
+    // Carregar arquivos anexados
+    function carregarArquivos(turmaId) {
+        fetch(`/professor_turmas/listar_arquivos/${turmaId}/`)
+            .then((response) => response.json())
+            .then((data) => {
+                fileList.innerHTML = ""; // Limpar lista
+                if (data.success && data.arquivos.length > 0) {
+                    data.arquivos.forEach((arquivo) => {
+                        var listItem = document.createElement("li");
+
+                        // Nome do arquivo como link para download
+                        var fileLink = document.createElement("a");
+                        fileLink.href = arquivo.url; // URL do arquivo para download
+                        fileLink.textContent = arquivo.nome;
+                        fileLink.target = "_blank"; // Abre o download em uma nova aba
+                        fileLink.style.marginRight = "10px";
+                        fileLink.style.color = "#666";
+
+                        listItem.appendChild(fileLink);
+
+                        // Exibir tamanho do arquivo
+                        var fileSize = document.createElement("span");
+                        fileSize.textContent = `(${formatFileSize(arquivo.size)})`;
+                        fileSize.style.color = "#666";
+
+                        listItem.appendChild(fileSize);
+
+                        // Botão "Remover"
+                        var removeButton = document.createElement("button");
+                        removeButton.textContent = "Remover";
+                        removeButton.style.color = "#e72427";
+                        removeButton.style.cursor = "pointer";
+                        removeButton.addEventListener("click", () => {
+                            removerArquivo(arquivo.id, turmaId);
+                        });
+
+                        listItem.appendChild(removeButton);
+                        fileList.appendChild(listItem);
+                    });
+                } else {
+                    fileList.innerHTML = "<li class='empty'>Nenhum arquivo anexado.</li>";
+                }
+            })
+            .catch((error) => console.error("Erro ao carregar arquivos:", error));
+    }
+
+    // Adicionar uma nova conta ao clicar no botão "Adicionar conta"
+var addAccountButton = document.getElementById("add-account-btn");
+var newAccountInput = document.getElementById("new-account");
+addAccountButton.addEventListener("click", (event) => {
+    event.preventDefault(); // Evita comportamento padrão
+    var newAccount = newAccountInput.value.trim();
+    if (!newAccount) {
+        alert("Por favor, insira um e-mail válido.");
+        return;
+    }else{
+        alert("Conta adicionada com sucesso!");
+    };
+
+    fetch("{% url 'listar_contas' %}")
+        .then((response) => response.json())
+        .then((data) => {
+            // Verifica se a conta já existe na lista
+            if (data.contas.includes(newAccount)) {
+                alert("Essa conta já está na lista.");
+                return;
+            }
+
+            // Verifica o limite de contas
+            if (data.contas.length >= 4) {
+                alert("Você atingiu o limite de 4 contas. Remova uma conta para adicionar outra.");
+                return;
+            }
+
+            // Adiciona a nova conta
+            fetch("{% url 'mudar_conta' %}", {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": document.querySelector('[name="csrfmiddlewaretoken"]').value,
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ nova_conta: newAccount }),
+            })
+                .then((response) => response.json())
+                .then((data) => {
+                    if (data.success) {
+                        newAccountInput.value = ""; // Limpar o campo de entrada
+                        fetch("{% url 'listar_contas' %}")
+                            .then((response) => response.json())
+                            .then((updatedData) => {
+                                renderAccounts(updatedData.contas, updatedData.conta_atual);
+                                accountModal.style.display = "block"; // Certifique-se de que o modal de contas permanece aberto
+                            });
+                    } else {
+                        alert(data.message);
+                    }
+                })
+                .catch((error) => {
+                    console.error("Erro ao adicionar conta:", error);
+                });
+        })
+        .catch((error) => {
+            console.error("Erro ao verificar limite de contas:", error);
+        });
+});
+
+    // Função para remover arquivo
+    function removerArquivo(arquivoId, turmaId) {
+        if (confirm("Deseja realmente remover este arquivo?")) {
+            fetch(`/professor_turmas/remover_arquivo/${arquivoId}/`, {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": document.querySelector('[name="csrfmiddlewaretoken"]').value,
+                },
+            })
+                .then((response) => response.json())
+                .then((data) => {
+                    if (data.success) {
+                        alert(data.message);
+                        carregarArquivos(turmaId); // Atualiza a lista de arquivos
+                    } else {
+                        alert("Erro ao remover o arquivo: " + data.message);
+                    }
+                })
+                .catch((error) => {
+                    console.error("Erro ao remover o arquivo:", error);
+                    alert("Erro ao remover o arquivo. Tente novamente.");
+                });
+        }
+    }
+
+    // Submeter formulário de upload
+    uploadForm.addEventListener("submit", function (e) {
+        e.preventDefault();
+
+        var formData = new FormData(this);
+        var turmaId = this.getAttribute("action").split("/")[3]; // Extrair o ID da turma do atributo action
+
+        fetch(this.getAttribute("action"), {
+            method: "POST",
+            body: formData,
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                if (data.success) {
+                    alert(data.message);
+                    carregarArquivos(turmaId); // Recarregar arquivos após o envio
+                } else {
+                    alert("Erro ao anexar arquivo: " + data.message);
+                }
+            })
+            .catch((error) => console.error("Erro ao anexar arquivo:", error));
+    });
+
+    // Fechar modal de alunos ao clicar fora do modal
+    window.addEventListener("click", (event) => {
+        var uploadModal = document.getElementById("upload-modal");
+        if (event.target === uploadModal) {
+            uploadModal.style.display = "none";
+        }
+    });
+
+    // Função para formatar tamanho do arquivo
+    function formatFileSize(size) {
+        var units = ["B", "KB", "MB", "GB", "TB"];
+        let unitIndex = 0;
+
+        while (size >= 1024 && unitIndex < units.length - 1) {
+            size /= 1024;
+            unitIndex++;
+        }
+
+        return `${size.toFixed(2)} ${units[unitIndex]}`;
+    }
+});
+
+        // Fechar modal de alunos ao clicar no "X"
+document.getElementById("close-students-modal").addEventListener("click", () => {
+    document.getElementById("students-modal").style.display = "none";
+});
+
+// Fechar modal de alunos ao clicar fora do modal
+window.addEventListener("click", (event) => {
+    var studentsModal = document.getElementById("students-modal");
+    if (event.target === studentsModal) {
+        studentsModal.style.display = "none";
+    }
+});
+
+// Função para abrir modal e carregar alunos
+function openStudentsModal(turmaId) {
+    fetch(`/turmas/${turmaId}/alunos/`)
+        .then((response) => response.json())
+        .then((data) => {
+            console.log("Dados recebidos do backend:", data); // Verifica os dados recebidos
+
+            var studentsList = document.querySelector(".students-list");
+            var totalStudentsElement = document.getElementById("total-students");
+
+            // Verifica se há alunos
+            if (!data.success) {
+                alert("Erro ao carregar alunos.");
+                return;
+            }
+
+            studentsList.innerHTML = "";
+            totalStudentsElement.textContent = `Total de alunos: ${data.total}`; // Atualiza o total
+
+            if (data.alunos.length > 0) {
+                data.alunos.forEach((aluno, index) => {
+                    var listItem = document.createElement("li");
+                    var alunoInfo = document.createElement("span");
+                    alunoInfo.textContent = `${aluno.nome} (${aluno.email})`;
+
+                    var alunoNumero = document.createElement("span");
+                    alunoNumero.textContent = `${index + 1}`;
+                    alunoNumero.classList.add("student-number");
+
+                    listItem.appendChild(alunoInfo);
+                    listItem.appendChild(alunoNumero);
+
+                    studentsList.appendChild(listItem);
+                });
+            } else {
+                var noStudentsItem = document.createElement("li");
+                noStudentsItem.textContent = "Nenhum aluno encontrado para esta turma.";
+                studentsList.appendChild(noStudentsItem);
+            }
+
+            document.getElementById("students-modal").style.display = "block";
+        })
+        .catch((error) => {
+            console.error("Erro ao carregar alunos:", error);
+            alert("Erro ao carregar a lista de alunos.");
+        });
+}
+
+// Adicionar evento para os botões "Ver alunos"
+document.querySelectorAll(".view-students").forEach((button) => {
+    button.addEventListener("click", () => {
+        var turmaId = button.getAttribute("data-turma-id");
+        console.log(`Botão clicado para a turma: ${turmaId}`); // Depuração
+        if (!turmaId) {
+            alert("ID da turma não encontrado.");
+            return;
+        }
+
+        fetch(`/turmas/${turmaId}/alunos/`)
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error("Erro ao carregar alunos");
+                }
+                return response.json();
+            })
+            .then((data) => {
+                if (data.success && data.alunos.length > 0) {
+                    var studentsList = document.querySelector(".students-list");
+                    studentsList.innerHTML = ""; // Limpa a lista antes de renderizar
+                    data.alunos.forEach((aluno) => {
+                        var li = document.createElement("li");
+                        li.textContent = `${aluno.nome} (${aluno.email})`;
+                        studentsList.appendChild(li);
+                    });
+
+
+                    var studentsModal = document.getElementById("students-modal");
+                    studentsModal.style.display = "block";
+                } else if (data.success && data.alunos.length === 0) {
+                    alert("Nenhum aluno encontrado para esta turma.");
+                } else {
+                    alert("Erro ao carregar alunos: " + data.message);
+                }
+            })
+            .catch((error) => {
+                console.error("Erro ao carregar alunos:", error);
+                alert("Erro ao carregar a lista de alunos.");
+            });
+    });
+});
+
+        var logoutConfirmationModal = document.createElement("div");    
+        var accountModal = document.getElementById("account-modal");
+        var confirmationModal = document.createElement("div");
+        // Função para fechar todos os modais
+        function closeAllModals() {
+            accountModal.style.display = "none";
+            confirmationModal.style.display = "none";
+            logoutConfirmationModal.style.display = "none";
+            deleteClassModal.style.display = "none";
+        }
+        var createClassBtn = document.getElementById("create-class-btn");
+        // Abrir modal de criação de turma
+        createClassBtn.addEventListener("click", () => {
+            closeAllModals();
+            createClassModal.style.display = "block";
+        });
+
+        var closeCreateModal = document.getElementById("close-create-modal");
+        // Fechar modal de criação
+        closeCreateModal.addEventListener("click", () => {
+            createClassModal.style.display = "none";
+        });
+
+        var createClassModal = document.getElementById("create-class-modal");
+        // Fechar modal de criação ao clicar fora
+        window.addEventListener("click", (event) => {
+            if (event.target === createClassModal) {
+                createClassModal.style.display = "none";
+            }
+        });
+
+        var closeModalButton = document.getElementById("close-modal");
+        // Fechar modal ao clicar no "X"
+        closeModalButton.addEventListener("click", (event) => {
+            event.stopPropagation();
+            document.getElementById("account-modal").style.display = "none";
+        });
+
+        window.addEventListener("click", (event) => {
+            if (event.target === accountModal) {
+                accountModal.style.display = "none";
+            }
+        });
+
+        window.addEventListener("click", (event) => {
+            if (event.target === confirmationModal) {
+                confirmationModal.style.display = "none";
+            }
+        });
+
+        // Abrir modal de exclusão
+        function openDeleteModal(turmaId) {
+            closeAllModals();
+            turmaIdToDelete = turmaId;
+            deleteClassModal.style.display = "block";
+        }
+
+        var closeDeleteModal = document.getElementById("close-delete-modal");
+        // Fechar modal de exclusão
+        closeDeleteModal.addEventListener("click", () => {
+            deleteClassModal.style.display = "none";
+            turmaIdToDelete = null;
+        });
+
+        var deleteClassModal = document.getElementById("delete-class-modal");
+        // Fechar modal de exclusão ao clicar fora
+        window.addEventListener("click", (event) => {
+            if (event.target === deleteClassModal) {
+                deleteClassModal.style.display = "none";
+                turmaIdToDelete = null;
+            }
+        });
+
+        var deleteClassModal = document.getElementById("delete-class-modal");
+        // Fechar modal de exclusão ao clicar fora
+        window.addEventListener("click", (event) => {
+            if (event.target === deleteClassModal) {
+                deleteClassModal.style.display = "none";
+                turmaIdToDelete = null;
+            }
+        });
+
+        var createClassForm = document.getElementById("create-class-form");
+        // Submeter formulário de criação de turma
+        createClassForm.addEventListener("submit", (event) => {
+            event.preventDefault();
+
+            var formData = new FormData(createClassForm);
+
+            fetch("/professor_turmas/criar/", {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": document.querySelector('[name="csrfmiddlewaretoken"]').value,
+                },
+                body: formData,
+            })
+                .then((response) => response.json())
+                .then((data) => {
+                    if (data.success) {
+                        alert("Turma criada com sucesso.");
+                        createClassModal.style.display = "none";
+                        window.location.reload(); // Atualiza a página
+                    } else {
+                        alert("Erro ao criar turma: " + data.message);
+                    }
+                })
+                .catch((error) => {
+                    console.error("Erro ao criar turma:", error);
+                    alert("Erro ao criar turma. Reinicie a página e tente novamente.");
+                });
+        });
+
+        var deleteClassForm = document.getElementById("delete-class-form");
+        deleteClassForm.addEventListener("submit", (event) => {
+            event.preventDefault();
+
+            var deletePasswordInput = document.getElementById("delete-password-input");
+            var password = deletePasswordInput.value.trim();
+            if (!password) {
+                alert("Por favor, insira sua senha.");
+                return;
+            }
+
+            fetch(`/professor_turmas/excluir_turma/${turmaIdToDelete}/`, {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": document.querySelector('[name="csrfmiddlewaretoken"]').value,
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ senha: password }),
+            })
+                .then((response) => response.json())
+                .then((data) => {
+                    if (data.success) {
+                        alert("Turma excluída com sucesso.");
+                        deleteClassModal.style.display = "none";
+                        window.location.reload(); // Atualiza a página
+                    } else {
+                        alert("Erro ao excluir turma: " + data.message);
+                    }
+                })
+                .catch((error) => {
+                    console.error("Erro ao excluir turma:", error);
+                    alert("Erro ao excluir turma. Reinicie a página e tente novamente.");
+                })
+                .finally(() => {
+                    deletePasswordInput.value = ""; // Limpa o campo de senha
+                    turmaIdToDelete = null; // Limpa o ID da turma
+                });
+        });
+
+        // Capturar o evento de clique nos botões de exclusão
+        document.querySelectorAll(".cancel").forEach((button) => {
+            button.addEventListener("click", (event) => {
+                event.preventDefault(); // Impede o comportamento padrão de redirecionamento
+
+                var turmaId = button.getAttribute("data-turma-id");
+                var turmaName = button.getAttribute("data-turma-name");
+
+                // Abre o modal de exclusão
+                openDeleteModal(turmaId, turmaName);
+            });
+        });
+
+
+
+        // Função para renderizar a lista de contas no modal
+        var accountList = document.querySelector(".account-list");
+        function renderAccounts(accounts, currentEmail) {
+    accountList.innerHTML = ""; // Limpa a lista atual
+    if (accounts.length === 0) {
+        accountList.innerHTML = "<li class='empty'>Nenhuma conta adicionada.</li>";
+    } else {
+        accounts.forEach((account) => {
+            var listItem = document.createElement("li");
+            listItem.textContent = account;
+            listItem.setAttribute("data-email", account);
+
+            // Indicar qual é a conta atual
+            if (account === currentEmail) {
+                listItem.textContent += " (atual)";
+                listItem.classList.add("current-account");
+
+                // Prevenir a exibição do modal de confirmação ao clicar na conta atual
+                listItem.addEventListener("click", () => {
+                    alert("Você já está logado com essa conta.");
+                    event.stopPropagation()
+                });
+            } else {
+                // Botão "Remover" para contas que não são a atual
+                var removeButton = document.createElement("button");
+                removeButton.textContent = "Remover";
+                removeButton.style.marginLeft = "10px";
+                removeButton.style.color = "#e72427";
+                removeButton.style.cursor = "pointer";
+
+                removeButton.addEventListener("click", (event) => {
+                    event.stopPropagation(); // Impedir seleção acidental de conta
+                    removeAccount(account); // Remove diretamente
+                });
+
+                listItem.appendChild(removeButton);
+
+                // Exibir modal de confirmação ao clicar em contas diferentes da atual
+                listItem.addEventListener("click", () => {
+                    selectedEmail = account;
+                    closeAllModals();
+                    document.getElementById("account-confirmation-modal").style.display = "block";
+                });
+            }
+
+            accountList.appendChild(listItem);
+        });
+    }
+}
+
+
+
+
+// Abrir modal de gerenciamento de contas
+var changeAccountButton = document.getElementById("change-account-btn");
+changeAccountButton.addEventListener("click", () => {
+    closeAllModals(); // Fecha outros modais abertos
+    accountModal.style.display = "block"; // Exibe o modal de contas
+
+
+    fetch("/turmas/listar-contas/")
+    .then((response) => response.json())
+    .then((data) => {
+        console.log("Dados recebidos do servidor:", data); // Adicione este log
+        if (data.success) {
+            renderAccounts(data.contas, data.conta_atual);
+        } else {
+            alert("Erro ao carregar contas: " + data.message);
+        }
+    })
+    .catch((error) => console.error("Erro ao carregar contas:", error));
+
+});
+
+// Verificar se o clique foi fora do modal
+if (confirmationModal && !confirmationModal.contains(event.target)) {
+        confirmationModal.style.display = "none";
+    }
+    if (accountModal && !accountModal.contains(event.target)) {
+        accountModal.style.display = "none";
+    }
+
+
+    closeConfirmationModal.addEventListener("click", () => {
+        confirmationModal.style.display = "none";
+    });
+
+    window.addEventListener("click", (event) => {
+        if (event.target === confirmationModal) {
+            confirmationModal.style.display = "none";
+        }
+    });
+    function removeAccount(email) {
+        fetch("{% url 'remover_conta' %}", {
+            method: "POST",
+            headers: {
+                "X-CSRFToken": document.querySelector('[name="csrfmiddlewaretoken"]').value,
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ conta: email }),
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                if (data.success) {
+                    alert("Conta removida com sucesso.");
+                    // Atualizar a lista de contas sem fechar o modal
+                    fetch("{% url 'listar_contas' %}")
+                        .then((response) => response.json())
+                        .then((updatedData) => {
+                            renderAccounts(updatedData.contas, updatedData.conta_atual);
+                        });
+                } else {
+                    alert(data.message);
+                }
+            })
+            .catch((error) => {
+                console.error("Erro ao remover conta:", error);
+            });
+
+};
+
+</script>
+</body>
+</html>

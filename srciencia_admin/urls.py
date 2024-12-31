@@ -1,19 +1,4 @@
-"""
-URL configuration for srciencia_admin project.
 
-The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/5.1/topics/http/urls/
-Examples:
-Function views
-    1. Add an import:  from my_app import views
-    2. Add a URL to urlpatterns:  path('', views.home, name='home')
-Class-based views
-    1. Add an import:  from other_app.views import Home
-    2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
-Including another URLconf
-    1. Import the include() function: from django.urls import include, path
-    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
-"""
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.conf import settings
@@ -21,6 +6,9 @@ from django.urls import path
 from django.conf.urls import include
 from django.contrib.auth import views as auth_views
 from srciencia_core.views.adminView import get_topicos, get_conteudos
+from srciencia_core.views.Visualizar_alunosView import *
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -31,4 +19,11 @@ urlpatterns = [
     path('api/conteudos/<int:disciplina_id>/', get_conteudos, name='get_conteudos'),
     path('api/topicos/<int:conteudo_id>/', get_topicos, name='get_topicos'),
     path("ckeditor5/", include('django_ckeditor_5.urls')),
-]+ static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    path('pagina_inicial/', include('srciencia_core.urls.Pagina_inicialUrls')),
+    path('turmas/', include('srciencia_core.urls.TurmasUrls')),
+    path('professor_turmas/', include('srciencia_core.urls.Professor_turmasUrls')),
+    path('turmas/<int:turma_id>/alunos/', listar_alunos_turma, name='listar_alunos_turma'),
+] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+if settings.DEBUG: 
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
