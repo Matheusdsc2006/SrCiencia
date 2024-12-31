@@ -227,17 +227,39 @@
         var confirmChangeButton = document.getElementById("confirm-change-btn");
 
         confirmChangeButton.addEventListener("click", () => {
-            console.log("Confirmando mudança para:", selectedEmail); // Log para depuração
+    console.log("Confirmando mudança para:", selectedEmail); // Log para depuração
 
-            if (selectedEmail) {
-                accountConfirmationModal.style.display = "none";
-                const loginUrl = "/auth/login/" + `?email=${encodeURIComponent(selectedEmail)}`;
-                console.log("Redirecionando para:", loginUrl); // Log para depuração
-                window.location.href = loginUrl; // Redireciona
-            } else {
-                alert("Erro: Nenhum e-mail foi selecionado para redirecionamento.");
-            }
-        });
+    if (selectedEmail) {
+        // Enviar requisição ao backend para confirmar a mudança de conta
+        fetch("{% url 'confirmar_mudanca_conta' %}", {
+            method: "POST",
+            headers: {
+                "X-CSRFToken": getCsrfToken(),
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ nova_conta: selectedEmail }),
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                if (data.success) {
+                    console.log("Mudança confirmada no backend.");
+                    accountConfirmationModal.style.display = "none";
+                    // Redirecionar para o login com a conta selecionada
+                    const loginUrl = "/auth/login/" + `?email=${encodeURIComponent(selectedEmail)}`;
+                    window.location.href = loginUrl;
+                } else {
+                    alert("Erro ao mudar de conta: " + data.message);
+                }
+            })
+            .catch((error) => {
+                console.error("Erro ao confirmar mudança de conta:", error);
+                alert("Erro ao confirmar mudança de conta. Tente novamente.");
+            });
+    } else {
+        alert("Erro: Nenhum e-mail foi selecionado para redirecionamento.");
+    }
+});
+
         
         window.addEventListener("click", (event) => {
             if (event.target === logoutConfirmationModal) {
@@ -344,15 +366,22 @@
     // Adicionar uma nova conta ao clicar no botão "Adicionar conta"
 var addAccountButton = document.getElementById("add-account-btn");
 var newAccountInput = document.getElementById("new-account");
+// Adicionar uma nova conta ao clicar no botão "Adicionar conta"
+var addAccountButton = document.getElementById("add-account-btn");
+var newAccountInput = document.getElementById("new-account");
+ // Adicionar uma nova conta ao clicar no botão "Adicionar conta"
+ var addAccountButton = document.getElementById("add-account-btn");
+var newAccountInput = document.getElementById("new-account");
+ // Adicionar uma nova conta ao clicar no botão "Adicionar conta"
+ var addAccountButton = document.getElementById("add-account-btn");
+var newAccountInput = document.getElementById("new-account");
 addAccountButton.addEventListener("click", (event) => {
     event.preventDefault(); // Evita comportamento padrão
     var newAccount = newAccountInput.value.trim();
     if (!newAccount) {
         alert("Por favor, insira um e-mail válido.");
         return;
-    }else{
-        alert("Conta adicionada com sucesso!");
-    };
+    }
 
     fetch("{% url 'listar_contas' %}")
         .then((response) => response.json())
@@ -382,6 +411,11 @@ addAccountButton.addEventListener("click", (event) => {
                 .then((data) => {
                     if (data.success) {
                         newAccountInput.value = ""; // Limpar o campo de entrada
+
+                        // Exibe a mensagem de sucesso  
+                        alert("Conta adicionada com sucesso!");
+
+                        // Atualizar a lista de contas no modal
                         fetch("{% url 'listar_contas' %}")
                             .then((response) => response.json())
                             .then((updatedData) => {
@@ -400,6 +434,10 @@ addAccountButton.addEventListener("click", (event) => {
             console.error("Erro ao verificar limite de contas:", error);
         });
 });
+
+
+
+
 
     // Função para remover arquivo
     function removerArquivo(arquivoId, turmaId) {

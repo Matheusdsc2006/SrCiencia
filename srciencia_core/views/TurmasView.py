@@ -8,8 +8,7 @@ from django.views.decorators.http import require_POST
 
 @login_required
 def turmas_view(request):
-    if request.user.is_staff:
-        # Para professores, renderizar uma página personalizada
+    if request.user.perfil == 3: 
         turmas = Turma.objects.filter(professor=request.user)
         turmas_com_dados = [
             {
@@ -21,24 +20,26 @@ def turmas_view(request):
             for turma in turmas
         ]
         return render(request, "professor_turmas.html", {"turmas": turmas_com_dados})
+    
+    elif request.user.perfil == 2:  
+        conta_atual = request.session.get("conta_atual", request.user.email)
+        turmas = TurmaAluno.objects.filter(aluno=request.user, visivel=True).select_related("turma", "turma__professor")
+        turmas_com_dados = [
+            {
+                "id": turma.turma.id,
+                "nome": turma.turma.nome,
+                "descricao": turma.turma.descricao,
+                "professor__username": turma.turma.professor.username if turma.turma.professor else "Desconhecido",
+            }
+            for turma in turmas
+        ]
+        return render(request, "turmas.html", {
+            "turmas": turmas_com_dados,
+            "conta_atual": conta_atual,
+        })
+    
+    return redirect('pagina_inicial')
 
-    # Para alunos, exibir apenas turmas em que estão inscritos
-    conta_atual = request.session.get("conta_atual", request.user.email)
-    turmas = TurmaAluno.objects.filter(aluno=request.user, visivel=True).select_related("turma", "turma__professor")
-    turmas_com_dados = [
-        {
-            "id": turma.turma.id,
-            "nome": turma.turma.nome,
-            "descricao": turma.turma.descricao,
-            "professor__username": turma.turma.professor.username if turma.turma.professor else "Desconhecido",
-        }
-        for turma in turmas
-    ]
-
-    return render(request, "turmas.html", {
-        "turmas": turmas_com_dados,
-        "conta_atual": conta_atual,
-    })
 
 @login_required
 def listar_turmas(request):
@@ -61,37 +62,52 @@ def mudar_conta(request):
             nova_conta = body.get("nova_conta")
 
             if nova_conta:
-                # Obter o modelo de usuário personalizado
                 User = get_user_model()
 
                 # Verificar se o email pertence a um usuário cadastrado
                 if not User.objects.filter(email=nova_conta).exists():
                     return JsonResponse({"success": False, "message": "Conta não encontrada. Cadastre-se antes de adicioná-la."})
 
-                # Atualizar a conta atual na sessão
-                request.session["conta_atual"] = request.session.get("conta_atual", nova_conta)
-                request.session.modified = True
-
                 # Atualizar a lista de contas, sem duplicar
                 contas = request.session.get("contas", [])
                 if nova_conta not in contas:
                     contas.append(nova_conta)
+                    request.session["contas"] = contas
+                    request.session.modified = True
 
-                # Marcar a última conta adicionada
-                request.session["ultima_conta_adicionada"] = nova_conta
-                request.session["contas"] = contas
-
-                return JsonResponse({
-                    "success": True, 
-                    "message": "Conta adicionada com sucesso.",
-                    "nova_conta": nova_conta
-                })
+                # Não altera a conta atual aqui. Apenas adiciona à lista.
+                return JsonResponse({"success": True, "message": "Conta adicionada com sucesso."})
 
             return JsonResponse({"success": False, "message": "Nenhuma conta fornecida."})
         except Exception as e:
             return JsonResponse({"success": False, "message": f"Erro interno: {str(e)}"})
 
     return JsonResponse({"success": False, "message": "Método inválido."})
+
+@login_required
+def confirmar_mudanca_conta(request):
+    if request.method == "POST":
+        try:
+            body = json.loads(request.body.decode("utf-8"))
+            nova_conta = body.get("nova_conta")
+
+            if nova_conta:
+                contas = request.session.get("contas", [])
+                if nova_conta not in contas:
+                    return JsonResponse({"success": False, "message": "Conta não encontrada na lista. Adicione-a primeiro."})
+
+                request.session["conta_atual"] = nova_conta
+                request.session.modified = True
+
+                return JsonResponse({"success": True, "message": "Conta atual alterada com sucesso."})
+
+            return JsonResponse({"success": False, "message": "Nenhuma conta fornecida."})
+        except Exception as e:
+            return JsonResponse({"success": False, "message": f"Erro interno: {str(e)}"})
+
+    return JsonResponse({"success": False, "message": "Método inválido."})
+
+
 
 def remover_conta(request):
     if request.method == "POST":

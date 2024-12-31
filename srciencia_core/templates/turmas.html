@@ -538,37 +538,38 @@
 
 
         submitButton.addEventListener("click", () => {
-            console.log("Botão de submeter código da turma clicado.");
-            var codigoTurma = inputCodigoTurma.value.trim();
+    console.log("Botão de submeter código da turma clicado.");
+    var codigoTurma = inputCodigoTurma.value.trim();
 
-            if (!codigoTurma) {
-                alert("Por favor, insira um código de turma.");
-                return;
+    if (!codigoTurma) {
+        alert("Por favor, insira um código de turma.");
+        return;
+    }
+
+    fetch("{% url 'verificar_codigo_turma' %}", {
+        method: "POST",
+        headers: {
+            "X-CSRFToken": document.querySelector('[name="csrf-token"]').content,
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ codigo_turma: codigoTurma }),
+    })
+        .then((response) => response.json())
+        .then((data) => {
+            if (data.success) {
+                alert(data.message);
+                // Recarregar a página ao adicionar turma com sucesso
+                window.location.reload();
+            } else {
+                alert(data.message);
             }
-
-            fetch("{% url 'verificar_codigo_turma' %}", {
-                method: "POST",
-                headers: {
-                    "X-CSRFToken": document.querySelector('[name="csrf-token"]').content,
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ codigo_turma: codigoTurma }),
-            })
-                .then((response) => response.json())
-                .then((data) => {
-                    if (data.success) {
-                        renderTurma(data.turma);
-                        alert(data.message);
-                    } else {
-                        alert(data.message);
-                    }
-                })
-                .catch((error) => {
-                    console.error("Erro ao verificar o código da turma:", error);
-                    alert("Erro ao verificar o código da turma. Tente novamente.");
-                });
+        })
+        .catch((error) => {
+            console.error("Erro ao verificar o código da turma:", error);
+            alert("Erro ao verificar o código da turma. Tente novamente.");
         });
-    });
+});
+
 
     function cancelarInscricao(turmaId) {
         fetch(`/turmas/${turmaId}/cancelar/`, {
@@ -662,7 +663,6 @@
 
     };
 
-    let selectedEmail = null;
     var confirmRemoveButton = document.getElementById("confirm-remove-btn");
     // Confirmar remoção da conta atual
     confirmRemoveButton.addEventListener("click", () => {
@@ -746,6 +746,7 @@
 
         return `${size.toFixed(2)} ${units[unitIndex]}`;
     }
+    });
 
 </script>
 

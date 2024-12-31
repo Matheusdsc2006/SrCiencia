@@ -8,6 +8,7 @@ urlpatterns = [
     path("remover-conta/", remover_conta, name="remover_conta"),
     path('listar-contas/', listar_contas, name='listar_contas'),
     path("listar_turmas/", listar_turmas, name="listar_turmas"),
+    path('confirmar-mudanca-conta/', confirmar_mudanca_conta, name='confirmar_mudanca_conta'),
     path("verificar_codigo_turma/", verificar_codigo_turma, name="verificar_codigo_turma"),
     path("<int:turma_id>/cancelar/", cancelar_inscricao, name="cancelar_inscricao"),
 ]

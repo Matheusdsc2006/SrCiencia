@@ -11,15 +11,16 @@ def register(request, professor=False):
         if form.is_valid():
             user = form.save(commit=False)
             user.first_name, user.last_name = split_full_name(form.cleaned_data['nome'])
-            user.perfil = 3 if professor else 2
+            user.perfil = 3 if professor else 2 
+            user.is_staff = professor
             user.situacao = 'Regular'
             user.save()
-            user.backend = 'django.contrib.auth.backends.ModelBackend'
             login(request, user)
             return redirect('pagina_inicial')
     else:
         form = UsuarioCreationForm()
-    return render(request, 'auth/cadastro.html', {'form': form, 'professor': professor})
+    return render(request, './auth/cadastro.html', {'form': form, 'professor': professor})
+
 
 def register_professor(request):
     return register(request, professor=True)
