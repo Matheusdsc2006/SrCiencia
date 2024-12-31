@@ -28,7 +28,7 @@ main{
 #icon-eye-off {
     position: absolute;
     right: 1rem;
-    top: 73%;
+    top: 50%;
     transform: translateY(-50%);
     cursor: pointer;
     width: 25px;
@@ -167,6 +167,20 @@ main{
     display: flex;
     flex-direction: column;
     gap: 1rem;
+}
+
+.back-link {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--color-primary-purple);
+    text-decoration: none;
+    margin-right: 1rem;
+    transition: color 0.3s;
+    margin-right: 120px;
+}
+
+.back-link:hover {
+    color: var(--color-dark-purple);
 }
 
 

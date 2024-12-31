@@ -23,44 +23,82 @@
     --box-shadow: 0 0px 10px rgba(0, 0, 0, 0.2);
 }
 
-html, body{
+html, body {
     display: flex;
     flex-direction: column;
     min-height: 100dvh;
 }
 
-main{
+main {
     flex-grow: 1;
 }
 
-.container {
-    max-width: 80em;
-    padding: 0 2rem;
-    margin: 0 auto;
-    width: 100%;
-}
-
 header {
-    display: flex;
-    flex-shrink: 0;
-    justify-content: center;
-    padding: 1rem 0;
+    padding: 0.3rem 0;
     box-shadow: var(--box-shadow);
     background-color: var(--color-white);
     z-index: 1;
 }
 
-header .container {
+.header-container {
     display: flex;
-    justify-content: center;
+    align-items: center;
+    justify-content: space-between;
+    max-width: 80rem;
+    margin: 0 auto;
+    padding: 0 2rem;
+    position: relative;
 }
 
-header .logo{
+
+.logo-container {
+    flex: 1;
+    text-align: center;
+}
+
+.nav-links {
     display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+.nav-links a {
+    color: var(--color-dark-gray);
+    font-size: 1rem;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.auth-link{
+    margin-right: 100px;
+}
+
+.nav-links a:hover {
+    color: var(--color-primary-purple);
 }
 
 header .logo img {
+    margin-top: 15px;
     height: 3rem;
+}
+
+.prof {
+    cursor: pointer;
+    padding: 0.5rem 2rem;
+    border: none;
+    background-color: var(--color-primary-purple);
+    border-radius: 5px;
+    color: var(--color-white);
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    position: absolute;
+    right: 2rem; 
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.prof:hover {
+    background-color: var(--color-dark-purple);
 }
 
 footer {
@@ -85,11 +123,11 @@ footer .footer-content {
     width: 100%;
 }
 
-footer .footer-logo{
+footer .footer-logo {
     width: 25%;
 }
 
-footer .footer-logo img{
+footer .footer-logo img {
     width: 100%;
 }
 
@@ -126,25 +164,25 @@ footer .footer-copyright {
     text-align: center;
 }
 
-footer .footer-copyright a{
+footer .footer-copyright a {
     font-size: 1rem;
     text-decoration: none;
     color: var(--color-white);
-    transition: .3s all;
+    transition: 0.3s all;
 }
 
-footer .footer-copyright a:hover{
-    color: var(--color-medium-gray)
+footer .footer-copyright a:hover {
+    color: var(--color-medium-gray);
 }
 
-@media (min-width: 769px) and (max-width: 1024px){
-
-    footer .footer-logo{
+@media (min-width: 769px) and (max-width: 1024px) {
+    footer .footer-logo {
         width: 30%;
     }
 
-    footer .footer-column-title, footer .footer-copyright a{
-        font-size: .9rem;
+    footer .footer-column-title,
+    footer .footer-copyright a {
+        font-size: 0.9rem;
     }
 
     footer .footer-column-list li {
@@ -154,11 +192,86 @@ footer .footer-copyright a:hover{
     footer .footer-column {
         width: 30%;
     }
+    .header-container {
+        flex-direction: column;
+        align-items: center;
+    }
 
+    .header-button .prof {
+        position: relative;
+        top: auto;
+        right: auto;
+        transform: none;
+        margin-top: 1rem;
+    }
 }
-@media (max-width: 768px){
 
-    footer .footer-logo{
+.header-button {
+    position: absolute;
+    top: 1rem;
+    right: 2rem;
+}
+
+.toggle-role-button {
+    display: inline-block;
+    background-color: var(--color-primary-purple);
+    color: var(--color-white);
+    padding: 0.5rem 1.5rem;
+    border-radius: 5px;
+    text-decoration: none;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+.toggle-role-button:hover {
+    background-color: var(--color-dark-purple);
+    transform: scale(1.05);
+}
+
+#call-to-register button {
+    cursor: pointer;
+    padding: 0.5rem 2rem;
+    border: none;
+    border-radius: 5px;
+    background-color: var(--color-dark-purple-gray);
+    color: var(--color-white);
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    height: 50px;
+}
+
+#call-to-login button{
+    cursor: pointer;
+    padding: 0.5rem 2rem;
+    border: 1px solid var(--color-dark-purple-gray);
+    border-radius: 5px;
+    background-color: var(--color-white);
+    color: var(--color-dark-purple-gray);
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    height: 50px;
+}
+
+#call-to-register button:hover {
+    background-color: black;
+    box-shadow: var(--box-shadow);
+}
+
+#call-to-login button:hover{
+    box-shadow: var(--box-shadow);
+    border: 2px solid black;
+}
+
+/* Espaçamento entre os botões */
+#call-to-login, #call-to-register {
+    display: inline-block;
+    margin: 0.5rem;
+}
+
+
+
+
+@media (max-width: 768px) {
+    footer .footer-logo {
         width: 100%;
         max-width: 15em;
     }
@@ -178,5 +291,4 @@ footer .footer-copyright a:hover{
     footer .footer-column {
         width: 100%;
     }
-
 }

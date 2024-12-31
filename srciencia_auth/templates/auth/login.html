@@ -42,7 +42,7 @@
                 {% endif %}
     
                 <div class="form-group submit">
-                    <p class="auth-link register-link">Não possui uma conta? <a href="{% url 'cadastro' %}">Fazer Cadastro</a></p>
+                    <p class="auth-link register-link" id="auth-linkregister">Não possui uma conta? <a href="{% url 'cadastro' %}">Fazer Cadastro</a></p>
                     <button type="submit">Entrar</button>
                 </div>
             </form>
@@ -61,7 +61,4 @@
             }
         });
     </script>    
-{% endblock %}
-
-{% block scripts %}
 {% endblock %}

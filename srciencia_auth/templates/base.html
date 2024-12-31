@@ -11,13 +11,15 @@
     </head>
     <body>
         <header>
-            <div class="container">
-                <a href="{% url 'home' %}">
+            <div class="header-container">
+                <a href="{% url 'home' %}" class="logo-container">
                     <h1 class="logo">
                         <img src="{% static 'assets/logo_sr_ciencia.svg' %}" alt="Logotipo do Sr. Ciência">
                     </h1>
                 </a>
-                {% block nav %}{% endblock %}
+                {% block nav %}
+                <a href="{% url 'cadastro_professor' %}" class="prof">Sou Professor</a>
+                {% endblock %}
             </div>
         </header>
         
@@ -58,7 +60,7 @@
                 </div>
 
                 <div class="footer-copyright">
-                    <a href = "https://portal.ifrn.edu.br/" target="_blank">&copy; IFRN 2024 - Todos os direitos reservados.</a>
+                    <a href="https://portal.ifrn.edu.br/" target="_blank">&copy; IFRN 2024 - Todos os direitos reservados.</a>
                 </div>
             </div>
         </footer>

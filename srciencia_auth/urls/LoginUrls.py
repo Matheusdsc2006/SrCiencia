@@ -1,11 +1,12 @@
 from django.urls import path, reverse_lazy
 from django.contrib.auth import views as auth_views
-from srciencia_auth.views.LoginView import login_view
-from srciencia_auth.views.CadastroView import register
+from srciencia_auth.views.LoginView import *
+from srciencia_auth.views.CadastroView import *
 
 urlpatterns = [
     path("login/", login_view, name="login"),
     path("cadastro/", register, name="cadastro"),
+    path("cadastro_professor/", register_professor, name="cadastro_professor"),
 
     # URLs para redefinição de senha
     path("password_reset/", auth_views.PasswordResetView.as_view(
