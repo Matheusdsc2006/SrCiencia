@@ -1,0 +1,91 @@
+{% extends "admin/base-admin.html" %}
+{% load static %}
+{% block styles %}
+<link rel="stylesheet" href="{% static 'css/questoes.css' %}">
+{% endblock %}
+
+{% block content %}
+<main>
+    <h2>{% if questao_form.instance.pk %}Editar Questão{% else %}Nova Questão{% endif %}</h2>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        
+        <div>
+            <label for="{{ questao_form.descricao.id_for_label }}">Descrição:</label>
+            {{ questao_form.descricao }}
+        </div>
+        <div class="select-boxes">
+            <div>
+                <label for="{{ questao_form.banca.id_for_label }}">Banca:</label>
+                {{ questao_form.banca }}
+            </div>
+            <div>
+                <label for="{{ questao_form.disciplina.id_for_label }}">Disciplina:</label>
+                {{ questao_form.disciplina }}
+            </div>
+            <div>
+                <label for="{{ questao_form.conteudo.id_for_label }}">Conteúdo:</label>
+                {{ questao_form.conteudo }}
+            </div>
+            <div>
+                <label for="{{ questao_form.topico.id_for_label }}">Tópico:</label>
+                {{ questao_form.topico }}
+            </div>
+        </div>
+        <div>
+            <label for="{{ questao_form.resolucao.id_for_label }}">Resolução:</label>
+            {{ questao_form.resolucao }}
+        </div>
+
+        <h3>Alternativas</h3>
+        {{ formset.management_form }}
+        <div class="alternativas">
+            {% for form in formset %}
+                <div class="alternativa">
+                    <div class="input-alternativa">
+                        <div class="descricao-alternativa">
+                            {{ form.descricao }}
+                        </div>
+                        <div class="correta-alternativa">
+                            {{ form.correta }}
+                        </div>
+                        <div class="imagem-alternativa">
+                            <label for="id_form-{{ forloop.counter0 }}-imagem">
+                                <img src="{% static 'assets/camera.svg' %}" id="uploadIcon_{{ forloop.counter }}" style="cursor: pointer" alt="">
+                            </label>
+                            {{ form.imagem }}
+                            <script>
+                                var imagemInput = document.getElementById("id_form-{{ forloop.counter0 }}-imagem");
+                                imagemInput.setAttribute('onchange', 'previewImage(event, ' + {{ forloop.counter }} + ')');
+                            </script>
+                        </div>
+                    </div>
+                    <div class="imagePreview" id="imagePreview_{{ forloop.counter }}">
+                        {% if form.instance.imagem %}
+                            <!-- Se a imagem já existe, mostra a imagem associada -->
+                            <img id="imagePreviewImg_{{ forloop.counter }}" src="{{ form.instance.imagem.url }}" alt="Pré-visualização" style="display: block;"/>
+                        {% else %}
+                            <!-- Se não, mantém a pré-visualização oculta -->
+                            <img id="imagePreviewImg_{{ forloop.counter }}" src="" alt="Pré-visualização" style="display: none;"/>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        <div>
+            <button type="submit" class="btn btn-primary">Salvar</button>
+            <a href="{% url 'questao_list' %}" class="btn btn-secondary">Cancelar</a>
+        </div>
+    </form>
+
+    <script>
+        MathJax.typeset();
+    </script>
+</main>
+{% endblock %}
+
+
+{% block scripts %}
+    {{ questao_form.media }}
+    <script src="{% static 'js/questao-form.js' %}"></script>
+{% endblock %}

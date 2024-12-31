@@ -1,0 +1,103 @@
+header .container{
+    flex-direction: column;
+    justify-content: flex-start;
+    gap: 2rem;
+    padding: 2rem;
+}
+body{
+    display: flex;
+    flex-direction: row;
+}
+body{
+    background-color: var(--color-light-purple);
+}
+
+header .menu-core ul{
+    list-style-type: none;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+header .menu-core ul li{
+    padding: .5rem 1.5rem;
+    border-radius: 50px;
+    transition: .3s all;
+    cursor: pointer;
+}
+
+header .menu-core ul li.active, header .menu-core ul li:hover{
+    background-color: var(--color-light-gray);
+}
+
+header .menu-core ul li a{
+    color: var(--color-dark-purple-gray);
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+header .menu-core ul li.button-logout a{
+    color: var(--color-red);
+}
+
+main{
+    padding: 3rem 3rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    max-width: 60rem;
+}
+
+main h2{
+    font-size: 2rem;
+    font-weight: 600;
+}
+
+.btn{
+    padding: .5rem 3rem;
+    border-radius: 5px;
+    width: fit-content;
+    border: none;
+    font-size: 1rem;
+}
+
+.btn-primary{
+    background-color: var(--color-primary-purple);
+    color: var(--color-white);
+}
+
+.btn-danger{
+    background-color: var(--color-red);
+    color: var(--color-white);
+}
+
+.card{
+    background: var(--color-white);
+    padding: 1rem 2rem;
+    border-radius: 10px;
+    list-style-type: none;
+}
+
+select{
+    padding: .3rem .5rem;
+    border-radius: 10px;
+}
+.ck-word-count{
+    color: var(--color-dark-gray)
+}
+
+.select-boxes{
+    display: flex;
+    gap: 20px;
+}
+
+.select-boxes select{
+    width: 100%;
+}
+label{
+    font-weight: 500;
+}
+.list-crud{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}

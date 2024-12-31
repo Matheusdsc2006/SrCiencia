@@ -1,0 +1,18 @@
+{% extends "base-core.html" %}
+{% load static %}
+
+{% block nav %}
+<nav class="menu-core">
+    <ul>
+        <li class="{% if '/app/u/0/questoes' in request.path %}active{% endif %}">
+            <a href="{% url 'questao_list' %}">Questões</a>
+        </li>
+        <li class="{% if request.path == '/forum/' %}active{% endif %}">
+            <a href="">Usuários</a>
+        </li>
+        <li class="button-logout">
+            <a href="{% url 'logout' %}">Sair</a>
+        </li>
+    </ul>
+</nav>
+{% endblock %}

@@ -1,0 +1,14 @@
+{% extends "admin/base-admin.html" %}
+{% load static %}
+
+{% block content %}
+<main>
+    <h2>Tem certeza de que deseja excluir esta questão?</h2>
+    <p>{{ questao.descricao | safe }}</p>
+    <form method="post">
+      {% csrf_token %}
+      <button type="submit" class="btn btn-danger">Sim, apagar</button>
+      <a href="{% url 'questao_list' %}" class="btn btn-secondary">Cancelar</a>
+    </form>
+</main>
+{% endblock %}
