@@ -29,68 +29,6 @@ main {
     display: flex;
 }
 
-/* Barra Lateral */
-.sidebar {
-    width: 240px; /* Define a largura fixa do menu lateral */
-    background-color: var(--white);
-    height: 100vh;
-    position: fixed; /* Mantém o menu fixado à esquerda */
-    padding: 20px;
-    box-shadow: 2px 0 6px rgba(0, 0, 0, 0.1);
-}
-
-.logo img {
-    width: 100%;
-    max-width: 200px;
-    margin: 15px 0px 10px 10px;
-}
-
-.sidebar nav ul {
-    list-style: none;
-    padding: 0;
-}
-
-.sidebar nav ul li {
-    margin-bottom: 20px;
-}
-
-.sidebar nav ul li a {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    padding: 10px;
-    text-decoration: none;
-    color: var(--gray);
-    border-radius: 8px;
-    transition: background-color 0.3s ease, color 0.3s ease;
-}
-
-.sidebar nav ul li a img {
-    width: 20px;
-    height: 20px;
-}
-
-.sidebar nav ul li a:hover {
-    background-color: var(--light-purple);
-    color: var(--dark-purple);
-}
-
-.sidebar nav ul li a.active {
-    background-color: var(--light-purple);
-    color: var(--dark-purple);
-    font-weight: bold;
-}
-
-.sidebar nav ul li a.logout {
-    color: var(--danger-red);
-    font-weight: bold;
-}
-
-.logout {
-    color: #ff4d4f;
-    font-weight: bold;
-}
-
 /* Área usuário */
 /* Cabeçalho */
 .header {
@@ -111,25 +49,6 @@ main {
     color: #5e2a8a; /* Roxo padrão */
 }
 
-/* Contêiner do Usuário */
-.header-user {
-    background-color: white;
-    width: 370px;
-    height: 60px;
-    border-radius: 5px; /* Bordas arredondadas */
-    display: flex;
-    align-items: center;
-    padding: 0 15px; /* Espaçamento interno */
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Sombra leve */
-}
-
-/* Informações do Usuário */
-.user-info {
-    display: flex;
-    align-items: center;
-    gap: 15px; /* Espaço entre elementos */
-}
-
 .premium {
     background-color: black;
     color: white;
@@ -145,12 +64,6 @@ main {
     font-weight: bold;
 }
 
-.user-avatar {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%; /* Avatar circular */
-    border: 2px solid #5e2a8a; /* Borda roxa */
-}
 
 
 /* Grid Principal */

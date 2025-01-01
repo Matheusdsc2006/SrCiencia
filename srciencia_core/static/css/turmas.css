@@ -21,15 +21,6 @@ body {
     display: flex;
 }
 
-.main-container {
-    margin-left: 310px;
-    padding: 2rem;
-    display: flex;
-    flex-direction: column;
-    gap: 2rem;
-    max-width: 1200px;
-}
-
 
 .header {
     display: flex;
@@ -63,58 +54,6 @@ body {
     width: 385px;
 }
 
-.header-user {
-    display: flex;
-    align-items: center;
-    gap: 1.5rem;
-}
-
-.user-info {
-    display: flex;
-    align-items: center;
-    gap: 0.8rem;
-}
-
-.user-avatar img {
-    border-radius: 50%;
-    width: 50px;
-    margin-right: -40px;
-    margin-left: 10px;
-}
-
-.user-name {
-    font-size: 1rem;
-    font-weight: bold;
-    color: var(--gray);
-    margin: 0;
-}
-
-.user-email {
-    font-size: 0.9rem;
-    max-width: 200px;
-    color: var(--gray);
-    margin: 0;
-}
-
-.change-account {
-    padding: 0.8rem 1.5rem;
-    font-size: 1rem;
-    color: var(--primary-purple);
-    background-color: var(--white);
-    border: 2px solid var(--primary-purple);
-    border-radius: 5px;
-    cursor: pointer;
-    transition: all 0.3s;
-    margin-left: 10px;
-    margin-right: 30px;
-    width: 170px;
-    margin-left: 40px;
-}
-
-.change-account:hover {
-    background-color: var(--primary-purple);
-    color: var(--white);
-}
 
 button {
     padding: 0.5rem 1rem;
@@ -207,62 +146,6 @@ button:hover {
     border-top: 4px solid var(--orange);
 }
 
-/* Menu Lateral */
-.sidebar {
-    width: 240px; /* Define a largura fixa do menu lateral */
-    background-color: var(--white);
-    height: 100vh;
-    position: fixed; /* Mantém o menu fixado à esquerda */
-    padding: 20px;
-    box-shadow: 2px 0 6px rgba(0, 0, 0, 0.1);
-}
-
-.logo img {
-    width: 100%;
-    max-width: 200px;
-    margin: 15px 0px 10px 10px;
-}
-
-.sidebar nav ul {
-    list-style: none;
-    padding: 0;
-}
-
-.sidebar nav ul li {
-    margin-bottom: 20px;
-}
-
-.sidebar nav ul li a {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    padding: 10px;
-    text-decoration: none;
-    color: var(--gray);
-    border-radius: 8px;
-    transition: background-color 0.3s ease, color 0.3s ease;
-}
-
-.sidebar nav ul li a img {
-    width: 20px;
-    height: 20px;
-}
-
-.sidebar nav ul li a:hover {
-    background-color: var(--light-purple);
-    color: var(--dark-purple);
-}
-
-.sidebar nav ul li a.active {
-    background-color: var(--light-purple);
-    color: var(--dark-purple);
-    font-weight: bold;
-}
-
-.sidebar nav ul li a.logout {
-    color: var(--danger-red);
-    font-weight: bold;
-}
 
 /* Estilos para o Modal */
 /* Atualização para o design dos modais */

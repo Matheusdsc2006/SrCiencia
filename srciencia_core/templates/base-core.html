@@ -12,13 +12,30 @@
     </head>
     <body>
         <header>
-            <div id="icon-container"></div>
-            <div class="container">
-                <h1 class="logo"><img src="{% static 'assets/logo_sr_ciencia.svg' %}" alt=""></h1>
-                {% block nav %}
-                {% endblock %}
-            </div>
+                <aside class="sidebar">
+                    <div class="logo">
+                        <img src="{% static 'assets/sr_ciencia.svg' %}" alt="SR. Ciência" style="margin-top: 12px;">
+                    </div>
+                    <nav style="margin-top: -4px;">
+                        <ul>
+                            <li><a href="{% url 'pagina_inicial' %}" class="{% if active_menu == 'pagina_inicial' %}active{% endif %}">
+                                <img src="{% static 'assets/home.svg' %}" alt="">Página inicial
+                            </a></li>
+                            <li><a href="#"><img src="{% static 'assets/profile.svg' %}" alt="">Meu perfil</a></li>
+                            <li><a href="#"><img src="{% static 'assets/practice.svg' %}" alt="">Praticar</a></li>
+                            <li><a href="{% url 'turmas' %}" class="{% if active_menu == 'turmas' %}active{% endif %}">
+                                <img src="{% static 'assets/classes.svg' %}" alt="">Turmas
+                            </a></li>
+                            <li><a href="#"><img src="{% static 'assets/forum.svg' %}" alt="">Fórum</a></li>
+                            <li><a href="#"><img src="{% static 'assets/help.svg' %}" alt="">Ajuda</a></li>
+                            <li><a href="{% url 'login' %}" class="logout">
+                                <img src="{% static 'assets/logout.svg' %}" alt="">Sair
+                            </a></li>
+                        </ul>
+                    </nav>
+                </aside>
         </header>
+        
         
         {% block content %}{% endblock %}
         

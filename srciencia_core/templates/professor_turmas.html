@@ -6,6 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SR. Ciência - Professor</title>
     <link rel="stylesheet" href="{% static 'css/professor_turmas.css' %}">
+    <link rel="stylesheet" href="{% static 'css/global.css' %}">
+    <link rel="stylesheet" href="{% static 'css/global-core.css' %}">
 </head>
 <body>
     <div class="container">
@@ -22,7 +24,7 @@
                     <li><a href="{% if user.is_staff %}{% url 'professor_turmas' %}{% else %}{% url 'turmas' %}{% endif %}" class="active"><img src="{% static 'assets/classes.svg' %}" alt="">Turmas</a></li>
                     <li><a href="#"><img src="{% static 'assets/forum.svg' %}" alt="">Fórum</a></li>
                     <li><a href="#"><img src="{% static 'assets/help.svg' %}" alt="">Ajuda</a></li>
-                    <li><a href="{% url 'login' %}" class="logout" style="color: #e72427;"><img src="{% static 'assets/logout.svg' %}" alt="">Sair</a></li>
+                    <li><a href="{% url 'login' %}" class="logout"><img src="{% static 'assets/logout.svg' %}" alt="">Sair</a></li>
                 </ul>
             </nav>
         </aside>

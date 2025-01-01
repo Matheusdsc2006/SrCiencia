@@ -6,6 +6,8 @@
     <title>SR. Ciência - Página Inicial</title>
     {% load static %}
     <link rel="stylesheet" href="{% static 'css/pagina_inicial.css' %}">
+    <link rel="stylesheet" href="{% static 'css/global.css' %}">
+    <link rel="stylesheet" href="{% static 'css/global-core.css' %}">
 </head>
 <body>
     <div class="container">
@@ -22,7 +24,7 @@
                     <li><a href="{% if user.is_staff %}{% url 'turmas' %}{% else %}{% url 'turmas' %}{% endif %}" class="{% if active_menu == 'turmas' %}active{% endif %}"><img src="{% static 'assets/classes.svg' %}" alt="">Turmas</a></li>
                     <li><a href="#"><img src="{% static 'assets/forum.svg' %}" alt="">Fórum</a></li>
                     <li><a href="#"><img src="{% static 'assets/help.svg' %}" alt="">Ajuda</a></li>
-                    <li><a href="{% url 'login' %}" class="logout" style="color: #e72427;"><img src="{% static 'assets/logout.svg' %}" alt="">Sair</a></li>
+                    <li><a href="{% url 'login' %}" class="logout"><img src="{% static 'assets/logout.svg' %}" alt="">Sair</a></li>
                 </ul>
             </nav>
         </aside>
