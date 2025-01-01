@@ -4,9 +4,9 @@ fetch('sr-ciencia.json')
                 const container = document.getElementById('icon-container');
                 data.icons.forEach(icon => {
                     const img = document.createElement('img');
-                    img.src = icon.url;  // Use a propriedade correta do seu JSON
+                    img.src = icon.url;
                     img.alt = icon.name;
-                    img.style.width = '50px'; // Defina um tamanho desejado
+                    img.style.width = '50px';
                     img.style.height = '50px';
                     container.appendChild(img);
                 });

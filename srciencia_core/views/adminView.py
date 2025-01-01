@@ -9,7 +9,7 @@ from srciencia_core.models import Conteudo, Topico
 
 def questao_list(request):
     questoes = Questao.objects.all()
-    return render(request, "admin/questoes/questao_list.html", {"questoes": questoes})
+    return render(request, "admin/questao_list.html", {"questoes": questoes})
 
 def questao_create(request):
     AlternativaFormSet = modelformset_factory(Alternativa, form=AlternativaForm, extra=5)
@@ -26,7 +26,7 @@ def questao_create(request):
     else:
         questao_form = QuestaoForm()
         formset = AlternativaFormSet(queryset=Alternativa.objects.none())
-    return render(request, "admin/questoes/questao_form.html", {"questao_form": questao_form, "formset": formset})
+    return render(request, "admin/questao_form.html", {"questao_form": questao_form, "formset": formset})
 
 def questao_update(request, pk):
     questao = get_object_or_404(Questao, pk=pk)
@@ -41,14 +41,14 @@ def questao_update(request, pk):
     else:
         questao_form = QuestaoForm(instance=questao)
         formset = AlternativaFormSet(queryset=questao.alternativas.all())
-    return render(request, "admin/questoes/questao_form.html", {"questao_form": questao_form, "formset": formset})
+    return render(request, "admin/questao_form.html", {"questao_form": questao_form, "formset": formset})
 
 def questao_delete(request, pk):
     questao = get_object_or_404(Questao, pk=pk)
     if request.method == "POST":
         questao.delete()
         return redirect("questao_list")
-    return render(request, "admin/questoes/questao_confirm_delete.html", {"questao": questao})
+    return render(request, "admin/questao_confirm_delete.html", {"questao": questao})
 
 
 @api_view(['GET'])

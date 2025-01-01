@@ -20,7 +20,7 @@
                 <ul>
                     <li><a href="{% url 'pagina_inicial' %}"><img src="{% static 'assets/home.svg' %}" alt="">Página inicial</a></li>
                     <li><a href="#"><img src="{% static 'assets/profile.svg' %}" alt="">Meu perfil</a></li>
-                    <li><a href="#"><img src="{% static 'assets/practice.svg' %}" alt="">Praticar</a></li>
+                    <li><a href="{% url 'questao_list' %}"><img src="{% static 'assets/practice.svg' %}" alt="">Praticar</a></li>
                     <li><a href="{% if user.is_staff %}{% url 'professor_turmas' %}{% else %}{% url 'turmas' %}{% endif %}" class="active"><img src="{% static 'assets/classes.svg' %}" alt="">Turmas</a></li>
                     <li><a href="#"><img src="{% static 'assets/forum.svg' %}" alt="">Fórum</a></li>
                     <li><a href="#"><img src="{% static 'assets/help.svg' %}" alt="">Ajuda</a></li>
@@ -82,7 +82,7 @@
             <h2>Criar nova turma</h2>
             <form id="create-class-form">
                 <label for="class-name" class="disciplina">Disciplina:</label>
-                <input type="text" id="class-name" name="class_name" placeholder="Digite a disciplina" required />
+                <input type="text" id="class-name" name="class_name" placeholder="Ex. Física II" required />
 
                 <label for="class-description" class="turma">Turma/Turno:</label>
                 <input id="class-description" name="class_description" placeholder="Ex. Eletrotécnica - 2V" required />
@@ -100,10 +100,14 @@
         <h2>Como segurança, confirme sua senha</h2>
         <form id="delete-class-form">
             {% csrf_token %}
-            <input type="password" id="delete-password-input" placeholder="Digite sua senha" class="senha" required>
+            <div class="form-group">
+                <label for="delete-password-input">Senha:</label>
+                <input type="password" id="delete-password-input" placeholder="Digite sua senha" class="senha" required>
+                <img id="icon-eye-show-delete-password" src="{% static 'assets/eye-show.svg' %}" alt="Mostrar senha" class="eye-icon">
+                <img id="icon-eye-off-delete-password" src="{% static 'assets/eye-off.svg' %}" alt="Ocultar senha" class="eye-icon" style="display: none;">
+            </div>
             <button type="submit" class="btn-confirm">Confirmar</button>
         </form>
-        
     </div>
 </div>
 
@@ -195,10 +199,27 @@
         var listItem = document.createElement("li");
         var accountConfirmationModal = document.getElementById("account-confirmation-modal");
         var closeAccountConfirmationModal = document.getElementById("close-account-confirmation-modal");
+        var deletePasswordInput = document.getElementById("delete-password-input");
+        var eyeShowDeletePassword = document.getElementById("icon-eye-show-delete-password");
+        var eyeOffDeletePassword = document.getElementById("icon-eye-off-delete-password");
 
 
         let turmaIdToDelete = null;
         let selectedEmail = null;
+
+        function toggleDeletePasswordVisibility() {
+            if (deletePasswordInput.type === "password") {
+                deletePasswordInput.type = "text";
+                eyeShowDeletePassword.style.display = "none";
+                eyeOffDeletePassword.style.display = "inline";
+            } else {
+                deletePasswordInput.type = "password";
+                eyeShowDeletePassword.style.display = "inline";
+                eyeOffDeletePassword.style.display = "none";
+            }
+        }
+        eyeShowDeletePassword.addEventListener("click", toggleDeletePasswordVisibility);
+        eyeOffDeletePassword.addEventListener("click", toggleDeletePasswordVisibility);
 
         function adicionarItemNaLista(email) {
             var listItem = document.createElement("li");
@@ -247,7 +268,7 @@
                     console.log("Mudança confirmada no backend.");
                     accountConfirmationModal.style.display = "none";
                     // Redirecionar para o login com a conta selecionada
-                    const loginUrl = "/auth/login/" + `?email=${encodeURIComponent(selectedEmail)}`;
+                    var loginUrl = "/auth/login/" + `?email=${encodeURIComponent(selectedEmail)}`;
                     window.location.href = loginUrl;
                 } else {
                     alert("Erro ao mudar de conta: " + data.message);
@@ -899,7 +920,6 @@ if (confirmationModal && !confirmationModal.contains(event.target)) {
             .catch((error) => {
                 console.error("Erro ao remover conta:", error);
             });
-
 };
 
 </script>
