@@ -30,7 +30,7 @@
         </aside>
 
         <!-- Conteúdo Principal -->
-        <main class="main-container">
+        <main class="main-container" style="margin-left: 55px;">
             <div class="header">
                 <div class="header-input">
                     <p class="cod">* Repasse o código aos alunos</p>
@@ -100,16 +100,19 @@
         <h2>Como segurança, confirme sua senha</h2>
         <form id="delete-class-form">
             {% csrf_token %}
-            <div class="form-group">
-                <label for="delete-password-input">Senha:</label>
-                <input type="password" id="delete-password-input" placeholder="Digite sua senha" class="senha" required>
-                <img id="icon-eye-show-delete-password" src="{% static 'assets/eye-show.svg' %}" alt="Mostrar senha" class="eye-icon">
-                <img id="icon-eye-off-delete-password" src="{% static 'assets/eye-off.svg' %}" alt="Ocultar senha" class="eye-icon" style="display: none;">
+            <div class="input-wrapper">
+                <label for="delete-password-input" class="senha">Senha:</label>
+                <input type="password" id="delete-password-input" placeholder="Digite sua senha" required>
+                <button type="button" id="toggle-password-visibility" class="eye-icon">
+                    <img id="icon-eye-show-delete-password" src="{% static 'assets/eye-show.svg' %}" alt="Mostrar senha">
+                    <img id="icon-eye-off-delete-password" src="{% static 'assets/eye-off.svg' %}" alt="Ocultar senha" style="display: none;">
+                </button>
             </div>
             <button type="submit" class="btn-confirm">Confirmar</button>
         </form>
     </div>
 </div>
+
 
 <!-- Modal de Mudar conta -->
 <div id="account-modal" class="modal">

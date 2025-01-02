@@ -5,14 +5,14 @@
 {% block content %}
 <main>
     <h2>Questões</h2>
-    <a href="{% url 'questao_create' %}" class="btn btn-primary">Adicionar questão</a>
+    <a href="{% url 'questao_create' %}" class="btn btn-add">Adicionar questão</a>
     <ul id="questoes" class="list-crud">
       {% for questao in questoes %}
         <li class="card">
             <div class="questao-descricao">
                 {{ questao.descricao|safe }}
             </div>
-          <a href="{% url 'questao_update' questao.pk %}" class="btn btn-primary">Editar questão</a>
+          <a href="{% url 'questao_update' questao.pk %}" class="btn btn-edit">Editar questão</a>
           <form action="{% url 'questao_delete' questao.pk %}" method="get" style="display:inline;">
             {% csrf_token %}
             <button type="submit" class="btn btn-danger">Apagar questão</button>

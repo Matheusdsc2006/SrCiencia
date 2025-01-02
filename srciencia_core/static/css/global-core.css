@@ -78,16 +78,88 @@ main h2{
     font-size: 1rem;
 }
 
-.btn-primary{
-    background-color: var(--color-primary-purple);
-    color: var(--color-white);
+.btn-edit {
+    background-color: var(--primary-purple);
+    color: var(--white);
+    cursor: pointer;
+    padding: .5rem 3rem;
+    border-radius: 5px;
+    width: fit-content;
+    border: none;
+    font-size: 1rem;
+    transition: background-color 0.3s ease;
 }
+
+.btn-edit:hover {
+    background-color: var(--dark-purple); 
+}
+
 
 .btn-danger{
     background-color: var(--color-red);
     color: var(--color-white);
     cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease; 
 }
+
+.btn-danger:hover{
+    background-color: var(--color-red);
+    background-color: darkred; 
+}
+
+.btn-add {
+    background-color: var(--primary-purple); 
+    color: var(--white);
+    cursor: pointer;
+    padding: .5rem 3rem;
+    border-radius: 5px;
+    width: fit-content;
+    border: none;
+    font-size: 1rem;
+    transition: background-color 0.3s ease;
+}
+
+.btn-add:hover {
+    background-color: var(--dark-purple);
+}
+
+.btn-cancel {
+    display: inline-block;
+    text-align: center; 
+    background-color: var(--color-red);
+    color: var(--white); 
+    cursor: pointer;
+    padding: .5rem 3rem; 
+    border-radius: 5px; 
+    text-decoration: none; 
+    font-size: 1rem; 
+    border: none; 
+    transition: background-color 0.3s ease, color 0.3s ease; 
+}
+
+.btn-cancel:hover {
+    background-color: darkred; 
+    color: var(--white);
+}
+
+.btn-save {
+    display: inline-block;
+    text-align: center;
+    background-color: var(--primary-purple); 
+    color: var(--white); 
+    cursor: pointer; 
+    padding: .5rem 3rem; 
+    border-radius: 5px;
+    font-size: 1rem; 
+    border: none; 
+    transition: background-color 0.3s ease, color 0.3s ease; 
+}
+
+.btn-save:hover {
+    background-color: var(--dark-purple);
+    color: var(--white);
+}
+
 
 .card{
     background: var(--color-white);
@@ -276,6 +348,36 @@ label{
 .input-wrapper button:hover {
     background-color: var(--dark-purple);
 }
+
+.input-wrapper .eye-icon {
+    position: absolute;
+    right: 10px;
+    top: 72%;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    margin: 0;
+    transition: none;
+}
+
+.input-wrapper .eye-icon:hover {
+    background: none;
+    border: none;
+}
+
+.input-wrapper .eye-icon img {
+    width: 20px;
+    height: 20px;
+    display: block;
+    filter: none; 
+}
+
+.input-wrapper .eye-icon img:hover {
+    filter: none;
+}
+
+
 
 .cards {
     display: grid;

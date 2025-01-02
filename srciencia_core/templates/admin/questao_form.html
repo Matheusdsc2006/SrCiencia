@@ -58,8 +58,8 @@
                             {{ form.imagem }}
                             <script>
                                 var imagemInput = document.getElementById("id_form-{{ forloop.counter0 }}-imagem");
-                                imagemInput.setAttribute('onchange', 'previewImage(event, ' + {{ forloop.counter }} + ')');
-                            </script>
+                                imagemInput.setAttribute('onchange', `previewImage(event, {{ forloop.counter|stringformat:"d" }})`);
+                            </script>                            
                         </div>
                     </div>
                     <div class="imagePreview" id="imagePreview_{{ forloop.counter }}">
@@ -75,8 +75,8 @@
             {% endfor %}
         </div>
         <div>
-            <button type="submit" class="btn btn-primary">Salvar</button>
-            <a href="{% url 'questao_list' %}" class="btn btn-secondary">Cancelar</a>
+            <button type="submit" class="btn btn-save">Salvar</button>
+            <a href="{% url 'questao_list' %}" class="btn btn-cancel">Cancelar</a>
         </div>
     </form>
 
