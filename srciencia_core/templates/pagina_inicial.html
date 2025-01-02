@@ -31,50 +31,54 @@
 
         <!-- Conteúdo Principal -->
         <main>
-            <div class="welcome">
-                <h1>Bem-vindo, <span class="highlight">Lucas</span></h1>
-            </div>
-            <div class="header">
-                <div class="header-user">
-                    <div class="user-info">
-                        <div class="user-avatar">
-                            <figure>
-                                <img src="{% static 'assets/user.avif' %}" alt="Usuário">
-                            </figure>
+            <div class="main-container">
+                <!-- Header -->
+                <div class="header-container">
+                    <h1 class="welcome">Bem-vindo, <span class="highlight">Lucas</span></h1>
+                    <div class="header-card">
+                        <div class="user-info">
+                            <div class="user-avatar">
+                                <figure>
+                                    <img src="{% static 'assets/user.avif' %}" alt="Usuário">
+                                </figure>
+                            </div>
+                            <div>
+                                <p class="user-name">{{ user.username }}</p>
+                                <p class="user-email">{{ user.email }}</p>
+                            </div>
                         </div>
-                        <div>
-                            <p class="user-name">{{ user.username }}</p>
-                            <p class="user-email">{{ user.email }}</p>
-                        </div>
+                        <button id="change-account-btn" class="change-account">Mudar de conta</button>
                     </div>
                 </div>
-                <button id="change-account-btn" class="change-account">Mudar de conta</button>
-            </div>                          
+                <div class="content-grid">
+                    <!-- Coluna Esquerda e Direita -->
+                    <!-- Código existente permanece o mesmo -->
+                </div>
+            </div>
+                                                              
             <div class="content-grid">
                 <!-- Coluna Esquerda -->
                 <section class="left-column">
                     <section class="activities">
-                        <h2>Atividades pendentes</h2>
-                        <div class="card-container">
-                            <!-- Atividade Física II -->
-                            <div class="activity-card">
-                                <h3>Física II</h3>
-                                <p>Eletrodinâmica</p>
-                                <p>Até dia 31/03</p>
-                                <p><img src="{% static 'assets/questions.svg' %}" alt="icone_q"> 20 questões</p>
-                                <p><img src="{% static 'assets/time.svg' %}" alt="icone_t"> Indefinido</p>
-                                <button>Iniciar tarefa</button>
-                            </div>
-                            <!-- Atividade Química II -->
-                            <div class="activity-card">
-                                <h3>Química II</h3>
-                                <p>Eletroquímica</p>
-                                <p>Até dia 17/04</p>
-                                <p><img src="{% static 'assets/questions.svg' %}" alt="icone_q"> 20 questões</p>
-                                <p><img src="{% static 'assets/time.svg' %}" alt="icone_t"> 40 min</p>
-                                <button>Iniciar tarefa</button>
-                            </div>
-                        </div>
+                        <section class="pending-items">
+                            {% if anexos_pendentes %}
+                                <h2>Anexos pendentes</h2>
+                                {% for turma in anexos_pendentes %}
+                                    <div class="pending-attachments">
+                                        <h3>{{ turma.turma }}</h3>
+                                        <ul>
+                                            {% for anexo in turma.anexos %}
+                                                <li data-anexo-id="{{ anexo.id }}">{{ anexo.nome }} - <a href="{{ anexo.url }}" target="_blank">Visualizar</a></li>
+                                            {% endfor %}
+                                        </ul>
+                                        <button class="view-attachments" data-turma-id="{{ turma.id }}">Ver anexos</button>
+                                    </div>
+                                {% endfor %}
+                            {% else %}
+                                <h2>Anexos pendentes</h2>
+                                <!-- Renderize anexos pendentes aqui -->
+                            {% endif %}
+                        </section>                        
                     </section>
 
                     <section class="practicing">
@@ -121,5 +125,26 @@
             </div>
         </main>
     </div>
+<script>
+        document.querySelectorAll('.view-attachments').forEach(button => {
+        button.addEventListener('click', function() {
+            const turmaId = this.getAttribute('data-turma-id');
+            const anexosIds = [...this.closest('.pending-attachments').querySelectorAll('li')].map(li => li.dataset.anexoId);
+
+            fetch('/marcar_anexos_vistos/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+                },
+                body: JSON.stringify({ anexos_ids: anexosIds })
+            }).then(response => response.json()).then(data => {
+                if (data.success) {
+                    alert("Anexos marcados como visualizados.");
+                }
+            });
+        });
+    });
+</script>
 </body>
 </html>

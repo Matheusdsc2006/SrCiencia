@@ -3,12 +3,12 @@
 <link rel="stylesheet" href="{% static 'css/global.css' %}">
 <link rel="stylesheet" href="{% static 'css/global-core.css' %}">
 {% block content %}
-<main>
+<main>  
     <h2>Questões</h2>
     <a href="{% url 'questao_create' %}" class="btn btn-add">Adicionar questão</a>
     <ul id="questoes" class="list-crud">
       {% for questao in questoes %}
-        <li class="card">
+        <li class="card" style="margin-bottom: 20px;">
             <div class="questao-descricao">
                 {{ questao.descricao|safe }}
             </div>

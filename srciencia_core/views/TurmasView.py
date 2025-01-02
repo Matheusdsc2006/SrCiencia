@@ -3,7 +3,7 @@ from django.http import JsonResponse
 import json
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
-from srciencia_core.models.Turma import Turma, TurmaAluno
+from srciencia_core.models.Turma import Turma, TurmaAluno, Arquivo
 from django.views.decorators.http import require_POST
 
 @login_required
@@ -175,3 +175,37 @@ def cancelar_inscricao(request, turma_id):
         except TurmaAluno.DoesNotExist:
             return JsonResponse({"success": False, "message": "Você não está inscrito nesta turma."})
     return JsonResponse({"success": False, "message": "Método inválido."})
+
+@login_required
+def listar_anexos_pendentes(request):
+    aluno = request.user
+    turmas = TurmaAluno.objects.filter(aluno=aluno, visivel=True).select_related('turma')
+    pendentes = []
+
+    for turma_aluno in turmas:
+        turma = turma_aluno.turma
+        anexos_nao_vistos = Arquivo.objects.filter(turma=turma).exclude(visualizado_por=aluno)
+        if anexos_nao_vistos.exists():
+            pendentes.append({
+                "turma": turma.nome,
+                "anexos": [
+                    {"id": anexo.id, "nome": anexo.nome, "url": anexo.arquivo.url}
+                    for anexo in anexos_nao_vistos
+                ]
+            })
+
+    return JsonResponse({"success": True, "pendentes": pendentes})
+
+@login_required
+def marcar_anexos_vistos(request):
+    if request.method == "POST":
+        anexos_ids = request.POST.getlist('anexos_ids[]', [])
+        anexos = Arquivo.objects.filter(id__in=anexos_ids)
+
+        for anexo in anexos:
+            anexo.visualizado_por.add(request.user)
+
+        return JsonResponse({"success": True, "message": "Anexos marcados como visualizados."})
+
+    return JsonResponse({"success": False, "message": "Método inválido."})
+

@@ -11,4 +11,6 @@ urlpatterns = [
     path('confirmar-mudanca-conta/', confirmar_mudanca_conta, name='confirmar_mudanca_conta'),
     path("verificar_codigo_turma/", verificar_codigo_turma, name="verificar_codigo_turma"),
     path("<int:turma_id>/cancelar/", cancelar_inscricao, name="cancelar_inscricao"),
+    path('listar_anexos_pendentes/', listar_anexos_pendentes, name='listar_anexos_pendentes'),
+    path('marcar_anexos_vistos/', marcar_anexos_vistos, name='marcar_anexos_vistos'),
 ]

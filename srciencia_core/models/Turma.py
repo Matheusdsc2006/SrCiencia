@@ -30,3 +30,8 @@ class Arquivo(models.Model):
     arquivo = models.FileField(upload_to='uploads/%Y/%m/%d/')
     nome = models.CharField(max_length=255)
     enviado_em = models.DateTimeField(auto_now_add=True)
+    visualizado_por = models.ManyToManyField(User, related_name="arquivos_visualizados", blank=True)
+
+    def __str__(self):
+        return self.nome
+

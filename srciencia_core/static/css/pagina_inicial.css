@@ -29,18 +29,6 @@ main {
     min-height: 100vh;
 }
 
-
-.welcome h1 {
-    font-size: 2rem;
-    font-weight: bold;
-    color: var(--dark-purple);
-    margin: 0;
-}
-
-.welcome .highlight {
-    color: var(--primary-purple);
-}
-
 .premium {
     background-color: black;
     color: var(--white);
@@ -209,4 +197,46 @@ button:hover {
     color: var(--danger-red);
     font-weight: bold;
 }
+
+
+/* Container principal */
+.main-container {
+    max-width: 1200px;
+    margin: 0 auto; 
+    padding: 0 20px; 
+}
+
+/* Header container */
+.header-container {
+    display: flex;
+    justify-content: space-between; 
+    align-items: center; 
+    margin-bottom: 20px; 
+    padding: 0; 
+}
+
+/* Card da direita */
+.header-card {
+    background-color: var(--white);
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    width: 620px;
+}
+
+.welcome {
+    font-size: 2rem;
+    font-weight: bold;
+    color: var(--dark-purple);
+    margin-right: 60px;
+    width: 200px;
+}
+
+.highlight{
+    color: var(--primary-purple);
+}
+
+
 

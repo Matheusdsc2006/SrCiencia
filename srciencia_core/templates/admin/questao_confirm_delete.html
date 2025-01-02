@@ -4,8 +4,10 @@
 <link rel="stylesheet" href="{% static 'css/global-core.css' %}">
 {% block content %}
 <main>
-    <h2>Tem certeza de que deseja excluir esta questão?</h2>
-    <p>{{ questao.descricao | safe }}</p>
+    <h2 class="certeza">Tem certeza de que deseja excluir esta questão?</h2>
+    <div class="container-exclusao">
+      <p>{{ questao.descricao | safe }}</p>
+    </div>
     <form method="post">
       {% csrf_token %}
       <button type="submit" class="btn btn-save">Sim, apagar</button>
