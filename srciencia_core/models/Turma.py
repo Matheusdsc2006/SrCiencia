@@ -25,6 +25,9 @@ class Turma(models.Model):
     def __str__(self):
         return self.nome
     
+import os
+from django.utils.timezone import localtime
+
 class Arquivo(models.Model):
     turma = models.ForeignKey('Turma', on_delete=models.CASCADE, related_name='arquivos')
     arquivo = models.FileField(upload_to='uploads/%Y/%m/%d/')
@@ -34,4 +37,16 @@ class Arquivo(models.Model):
 
     def __str__(self):
         return self.nome
+
+    def tamanho_formatado(self):
+        tamanho_bytes = self.arquivo.size
+        for unidade in ['B', 'KB', 'MB', 'GB']:
+            if tamanho_bytes < 1024:
+                return f"{tamanho_bytes:.2f} {unidade}"
+            tamanho_bytes /= 1024
+
+    def data_hora_formatada(self):
+        return localtime(self.enviado_em).strftime('%d/%m/%Y %H:%M')
+
+
 

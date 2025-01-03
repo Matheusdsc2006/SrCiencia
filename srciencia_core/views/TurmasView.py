@@ -5,6 +5,8 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
 from srciencia_core.models.Turma import Turma, TurmaAluno, Arquivo
 from django.views.decorators.http import require_POST
+from django.shortcuts import get_object_or_404
+from django.views.decorators.csrf import csrf_exempt
 
 @login_required
 def turmas_view(request):
@@ -178,34 +180,58 @@ def cancelar_inscricao(request, turma_id):
 
 @login_required
 def listar_anexos_pendentes(request):
-    aluno = request.user
-    turmas = TurmaAluno.objects.filter(aluno=aluno, visivel=True).select_related('turma')
-    pendentes = []
+    if request.user.is_authenticated:
+        turmas = request.user.turmas.all()
+        pendentes = []
 
-    for turma_aluno in turmas:
-        turma = turma_aluno.turma
-        anexos_nao_vistos = Arquivo.objects.filter(turma=turma).exclude(visualizado_por=aluno)
-        if anexos_nao_vistos.exists():
-            pendentes.append({
-                "turma": turma.nome,
-                "anexos": [
-                    {"id": anexo.id, "nome": anexo.nome, "url": anexo.arquivo.url}
-                    for anexo in anexos_nao_vistos
-                ]
-            })
+        for turma in turmas:
+            anexos_nao_vistos = turma.arquivos.exclude(visualizado_por=request.user)
+            if anexos_nao_vistos.exists():
+                turma_anexos = {
+                    "turma": turma.nome,
+                    "anexos": [
+                        {
+                            "id": anexo.id,
+                            "nome": anexo.nome,
+                            "url": anexo.arquivo.url,
+                            "data_hora": anexo.data_hora_formatada(),
+                            "tamanho": anexo.tamanho_formatado()
+                        } for anexo in anexos_nao_vistos
+                    ],
+                }
+                pendentes.append(turma_anexos)
 
-    return JsonResponse({"success": True, "pendentes": pendentes})
+        return JsonResponse({"success": True, "pendentes": pendentes})
+    return JsonResponse({"success": False, "message": "Usuário não autenticado."})
 
+
+
+@require_POST
 @login_required
-def marcar_anexos_vistos(request):
+@csrf_exempt
+def marcar_arquivo_como_visto(request):
     if request.method == "POST":
-        anexos_ids = request.POST.getlist('anexos_ids[]', [])
-        anexos = Arquivo.objects.filter(id__in=anexos_ids)
+        try:
+            data = json.loads(request.body)
+            arquivo_id = data.get("arquivo_id")
+            if not arquivo_id:
+                return JsonResponse({"success": False, "message": "ID do arquivo não fornecido."})
 
-        for anexo in anexos:
-            anexo.visualizado_por.add(request.user)
+            arquivo = get_object_or_404(Arquivo, id=arquivo_id)
 
-        return JsonResponse({"success": True, "message": "Anexos marcados como visualizados."})
+            # Adicionar o usuário ao campo `visualizado_por`
+            arquivo.visualizado_por.add(request.user)
+            arquivo.save()
+
+            return JsonResponse({"success": True, "message": "Arquivo marcado como visto."})
+
+        except Exception as e:
+            return JsonResponse({"success": False, "message": str(e)})
 
     return JsonResponse({"success": False, "message": "Método inválido."})
+
+
+
+    
+
 

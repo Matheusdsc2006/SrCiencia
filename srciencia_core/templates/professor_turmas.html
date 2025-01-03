@@ -256,35 +256,14 @@
     console.log("Confirmando mudança para:", selectedEmail); // Log para depuração
 
     if (selectedEmail) {
-        // Enviar requisição ao backend para confirmar a mudança de conta
-        fetch("{% url 'confirmar_mudanca_conta' %}", {
-            method: "POST",
-            headers: {
-                "X-CSRFToken": getCsrfToken(),
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ nova_conta: selectedEmail }),
-        })
-            .then((response) => response.json())
-            .then((data) => {
-                if (data.success) {
-                    console.log("Mudança confirmada no backend.");
-                    accountConfirmationModal.style.display = "none";
-                    // Redirecionar para o login com a conta selecionada
-                    var loginUrl = "/auth/login/" + `?email=${encodeURIComponent(selectedEmail)}`;
-                    window.location.href = loginUrl;
-                } else {
-                    alert("Erro ao mudar de conta: " + data.message);
-                }
-            })
-            .catch((error) => {
-                console.error("Erro ao confirmar mudança de conta:", error);
-                alert("Erro ao confirmar mudança de conta. Tente novamente.");
-            });
+        // Apenas redirecionar para a página de login com o e-mail selecionado
+        const loginUrl = `/auth/login/?email=${encodeURIComponent(selectedEmail)}`;
+        window.location.href = loginUrl;
     } else {
         alert("Erro: Nenhum e-mail foi selecionado para redirecionamento.");
     }
 });
+
 
         
         window.addEventListener("click", (event) => {

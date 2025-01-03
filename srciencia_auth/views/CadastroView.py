@@ -15,8 +15,8 @@ def register(request, professor=False):
             user.is_staff = professor
             user.situacao = 'Regular'
             user.save()
-            login(request, user)
-            return redirect('pagina_inicial')
+            login(request, user)  
+            return redirect('pagina_inicial') 
     else:
         form = UsuarioCreationForm()
     return render(request, './auth/cadastro.html', {'form': form, 'professor': professor})
