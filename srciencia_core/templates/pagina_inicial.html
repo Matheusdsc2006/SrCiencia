@@ -1,396 +1,460 @@
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SR. Ciência - Página Inicial</title>
-    {% load static %}
-    <link rel="stylesheet" href="{% static 'css/pagina_inicial.css' %}">
-    <link rel="stylesheet" href="{% static 'css/global.css' %}">
-    <link rel="stylesheet" href="{% static 'css/global-core.css' %}">
-</head>
-<body class="pagina-inicial">
-    <div class="container">
-        <!-- Barra Lateral -->
-        <aside class="sidebar">
-            <div class="logo">
-                <img src="{% static 'assets/sr_ciencia.svg' %}" alt="SR. Ciência">
-            </div>
-            <nav>
-                <ul>
-                    <li><a href="{% url 'pagina_inicial' %}" class="active"><img src="{% static 'assets/home.svg' %}" alt="">Página inicial</a></li>
-                    <li><a href="#"><img src="{% static 'assets/profile.svg' %}" alt="">Meu perfil</a></li>
-                    <li><a href="{% url 'questao_list' %}"><img src="{% static 'assets/practice.svg' %}" alt="">Praticar</a></li>
-                    <li><a href="{% if user.is_staff %}{% url 'turmas' %}{% else %}{% url 'turmas' %}{% endif %}" class="{% if active_menu == 'turmas' %}active{% endif %}"><img src="{% static 'assets/classes.svg' %}" alt="">Turmas</a></li>
-                    <li><a href="#"><img src="{% static 'assets/forum.svg' %}" alt="">Fórum</a></li>
-                    <li><a href="#"><img src="{% static 'assets/help.svg' %}" alt="">Ajuda</a></li>
-                    <li><a href="{% url 'login' %}" class="logout"><img src="{% static 'assets/logout.svg' %}" alt="">Sair</a></li>
-                </ul>
-            </nav>
-        </aside>
-
-        <!-- Conteúdo Principal -->
-        <main>
-            <div class="main-container">
-                <div class="header-container-inicio">
-                    <h1 class="welcome">Bem-vindo, <span class="highlight">{{ username }}</span></h1>
-                    <div class="header-card">
-                        <div class="user-info">
-                            <div class="user-avatar">
-                                <figure>
-                                    <img src="{% static 'assets/user.avif' %}" alt="Usuário">
-                                </figure>
-                            </div>
-                            <div>
-                                <p class="user-name">{{ user.username }}</p>
-                                <p class="user-email">{{ user.email }}</p>
-                            </div>
-                        </div>
-                        <button id="change-account-btn" class="change-account">Mudar de conta</button>
-                    </div>
+    <!DOCTYPE html>
+    <html lang="pt-br">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>SR. Ciência - Página Inicial</title>
+        {% load static %}
+        <link rel="stylesheet" href="{% static 'css/pagina_inicial.css' %}">
+        <link rel="stylesheet" href="{% static 'css/global.css' %}">
+        <link rel="stylesheet" href="{% static 'css/global-core.css' %}">
+    </head>
+    <body class="pagina-inicial">
+        <div class="container">
+            <!-- Barra Lateral -->
+            <aside class="sidebar">
+                <div class="logo">
+                    <img src="{% static 'assets/sr_ciencia.svg' %}" alt="SR. Ciência">
                 </div>
-            
-                <div class="content-grid">
-                    <section class="left-column">
-                        {% if user.perfil == 2 %} <!-- Exibir apenas para alunos -->
-                        <div class="activities">
-                            <h2 class="font-anexos">Você tem anexos não vistos em</h2>
-                            <div id="anexos-pendentes-container">
-                                <ul>
-                                    <li>
-                                        <button class="marcar-visto" data-anexo-id="1">
-                                            <img src="{% static 'assets/eye-show.svg' %}" alt="Olho aberto" class="eye-open">
-                                            <img src="{% static 'assets/eye-off.svg' %}" alt="Olho fechado" class="eye-closed">
-                                        </button>
-                                    </li>
-                                </ul>
+                <nav>
+                    <ul>
+                        <li><a href="{% url 'pagina_inicial' %}" class="active"><img src="{% static 'assets/home.svg' %}" alt="">Página inicial</a></li>
+                        <li><a href="#"><img src="{% static 'assets/profile.svg' %}" alt="">Meu perfil</a></li>
+                        <li><a href="{% url 'questao_list' %}"><img src="{% static 'assets/practice.svg' %}" alt="">Praticar</a></li>
+                        <li><a href="{% if user.is_staff %}{% url 'turmas' %}{% else %}{% url 'turmas' %}{% endif %}" class="{% if active_menu == 'turmas' %}active{% endif %}"><img src="{% static 'assets/classes.svg' %}" alt="">Turmas</a></li>
+                        <li><a href="#"><img src="{% static 'assets/forum.svg' %}" alt="">Fórum</a></li>
+                        <li><a href="#"><img src="{% static 'assets/help.svg' %}" alt="">Ajuda</a></li>
+                        <li><a href="{% url 'login' %}" class="logout"><img src="{% static 'assets/logout.svg' %}" alt="">Sair</a></li>
+                    </ul>
+                </nav>
+            </aside>
+
+            <!-- Conteúdo Principal -->
+            <main>
+                <div class="main-container">
+                    <div class="header-container-inicio">
+                        <h1 class="welcome">Bem-vindo, <span class="highlight">{{ username }}</span></h1>
+                        <div class="header-card">
+                            <div class="user-info">
+                                <div class="user-avatar">
+                                    <figure>
+                                        <img src="{% static 'assets/user.avif' %}" alt="Usuário">
+                                    </figure>
+                                </div>
+                                <div>
+                                    <p class="user-name">{{ user.username }}</p>
+                                    <p class="user-email">{{ user.email }}</p>
+                                </div>
                             </div>
-                            
+                            <button id="change-account-btn" class="change-account">Mudar de conta</button>
                         </div>
-                        {% endif %}
-                        <div class="practicing">
-                            <h2>Continuar praticando</h2>
-                            <div class="practice-card">
+                    </div>
+                
+                    <div class="content-grid">
+                        <section class="left-column">
+                            {% if user.perfil == 2 %} <!-- Exibir apenas para alunos -->
+                            <div class="activities">
+                                <h2 class="font-anexos">Você tem anexos não vistos em</h2>
+                                <div id="anexos-pendentes-container">
+                                    <ul>
+                                        <li>
+                                            <button class="marcar-visto" data-anexo-id="1">
+                                                <img src="{% static 'assets/eye-show.svg' %}" alt="Olho aberto" class="eye-open">
+                                                <img src="{% static 'assets/eye-off.svg' %}" alt="Olho fechado" class="eye-closed">
+                                            </button>
+                                        </li>
+                                    </ul>
+                                </div>
+                                
+                            </div>
+                            {% endif %}
+                            <div class="practicing">
+                                <h2>Continuar praticando</h2>
+                                <div class="practice-card">
+                                    <!-- Conteúdo -->
+                                </div>
+                            </div>
+                        </section>
+                        <aside class="right-column">
+                            <div class="daily-goal">
+                                <h2>Meta diária</h2>
                                 <!-- Conteúdo -->
                             </div>
-                        </div>
-                    </section>
-                    <aside class="right-column">
-                        <div class="daily-goal">
-                            <h2>Meta diária</h2>
-                            <!-- Conteúdo -->
-                        </div>
-                        <div class="ranking">
-                            <h2>Ranking Semanal</h2>
-                            <!-- Conteúdo -->
-                        </div>
-                    </aside>
+                            <div class="ranking">
+                                <h2>Ranking Semanal</h2>
+                                <!-- Conteúdo -->
+                            </div>
+                        </aside>
+                    </div>
                 </div>
-            </div>
-        </main>
-    </div>
-<!-- Modal de Gerenciamento de Contas -->
-<div id="account-modal" class="modal">
-    <div class="modal-content">
-        <span id="close-account-modal" class="close-icon">&times;</span>
-        <h2>Selecione ou remova uma conta</h2>
-        <ul class="account-list"></ul>
-        <form id="add-account-form">
-            {% csrf_token %}
-            <label for="new-account">E-mail:</label>
-            <input type="email" id="new-account" placeholder="Digite um e-mail" required />
-            <button id="add-account-btn" class="btn-confirm">Adicionar Conta</button>
-        </form>
-        
-    </div>
-</div>
-
-<!-- Modal de Confirmação para Mudar de Conta -->
-<div id="account-confirmation-modal" class="modal">
-    <div class="modal-content">
-        <span id="close-account-confirmation-modal" class="close-icon">&times;</span>
-        <h2>Deseja realmente mudar de conta?</h2>
-        <p style="font-size: 20px;">Você será redirecionado para a tela de login.</p>
-        <div class="modal-actions">
-            <button id="confirm-change-btn" class="btn-confirm">Sim</button>
+            </main>
+        </div>
+    <!-- Modal de Gerenciamento de Contas -->
+    <div id="account-modal" class="modal">
+        <div class="modal-content">
+            <span id="close-account-modal" class="close-icon">&times;</span>
+            <h2>Selecione ou remova uma conta</h2>
+            <ul class="account-list"></ul>
+            <form id="add-account-form">
+                {% csrf_token %}
+                <label for="new-account">E-mail:</label>
+                <input type="email" id="new-account" placeholder="Digite um e-mail" required />
+                <button id="add-account-btn" class="btn-confirm">Adicionar Conta</button>
+            </form>
+            
         </div>
     </div>
-</div>
 
-<script>
+    <!-- Modal de Confirmação para Mudar de Conta -->
+    <div id="account-confirmation-modal" class="modal">
+        <div class="modal-content">
+            <span id="close-account-confirmation-modal" class="close-icon">&times;</span>
+            <h2>Deseja realmente mudar de conta?</h2>
+            <p style="font-size: 20px;">Você será redirecionado para a tela de login.</p>
+            <div class="modal-actions">
+                <button id="confirm-change-btn" class="btn-confirm">Sim</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Anexos Não Vistos -->
+    <div id="modal-anexos-nao-vistos" class="modal">
+        <div class="modal-content">
+            <span id="close-anexos-modal" class="close-icon">&times;</span>
+            <h2>Anexos Não Vistos</h2>
+            <div id="modal-anexos-container">
+                <!-- Os anexos serão carregados dinamicamente aqui -->
+            </div>
+        </div>
+    </div>
     
-    document.addEventListener("DOMContentLoaded", () => {
-    var accountModal = document.getElementById("account-modal");
-    var accountConfirmationModal = document.getElementById("account-confirmation-modal");
-    var changeAccountButton = document.getElementById("change-account-btn");
-    var closeAccountModal = document.getElementById("close-account-modal");
-    var closeAccountConfirmationModal = document.getElementById("close-account-confirmation-modal");
-    var confirmChangeButton = document.getElementById("confirm-change-btn");
-    var addAccountButton = document.getElementById("add-account-btn");
-    var accountList = document.querySelector(".account-list");
-    var newAccountInput = document.getElementById("new-account");
-    var anexosPendentesContainer = document.getElementById("anexos-pendentes-container");
-    let selectedEmail = null;
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+        var accountModal = document.getElementById("account-modal");
+        var accountConfirmationModal = document.getElementById("account-confirmation-modal");
+        var changeAccountButton = document.getElementById("change-account-btn");
+        var closeAccountModal = document.getElementById("close-account-modal");
+        var closeAccountConfirmationModal = document.getElementById("close-account-confirmation-modal");
+        var confirmChangeButton = document.getElementById("confirm-change-btn");
+        var addAccountButton = document.getElementById("add-account-btn");
+        var accountList = document.querySelector(".account-list");
+        var newAccountInput = document.getElementById("new-account");
+        var anexosPendentesContainer = document.getElementById("anexos-pendentes-container");
+        var modalAnexos = document.getElementById("modal-anexos-nao-vistos");
+        var closeModalAnexos = document.getElementById("close-anexos-modal");
+        var modalAnexosContainer = document.getElementById("modal-anexos-container");
+        let selectedEmail = null;
+        let turmaId = 1;
 
-    // Função para renderizar as contas no modal
-    function renderAccounts(accounts, currentEmail) {
-        accountList.innerHTML = ""; // Limpar lista atual
-        if (accounts.length === 0) {
-            accountList.innerHTML = "<li class='empty'>Nenhuma conta adicionada.</li>";
-        } else {
-            accounts.forEach((account) => {
-                var listItem = document.createElement("li");
-                listItem.textContent = account;
-                listItem.setAttribute("data-email", account);
 
-                // Se a conta for a atual
-                if (account === currentEmail) {
-                    listItem.textContent += " (atual)";
-                    listItem.classList.add("current-account");
+        // Função para renderizar as contas no modal
+        function renderAccounts(accounts, currentEmail) {
+            accountList.innerHTML = ""; // Limpar lista atual
+            if (accounts.length === 0) {
+                accountList.innerHTML = "<li class='empty'>Nenhuma conta adicionada.</li>";
+            } else {
+                accounts.forEach((account) => {
+                    var listItem = document.createElement("li");
+                    listItem.textContent = account;
+                    listItem.setAttribute("data-email", account);
 
-                    // Alerta ao clicar na conta atual
-                    listItem.addEventListener("click", () => {
-                        alert("Você já está logado com essa conta.");
-                    });
-                } else {
-                    // Botão de remoção
-                    var removeButton = document.createElement("button");
-                    removeButton.textContent = "Remover";
-                    removeButton.className = "btn-remove";
+                    // Se a conta for a atual
+                    if (account === currentEmail) {
+                        listItem.textContent += " (atual)";
+                        listItem.classList.add("current-account");
 
-                    removeButton.addEventListener("click", (event) => {
-                        event.stopPropagation(); // Impedir seleção acidental de conta
-                        removeAccount(account);
-                    });
+                        // Alerta ao clicar na conta atual
+                        listItem.addEventListener("click", () => {
+                            alert("Você já está logado com essa conta.");
+                        });
+                    } else {
+                        // Botão de remoção
+                        var removeButton = document.createElement("button");
+                        removeButton.textContent = "Remover";
+                        removeButton.className = "btn-remove";
 
-                    listItem.appendChild(removeButton);
+                        removeButton.addEventListener("click", (event) => {
+                            event.stopPropagation(); // Impedir seleção acidental de conta
+                            removeAccount(account);
+                        });
 
-                    // Exibir modal de confirmação de mudança de conta
-                    listItem.addEventListener("click", () => {
-                        selectedEmail = account;
-                        accountModal.style.display = "none";
-                        accountConfirmationModal.style.display = "block";
-                    });
-                }
+                        listItem.appendChild(removeButton);
 
-                accountList.appendChild(listItem);
-            });
+                        // Exibir modal de confirmação de mudança de conta
+                        listItem.addEventListener("click", () => {
+                            selectedEmail = account;
+                            accountModal.style.display = "none";
+                            accountConfirmationModal.style.display = "block";
+                        });
+                    }
+
+                    accountList.appendChild(listItem);
+                });
+            }
         }
-    }
 
-    // Buscar contas do backend
-    function fetchAccounts() {
+        // Buscar contas do backend
+        function fetchAccounts() {
+            fetch("{% url 'listar_contas' %}")
+                .then((response) => response.json())
+                .then((data) => {
+                    if (data.success) {
+                        renderAccounts(data.contas, data.conta_atual);
+                    } else {
+                        alert(data.message);
+                    }
+                })
+                .catch((error) => console.error("Erro ao buscar contas:", error));
+        }
+
+        // Remover conta
+        function removeAccount(email) {
+            fetch("{% url 'remover_conta' %}", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRFToken": document.querySelector('[name="csrfmiddlewaretoken"]').value,
+                },
+                body: JSON.stringify({ conta: email }),
+            })
+                .then((response) => response.json())
+                .then((data) => {
+                    if (data.success) {
+                        alert("Conta removida com sucesso.");
+                        fetchAccounts(); // Atualizar lista de contas
+                    } else {
+                        alert(data.message);
+                    }
+                })
+                .catch((error) => console.error("Erro ao remover conta:", error));
+        }
+
+        // Adicionar nova conta
+    addAccountButton.addEventListener("click", (event) => {
+        event.preventDefault();
+        var newAccount = newAccountInput.value.trim();
+        if (!newAccount) {
+            alert("Por favor, insira um e-mail válido.");
+            return;
+        }
+
+        // Verificar se a conta já está listada
         fetch("{% url 'listar_contas' %}")
             .then((response) => response.json())
             .then((data) => {
                 if (data.success) {
-                    renderAccounts(data.contas, data.conta_atual);
-                } else {
-                    alert(data.message);
-                }
-            })
-            .catch((error) => console.error("Erro ao buscar contas:", error));
-    }
+                    if (data.contas.includes(newAccount)) {
+                        alert("Essa conta já está na lista.");
+                        newAccountInput.value = ""; // Limpar o campo de entrada
+                        return;
+                    }
 
-    // Remover conta
-    function removeAccount(email) {
-        fetch("{% url 'remover_conta' %}", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "X-CSRFToken": document.querySelector('[name="csrfmiddlewaretoken"]').value,
-            },
-            body: JSON.stringify({ conta: email }),
-        })
-            .then((response) => response.json())
-            .then((data) => {
-                if (data.success) {
-                    alert("Conta removida com sucesso.");
-                    fetchAccounts(); // Atualizar lista de contas
-                } else {
-                    alert(data.message);
-                }
-            })
-            .catch((error) => console.error("Erro ao remover conta:", error));
-    }
-
-    // Adicionar nova conta
-addAccountButton.addEventListener("click", (event) => {
-    event.preventDefault();
-    var newAccount = newAccountInput.value.trim();
-    if (!newAccount) {
-        alert("Por favor, insira um e-mail válido.");
-        return;
-    }
-
-    // Verificar se a conta já está listada
-    fetch("{% url 'listar_contas' %}")
-        .then((response) => response.json())
-        .then((data) => {
-            if (data.success) {
-                if (data.contas.includes(newAccount)) {
-                    alert("Essa conta já está na lista.");
-                    newAccountInput.value = ""; // Limpar o campo de entrada
-                    return;
-                }
-
-                // Adicionar nova conta ao backend
-                fetch("{% url 'mudar_conta' %}", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "X-CSRFToken": document.querySelector('[name="csrfmiddlewaretoken"]').value,
-                    },
-                    body: JSON.stringify({ nova_conta: newAccount }),
-                })
-                    .then((response) => response.json())
-                    .then((data) => {
-                        if (data.success) {
-                            alert("Conta adicionada com sucesso.");
-                            newAccountInput.value = ""; // Limpar o campo de entrada
-                            fetchAccounts(); // Atualizar lista de contas
-                        } else {
-                            alert(data.message);
-                        }
+                    // Adicionar nova conta ao backend
+                    fetch("{% url 'mudar_conta' %}", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "X-CSRFToken": document.querySelector('[name="csrfmiddlewaretoken"]').value,
+                        },
+                        body: JSON.stringify({ nova_conta: newAccount }),
                     })
-                    .catch((error) => console.error("Erro ao adicionar conta:", error));
-            } else {
-                alert(data.message);
+                        .then((response) => response.json())
+                        .then((data) => {
+                            if (data.success) {
+                                alert("Conta adicionada com sucesso.");
+                                newAccountInput.value = ""; // Limpar o campo de entrada
+                                fetchAccounts(); // Atualizar lista de contas
+                            } else {
+                                alert(data.message);
+                            }
+                        })
+                        .catch((error) => console.error("Erro ao adicionar conta:", error));
+                } else {
+                    alert(data.message);
+                }
+            })
+            .catch((error) => console.error("Erro ao verificar contas existentes:", error));
+    });
+
+
+        // Confirmar mudança de conta
+        confirmChangeButton.addEventListener("click", () => {
+            if (selectedEmail) {
+                accountConfirmationModal.style.display = "none";
+                window.location.href = `/auth/login/?email=${encodeURIComponent(selectedEmail)}`;
             }
-        })
-        .catch((error) => console.error("Erro ao verificar contas existentes:", error));
-});
+        });
 
+        // Abrir modal de contas
+        changeAccountButton.addEventListener("click", () => {
+            fetchAccounts();
+            accountModal.style.display = "block";
+        });
 
-    // Confirmar mudança de conta
-    confirmChangeButton.addEventListener("click", () => {
-        if (selectedEmail) {
-            accountConfirmationModal.style.display = "none";
-            window.location.href = `/auth/login/?email=${encodeURIComponent(selectedEmail)}`;
-        }
-    });
-
-    // Abrir modal de contas
-    changeAccountButton.addEventListener("click", () => {
-        fetchAccounts();
-        accountModal.style.display = "block";
-    });
-
-    // Fechar modal de contas ao clicar no "X"
-    closeAccountModal.addEventListener("click", () => {
-        accountModal.style.display = "none";
-    });
-
-    // Fechar modal de confirmação ao clicar no "X"
-    closeAccountConfirmationModal.addEventListener("click", () => {
-        accountConfirmationModal.style.display = "none";
-    });
-
-    // Fechar modal de contas ao clicar fora dele
-    window.addEventListener("click", (event) => {
-        if (event.target === accountModal) {
+        // Fechar modal de contas ao clicar no "X"
+        closeAccountModal.addEventListener("click", () => {
             accountModal.style.display = "none";
-        } else if (event.target === accountConfirmationModal) {
+        });
+
+        // Fechar modal de confirmação ao clicar no "X"
+        closeAccountConfirmationModal.addEventListener("click", () => {
             accountConfirmationModal.style.display = "none";
-        }
+        });
+
+        // Fechar modal de contas ao clicar fora dele
+        window.addEventListener("click", (event) => {
+            if (event.target === accountModal) {
+                accountModal.style.display = "none";
+            } else if (event.target === accountConfirmationModal) {
+                accountConfirmationModal.style.display = "none";
+            }
+        });
+
+    // Função para obter o ID da turma de forma dinâmica
+function getTurmaId() {
+    var element = document.querySelector("[data-turma-id]");
+    if (element) {
+        var turmaId = element.getAttribute("data-turma-id");
+        console.log("Turma ID encontrado:", turmaId);
+        return turmaId;
+    }
+    console.error("Nenhum ID de turma encontrado.");
+    return null;
+}
+
+// Função para adicionar evento de clique aos links de anexos
+function adicionarEventoAosLinksDeAnexos() {
+    const linksDeAnexos = document.querySelectorAll(".anexo-link");
+    linksDeAnexos.forEach((link) => {
+        link.addEventListener("click", (event) => {
+            const anexoId = link.parentElement.querySelector(".marcar-visto").getAttribute("data-anexo-id");
+
+            if (anexoId) {
+                // Marcar o anexo como visto antes de abrir
+                marcarAnexoComoVisto(null, anexoId);
+            }
+        });
     });
+}
 
 // Função para carregar anexos pendentes
-function carregarAnexosPendentes() {
-    fetch("{% url 'listar_anexos_pendentes' %}")
-        .then(response => response.json())
-        .then(data => {
-            if (data.success && data.pendentes.length > 0) {
-                anexosPendentesContainer.innerHTML = ""; // Limpar conteúdo atual
-
-                data.pendentes.forEach(turma => {
-                    const turmaDiv = document.createElement("div");
-                    turmaDiv.classList.add("turma-pendentes");
-
-                    const turmaTitulo = document.createElement("h3");
-                    turmaTitulo.textContent = turma.turma;
-                    turmaDiv.appendChild(turmaTitulo);
-
-                    const anexosList = document.createElement("ul");
-                    anexosList.classList.add("anexos-list"); // Adiciona uma classe para estilização
-                    turma.anexos.forEach(anexo => {
-                        const anexoItem = document.createElement("li");
-                        anexoItem.classList.add("anexo-item");
-
-                        // Criar o link do anexo dinamicamente
-                        const link = document.createElement("a");
-                        link.href = anexo.url; // URL dinâmica do anexo
-                        link.target = "_blank";
-                        link.textContent = anexo.nome; // Nome dinâmico do anexo
-                        link.classList.add("anexo-link");
-
-                        // Adiciona evento para marcar como visto ao clicar
-                        link.addEventListener("click", function () {
-                            marcarAnexoComoVisto(link, anexo.id);
-                        });
-
-                        // Criar container para detalhes e botão
-                        const detailsContainer = document.createElement("div");
-                        detailsContainer.classList.add("details-container");
-
-                        // Exibe data/hora e tamanho do arquivo
-                        const details = document.createElement("span");
-                        details.textContent = `${anexo.tamanho} | ${anexo.data_hora}`;
-                        details.classList.add("anexo-details");
-
-                        // Criar o botão "Marcar como visto"
-                        const button = document.createElement("button");
-                        button.classList.add("marcar-visto");
-                        button.setAttribute("data-anexo-id", anexo.id);
-
-                        // Adicionar os ícones de olho
-                        const eyeOpen = document.createElement("img");
-                        eyeOpen.src = "{% static 'assets/eye-show.svg' %}";
-                        eyeOpen.alt = "Olho aberto";
-                        eyeOpen.classList.add("eye-open");
-
-                        const eyeClosed = document.createElement("img");
-                        eyeClosed.src = "{% static 'assets/eye-off.svg' %}";
-                        eyeClosed.alt = "Olho fechado";
-                        eyeClosed.classList.add("eye-closed");
-
-                        button.appendChild(eyeOpen);
-                        button.appendChild(eyeClosed);
-
-                        // Adicionar evento ao botão
-                        button.addEventListener("click", function () {
-                            marcarAnexoComoVisto(button, anexo.id);
-                        });
-
-                        // Adicionar detalhes e botão ao container
-                        detailsContainer.appendChild(details);
-                        detailsContainer.appendChild(button);
-
-                        // Adicionar link e container ao item
-                        anexoItem.appendChild(link);
-                        anexoItem.appendChild(detailsContainer);
-
-                        // Adicionar o item à lista
-                        anexosList.appendChild(anexoItem);
-                    });
-
-                    turmaDiv.appendChild(anexosList);
-                    anexosPendentesContainer.appendChild(turmaDiv);
-                });
-            } else {
-                anexosPendentesContainer.innerHTML = "<p>Não há anexos atualmente.</p>";
-            }
-        })
-        .catch(error => {
-            console.error("Erro ao carregar anexos pendentes:", error);
-            anexosPendentesContainer.innerHTML = "<p>Erro ao carregar anexos não vistos.</p>";
-        });
+function carregarAnexosPendentes() {    
+    console.log("Carregando todos os anexos pendentes...");
+    fetch(`/turmas/listar_anexos_pendentes/`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": document.querySelector("[name=csrfmiddlewaretoken]").value,
+        },
+        body: JSON.stringify({}), // Sem passar turma_id para listar todos
+    })
+    .then((response) => response.json())
+    .then((data) => {
+        console.log("Dados retornados pela API:", data);
+        if (data.success && data.pendentes.length > 0) {
+            renderizarAnexosGerais(data.pendentes); // Renderizar todos os anexos
+        } else {
+            var anexosPendentesContainer = document.getElementById("anexos-pendentes-container");
+            anexosPendentesContainer.innerHTML = "<p>Não há anexos atualmente.</p>";
+        }
+    })
+    .catch((error) => console.error("Erro ao carregar anexos pendentes:", error));
 }
+
+function renderizarAnexosGerais(pendentes) {
+    const anexosPendentesContainer = document.getElementById("anexos-pendentes-container");
+    anexosPendentesContainer.innerHTML = ""; // Limpa o container
+
+    pendentes.forEach((turma) => {
+        const turmaDiv = document.createElement("div");
+        turmaDiv.classList.add("turma-pendentes");
+
+        // Nome da turma e professor
+        const turmaTitulo = document.createElement("h3");
+        turmaTitulo.innerHTML = `
+            Disciplina: <span class="turma-nome">${turma.turma}</span>
+            Professor: <span class="professor-nome">${turma.professor}</span>
+        `;
+        turmaDiv.appendChild(turmaTitulo);
+
+        // Lista de anexos
+        const anexosList = document.createElement("ul");
+        anexosList.classList.add("anexos-list");
+
+        turma.anexos.forEach((anexo) => {
+            const anexoItem = document.createElement("li");
+            anexoItem.classList.add("anexo-item");
+
+            // Criar link do anexo
+            const link = document.createElement("a");
+            link.href = anexo.url;
+            link.target = "_blank";
+            link.textContent = anexo.nome;
+            link.classList.add("anexo-link");
+
+            // Criar detalhes do anexo
+            const details = document.createElement("span");
+            details.textContent = `${anexo.tamanho} | ${anexo.data_hora}`;
+            details.classList.add("anexo-details");
+
+            // Botão para marcar como visto
+            const button = document.createElement("button");
+            button.classList.add("marcar-visto");
+            button.setAttribute("data-anexo-id", anexo.id);
+
+            // Adicionar os ícones de olho
+            const eyeOpen = document.createElement("img");
+            eyeOpen.src = "{% static 'assets/eye-show.svg' %}";
+            eyeOpen.alt = "Olho aberto";
+            eyeOpen.classList.add("eye-open");
+
+            const eyeClosed = document.createElement("img");
+            eyeClosed.src = "{% static 'assets/eye-off.svg' %}";
+            eyeClosed.alt = "Olho fechado";
+            eyeClosed.classList.add("eye-closed");
+
+            button.appendChild(eyeOpen);
+            button.appendChild(eyeClosed);
+
+            button.addEventListener("click", () => marcarAnexoComoVisto(button, anexo.id));
+
+            // Montar item do anexo
+            anexoItem.appendChild(link);
+            anexoItem.appendChild(details);
+            anexoItem.appendChild(button);
+
+            anexosList.appendChild(anexoItem);
+        });
+
+        turmaDiv.appendChild(anexosList);
+
+        // Botão "Ver mais" - Aparece apenas se houver 4 ou mais anexos
+        if (turma.anexos.length >= 4) {
+            const verMaisButton = document.createElement("button");
+            verMaisButton.textContent = "Ver mais";
+            verMaisButton.classList.add("ver-mais");
+            verMaisButton.setAttribute("data-turma-id", turma.turma_id);
+            verMaisButton.addEventListener("click", (event) => {
+                const turmaId = event.target.getAttribute("data-turma-id");
+                console.log("Abrindo modal para turma ID:", turmaId);
+                abrirModalAnexos(turmaId);
+            });
+
+            turmaDiv.appendChild(verMaisButton);
+        }
+
+        anexosPendentesContainer.appendChild(turmaDiv);
+    });
+
+    // Adicionar eventos aos links dos anexos
+    adicionarEventoAosLinksDeAnexos();
+}
+
+
 
 
 // Função para marcar um anexo como visto
 function marcarAnexoComoVisto(button, anexoId) {
-    // Verifica se o ID do anexo foi fornecido
     if (!anexoId) {
         alert("Erro: ID do arquivo não fornecido.");
         return;
@@ -402,34 +466,110 @@ function marcarAnexoComoVisto(button, anexoId) {
             "X-CSRFToken": document.querySelector('[name=csrfmiddlewaretoken]').value,
             "Content-Type": "application/json",
         },
-        body: JSON.stringify({ arquivo_id: anexoId }), // Passa o ID do arquivo para o backend
+        body: JSON.stringify({ arquivo_id: anexoId }),
     })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                if (button) {
-                    // Adiciona a classe "marcado" para indicar visualização
-                    button.classList.add("marcado");
-                }
-
-                // Exibe o pop-up de confirmação
-                alert("Anexo marcado como visto!");
-
-                // Recarrega a página automaticamente após o pop-up
-                setTimeout(() => {
-                    location.reload(); // Recarrega a página
-                }, 1000); // Tempo antes do recarregamento
-            } else {
-                alert("Erro ao marcar anexo como visto: " + data.message);
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            if (button) {
+                button.classList.add("marcado");
             }
-        })
-        .catch(error => {
-            console.error("Erro ao marcar anexo como visto:", error);
-        });
+
+            alert("Anexo marcado como visto!");
+
+            setTimeout(() => {
+                location.reload();
+            }, 1000);
+        } else {
+            alert("Erro ao marcar anexo como visto: " + data.message);
+        }
+    })
+    .catch(error => {
+        console.error("Erro ao marcar anexo como visto:", error);
+    });
 }
 
-    carregarAnexosPendentes();
+// Função para abrir o modal de anexos de uma turma específica
+function abrirModalAnexos(turmaId) {
+    console.log("Abrindo modal para turma ID:", turmaId);
+    fetch("/turmas/listar_anexos_pendentes/", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": document.querySelector("[name=csrfmiddlewaretoken]").value,
+        },
+        body: JSON.stringify({ turma_id: turmaId }),
+    })
+        .then((response) => response.json())
+        .then((data) => {
+            const modalAnexosContainer = document.getElementById("modal-anexos-container");
+            modalAnexosContainer.innerHTML = "";
+
+            if (data.success && data.pendentes.anexos.length > 0) {
+                data.pendentes.anexos.forEach((anexo) => {
+                    const anexoItem = document.createElement("div");
+                    anexoItem.classList.add("anexo-item");
+
+                    const link = document.createElement("a");
+                    link.href = anexo.url;
+                    link.target = "_blank";
+                    link.textContent = anexo.nome;
+                    link.classList.add("anexo-link");
+
+                    // Botão para marcar como visto
+                    const button = document.createElement("button");
+                    button.classList.add("marcar-visto");
+                    button.setAttribute("data-anexo-id", anexo.id);
+
+                    const eyeOpen = document.createElement("img");
+                    eyeOpen.src = "{% static 'assets/eye-show.svg' %}";
+                    eyeOpen.alt = "Olho aberto";
+                    eyeOpen.classList.add("eye-open");
+
+                    const eyeClosed = document.createElement("img");
+                    eyeClosed.src = "{% static 'assets/eye-off.svg' %}";
+                    eyeClosed.alt = "Olho fechado";
+                    eyeClosed.classList.add("eye-closed");
+
+                    button.appendChild(eyeOpen);
+                    button.appendChild(eyeClosed);
+
+                    button.addEventListener("click", () => marcarAnexoComoVisto(button, anexo.id));
+
+                    anexoItem.appendChild(link);
+                    anexoItem.appendChild(button);
+                    modalAnexosContainer.appendChild(anexoItem);
+                });
+
+                const modalAnexos = document.getElementById("modal-anexos-nao-vistos");
+                modalAnexos.style.display = "block";
+            } else {
+                alert("Nenhum anexo encontrado para esta turma.");
+            }
+
+            adicionarEventoAosLinksDeAnexos();
+        })
+        .catch((error) => console.error("Erro ao carregar anexos:", error));
+}
+
+
+// Fechar o modal ao clicar no "X"
+closeModalAnexos.addEventListener("click", () => {
+    var modalAnexos = document.getElementById("modal-anexos-nao-vistos");
+    modalAnexos.style.display = "none";
 });
-</script>
-</body>
-</html>
+
+// Fechar o modal ao clicar fora do conteúdo
+var modalAnexos = document.getElementById("modal-anexos-nao-vistos");
+window.addEventListener("click", (event) => {
+    if (event.target === modalAnexos) {
+        modalAnexos.style.display = "none";
+    }
+});
+
+// Inicializar o carregamento de anexos pendentes
+carregarAnexosPendentes();
+});
+    </script>
+    </body>
+    </html>

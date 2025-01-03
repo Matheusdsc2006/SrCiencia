@@ -178,32 +178,64 @@ def cancelar_inscricao(request, turma_id):
             return JsonResponse({"success": False, "message": "Você não está inscrito nesta turma."})
     return JsonResponse({"success": False, "message": "Método inválido."})
 
+@require_POST
 @login_required
 def listar_anexos_pendentes(request):
-    if request.user.is_authenticated:
-        turmas = request.user.turmas.all()
-        pendentes = []
+    try:
+        body = json.loads(request.body.decode("utf-8"))
+        turma_id = body.get("turma_id")
 
-        for turma in turmas:
+        if turma_id:
+            turma = get_object_or_404(Turma, id=turma_id, alunos=request.user)
             anexos_nao_vistos = turma.arquivos.exclude(visualizado_por=request.user)
-            if anexos_nao_vistos.exists():
-                turma_anexos = {
-                    "turma": turma.nome,
-                    "anexos": [
-                        {
-                            "id": anexo.id,
-                            "nome": anexo.nome,
-                            "url": anexo.arquivo.url,
-                            "data_hora": anexo.data_hora_formatada(),
-                            "tamanho": anexo.tamanho_formatado()
-                        } for anexo in anexos_nao_vistos
-                    ],
-                }
-                pendentes.append(turma_anexos)
 
-        return JsonResponse({"success": True, "pendentes": pendentes})
-    return JsonResponse({"success": False, "message": "Usuário não autenticado."})
+            pendentes = {
+                "turma_id": turma.id,  # Certifique-se de incluir o ID da turma
+                "turma": turma.nome,
+                "professor": turma.professor.username if turma.professor else "Desconhecido",
+                "anexos": [
+                    {
+                        "id": anexo.id,
+                        "nome": anexo.nome,
+                        "url": anexo.arquivo.url,
+                        "data_hora": anexo.data_hora_formatada(),
+                        "tamanho": anexo.tamanho_formatado(),
+                    }
+                    for anexo in anexos_nao_vistos
+                ],
+            }
 
+            return JsonResponse({"success": True, "pendentes": pendentes})
+
+        else:
+            turmas = Turma.objects.filter(alunos=request.user)
+            pendentes = []
+
+            for turma in turmas:
+                anexos_nao_vistos = turma.arquivos.exclude(visualizado_por=request.user)
+                if anexos_nao_vistos.exists():
+                    pendentes.append({
+                        "turma_id": turma.id,  # Inclua o ID da turma aqui
+                        "turma": turma.nome,
+                        "professor": turma.professor.username if turma.professor else "Desconhecido",
+                        "anexos": [
+                            {
+                                "id": anexo.id,
+                                "nome": anexo.nome,
+                                "url": anexo.arquivo.url,
+                                "data_hora": anexo.data_hora_formatada(),
+                                "tamanho": anexo.tamanho_formatado(),
+                            }
+                            for anexo in anexos_nao_vistos
+                        ],
+                    })
+
+            return JsonResponse({"success": True, "pendentes": pendentes})
+
+    except Turma.DoesNotExist:
+        return JsonResponse({"success": False, "message": "Turma não encontrada."})
+    except Exception as e:
+        return JsonResponse({"success": False, "message": f"Erro interno: {str(e)}"})
 
 
 @require_POST
