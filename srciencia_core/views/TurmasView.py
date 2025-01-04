@@ -187,10 +187,10 @@ def listar_anexos_pendentes(request):
 
         if turma_id:
             turma = get_object_or_404(Turma, id=turma_id, alunos=request.user)
-            anexos_nao_vistos = turma.arquivos.exclude(visualizado_por=request.user)
+            anexos_nao_vistos = turma.arquivos.exclude(visualizado_por=request.user)  # Remove o limite de 4 aqui
 
             pendentes = {
-                "turma_id": turma.id,  # Certifique-se de incluir o ID da turma
+                "turma_id": turma.id,
                 "turma": turma.nome,
                 "professor": turma.professor.username if turma.professor else "Desconhecido",
                 "anexos": [
@@ -215,7 +215,7 @@ def listar_anexos_pendentes(request):
                 anexos_nao_vistos = turma.arquivos.exclude(visualizado_por=request.user)
                 if anexos_nao_vistos.exists():
                     pendentes.append({
-                        "turma_id": turma.id,  # Inclua o ID da turma aqui
+                        "turma_id": turma.id,
                         "turma": turma.nome,
                         "professor": turma.professor.username if turma.professor else "Desconhecido",
                         "anexos": [
@@ -236,7 +236,6 @@ def listar_anexos_pendentes(request):
         return JsonResponse({"success": False, "message": "Turma não encontrada."})
     except Exception as e:
         return JsonResponse({"success": False, "message": f"Erro interno: {str(e)}"})
-
 
 @require_POST
 @login_required

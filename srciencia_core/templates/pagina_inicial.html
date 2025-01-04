@@ -355,10 +355,26 @@ function carregarAnexosPendentes() {
             renderizarAnexosGerais(data.pendentes); // Renderizar todos os anexos
         } else {
             var anexosPendentesContainer = document.getElementById("anexos-pendentes-container");
-            anexosPendentesContainer.innerHTML = "<p>Não há anexos atualmente.</p>";
+            anexosPendentesContainer.innerHTML = "<p>Não há anexos não vistos atualmente.</p>";
         }
     })
     .catch((error) => console.error("Erro ao carregar anexos pendentes:", error));
+}
+
+function adicionarEventoAosLinksDeAnexosPendentes() {
+    const linksDeAnexosPendentes = document.querySelectorAll("#anexos-pendentes-container .anexo-link");
+    linksDeAnexosPendentes.forEach((link) => {
+        link.addEventListener("click", (event) => {
+            event.preventDefault();
+            const anexoId = link.parentElement.querySelector(".marcar-visto").getAttribute("data-anexo-id");
+            if (anexoId) {
+                marcarAnexoComoVisto(null, anexoId); 
+                setTimeout(() => {
+                    window.open(link.href, "_blank");
+                }, 300);
+            }
+        });
+    });
 }
 
 function renderizarAnexosGerais(pendentes) {
@@ -377,11 +393,11 @@ function renderizarAnexosGerais(pendentes) {
         `;
         turmaDiv.appendChild(turmaTitulo);
 
-        // Lista de anexos
+        // Lista de anexos (máximo de 4 exibidos diretamente)
         const anexosList = document.createElement("ul");
         anexosList.classList.add("anexos-list");
 
-        turma.anexos.forEach((anexo) => {
+        turma.anexos.slice(0, 4).forEach((anexo) => {
             const anexoItem = document.createElement("li");
             anexoItem.classList.add("anexo-item");
 
@@ -392,7 +408,7 @@ function renderizarAnexosGerais(pendentes) {
             link.textContent = anexo.nome;
             link.classList.add("anexo-link");
 
-            // Criar detalhes do anexo
+            // Criar detalhes do anexo (tamanho e data/hora)
             const details = document.createElement("span");
             details.textContent = `${anexo.tamanho} | ${anexo.data_hora}`;
             details.classList.add("anexo-details");
@@ -402,7 +418,6 @@ function renderizarAnexosGerais(pendentes) {
             button.classList.add("marcar-visto");
             button.setAttribute("data-anexo-id", anexo.id);
 
-            // Adicionar os ícones de olho
             const eyeOpen = document.createElement("img");
             eyeOpen.src = "{% static 'assets/eye-show.svg' %}";
             eyeOpen.alt = "Olho aberto";
@@ -428,12 +443,13 @@ function renderizarAnexosGerais(pendentes) {
 
         turmaDiv.appendChild(anexosList);
 
-        // Botão "Ver mais" - Aparece apenas se houver 4 ou mais anexos
-        if (turma.anexos.length >= 4) {
+        // Adicionar botão "Ver mais" se houver mais de 3 anexos
+        if (turma.anexos.length > 3) {
             const verMaisButton = document.createElement("button");
             verMaisButton.textContent = "Ver mais";
             verMaisButton.classList.add("ver-mais");
             verMaisButton.setAttribute("data-turma-id", turma.turma_id);
+
             verMaisButton.addEventListener("click", (event) => {
                 const turmaId = event.target.getAttribute("data-turma-id");
                 console.log("Abrindo modal para turma ID:", turmaId);
@@ -446,10 +462,9 @@ function renderizarAnexosGerais(pendentes) {
         anexosPendentesContainer.appendChild(turmaDiv);
     });
 
-    // Adicionar eventos aos links dos anexos
-    adicionarEventoAosLinksDeAnexos();
+    // Adicionar eventos aos links dos anexos pendentes
+    adicionarEventoAosLinksDeAnexosPendentes();
 }
-
 
 
 
@@ -510,13 +525,28 @@ function abrirModalAnexos(turmaId) {
                     const anexoItem = document.createElement("div");
                     anexoItem.classList.add("anexo-item");
 
+                    // Criar link do anexo
                     const link = document.createElement("a");
                     link.href = anexo.url;
                     link.target = "_blank";
                     link.textContent = anexo.nome;
                     link.classList.add("anexo-link");
 
-                    // Botão para marcar como visto
+                    // Adicionar evento para marcar como visto ao clicar no link
+                    link.addEventListener("click", (event) => {
+                        event.preventDefault(); // Impedir comportamento padrão temporariamente
+                        marcarAnexoComoVisto(null, anexo.id); // Marcar como visto
+                        setTimeout(() => {
+                            window.open(anexo.url, "_blank"); // Abrir o link após marcar como visto
+                        }, 300);
+                    });
+
+                    // Adicionar detalhes do anexo
+                    const details = document.createElement("span");
+                    details.classList.add("anexo-details");
+                    details.textContent = `${anexo.tamanho} | ${anexo.data_hora}`;
+
+                    // Botão para marcar como visto manualmente
                     const button = document.createElement("button");
                     button.classList.add("marcar-visto");
                     button.setAttribute("data-anexo-id", anexo.id);
@@ -536,7 +566,9 @@ function abrirModalAnexos(turmaId) {
 
                     button.addEventListener("click", () => marcarAnexoComoVisto(button, anexo.id));
 
+                    // Montar item do anexo
                     anexoItem.appendChild(link);
+                    anexoItem.appendChild(details);
                     anexoItem.appendChild(button);
                     modalAnexosContainer.appendChild(anexoItem);
                 });
@@ -546,11 +578,11 @@ function abrirModalAnexos(turmaId) {
             } else {
                 alert("Nenhum anexo encontrado para esta turma.");
             }
-
-            adicionarEventoAosLinksDeAnexos();
         })
         .catch((error) => console.error("Erro ao carregar anexos:", error));
 }
+
+
 
 
 // Fechar o modal ao clicar no "X"

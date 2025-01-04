@@ -542,7 +542,7 @@ button:hover {
     cursor: pointer;
     transition: background-color 0.3s ease;
     font-weight: 400;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
+    box-shadow: 2px 3px 4px rgba(111, 1, 141, 0.15);
 }
 
 .turma-pendentes .ver-mais:hover {
@@ -615,12 +615,13 @@ button:hover {
     justify-content: center;
     cursor: pointer;
     transition: background-color 0.3s ease;
+    margin-left: 10px;
 }
 
 #anexos-pendentes-container button.marcar-visto img,
 #modal-anexos-container .marcar-visto img {
     width: 20px; 
-    height: 20px; 
+    height: 20px;
 }
 
 #anexos-pendentes-container button.marcar-visto .eye-open,
@@ -648,11 +649,11 @@ button:hover {
     display: block;
 }
 
-
-
-
-
-
-
+#modal-anexos-container .anexo-item .anexo-details {
+    font-size: 0.9rem;
+    color: var(--gray);
+    margin-left: 10px;
+    white-space: nowrap;
+}
 
 
