@@ -1,24 +1,105 @@
 {% extends "base-core.html" %}
 {% load static %}
+{% load custom_filters %}
 <link rel="stylesheet" href="{% static 'css/global.css' %}">
 <link rel="stylesheet" href="{% static 'css/global-core.css' %}">
 {% block content %}
-<main>  
-    <h2>Questões</h2>
+<main>
+    <h2 class="quest">Questões</h2>
     <a href="{% url 'questao_create' %}" class="btn btn-add">Adicionar questão</a>
     <ul id="questoes" class="list-crud">
-      {% for questao in questoes %}
+        {% for questao in questoes %}
         <li class="card" style="margin-bottom: 20px;">
+            <!-- Informações adicionais em layout horizontal -->
+            <div class="questao-info" style="background-color: var(--white); border-top: 1px solid var(--light-gray); border-bottom: 1px solid var(--light-gray); padding: 10px; display: flex; gap: 20px; justify-content: space-around; align-items: center;">
+              {% if questao.ano %}
+              <p><strong>Ano:</strong> {{ questao.ano }}</p>
+              {% endif %}
+              {% if questao.banca %}
+              <p><strong>Banca:</strong> {{ questao.banca.nome }}</p>
+              {% endif %}
+              {% if questao.disciplina %}
+              <p><strong>Disciplina:</strong> {{ questao.disciplina.nome }}</p>
+              {% endif %}
+              {% if questao.conteudo %}
+              <p><strong>Conteúdo:</strong> {{ questao.conteudo.nome }}</p>
+              {% endif %}
+              {% if questao.topico %}
+              <p><strong>Tópico:</strong> {{ questao.topico.nome }}</p>
+              {% endif %}
+          </div>          
+            <!-- Descrição da questão -->
             <div class="questao-descricao">
                 {{ questao.descricao|safe }}
             </div>
-          <a href="{% url 'questao_update' questao.pk %}" class="btn btn-edit">Editar questão</a>
-          <form action="{% url 'questao_delete' questao.pk %}" method="get" style="display:inline;">
-            {% csrf_token %}
-            <button type="submit" class="btn btn-danger">Apagar questão</button>
-          </form>
+            <!-- Alternativas -->
+            <div class="alternativas-lista" style="border: 1px solid var(--light-gray); border-radius: 8px; padding: 10px; margin-bottom: 0px;">
+                <h3 class="alternativas" style="display: flex; justify-content: space-between; align-items: center; margin-top: 0;">
+                    Alternativas:
+                    <button class="toggle-visibility" data-target="alternativas-section-{{ forloop.counter }}">
+                        <img src="{% static 'assets/eye-off.svg' %}" alt="Olho fechado" class="eye-closed">
+                        <img src="{% static 'assets/eye-show.svg' %}" alt="Olho aberto" class="eye-open">
+                    </button>
+                </h3>
+                <ul id="alternativas-section-{{ forloop.counter }}" style="display: none; margin-top: 10px;">
+                    {% for alternativa in questao.alternativas.all %}
+                    <li>
+                        {{ alternativa.descricao|safe }}
+                        {% if alternativa.correta %}
+                        <strong>(Correta)</strong>
+                        {% endif %}
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+            <!-- Resolução -->
+            <div class="resolucao" style="border: 1px solid var(--light-gray); border-radius: 8px; padding: 10px; margin-bottom: 10px;">
+                <h3 style="display: flex; justify-content: space-between; align-items: center; margin-top: 0;">
+                    Resolução:
+                    <button class="toggle-visibility" data-target="resolucao-section-{{ forloop.counter }}">
+                        <img src="{% static 'assets/eye-off.svg' %}" alt="Olho fechado" class="eye-closed">
+                        <img src="{% static 'assets/eye-show.svg' %}" alt="Olho aberto" class="eye-open">
+                    </button>
+                </h3>
+                <div id="resolucao-section-{{ forloop.counter }}" style="display: none; margin-top: 10px;">
+                    {{ questao.resolucao|safe }}
+                </div>
+            </div>
+            <!-- Botões de ação -->
+            <div class="btn-group">
+                <a href="{% url 'questao_update' questao.pk %}" class="btn btn-edit">Editar questão</a>
+                <form action="{% url 'questao_delete' questao.pk %}" method="get" style="display: inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">Apagar questão</button>
+                </form>
+            </div>
         </li>
-      {% endfor %}
+        {% endfor %}
     </ul>
 </main>
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const toggleButtons = document.querySelectorAll(".toggle-visibility");
+
+        toggleButtons.forEach((button) => {
+            button.addEventListener("click", () => {
+                const targetId = button.getAttribute("data-target");
+                const targetElement = document.getElementById(targetId);
+
+                const eyeOpen = button.querySelector(".eye-open");
+                const eyeClosed = button.querySelector(".eye-closed");
+
+                if (targetElement.style.display === "none") {
+                    targetElement.style.display = "block";
+                    eyeOpen.style.display = "block";
+                    eyeClosed.style.display = "none";
+                } else {
+                    targetElement.style.display = "none";
+                    eyeOpen.style.display = "none";
+                    eyeClosed.style.display = "block";
+                }
+            });
+        });
+    });
+</script>
 {% endblock %}

@@ -87,18 +87,21 @@ customColorPalette = [
 CKEDITOR_5_CONFIGS = {
     'default': {
         'toolbar': [
-            'bold', 'italic', 'underline', 'strikethrough', 'link', 'imageUpload',
-            'bulletedList', 'numberedList', 'blockQuote', 'insertTable', 'mediaEmbed',
+            'bold', 'italic', 'underline', 'strikethrough', '|',
+            'link', 'imageUpload', '|',
+            'bulletedList', 'numberedList', 'blockQuote', '|',
+            'insertTable', 'mediaEmbed', '|',
+            'fontColor', 'fontBackgroundColor', '|',
+            'undo', 'redo',
         ],
         'language': 'pt-br',
-        'image': {
-            'toolbar': ['imageTextAlternative', '|', 'imageStyle:alignLeft', 'imageStyle:alignCenter', 'imageStyle:alignRight'],
-        },
-        'table': {
-            'contentToolbar': ['tableColumn', 'tableRow', 'mergeTableCells'],
-        },
-    }
+        'height': '300px',
+        'width': 'auto',
+    },
 }
+
+
+
 
 
 

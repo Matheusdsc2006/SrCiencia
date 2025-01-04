@@ -1,89 +1,214 @@
-{% extends "base-core.html" %}
-{% load static %}
-{% block styles %}
-<link rel="stylesheet" href="{% static 'css/questoes.css' %}">
-<link rel="stylesheet" href="{% static 'css/global.css' %}">
-<link rel="stylesheet" href="{% static 'css/global-core.css' %}">
-{% endblock %}
+    {% extends "base-core.html" %}
+    {% load static %}
+    {% block styles %}
+    <link rel="stylesheet" href="{% static 'css/questoes.css' %}">
+    <link rel="stylesheet" href="{% static 'css/global.css' %}">
+    <link rel="stylesheet" href="{% static 'css/global-core.css' %}">
+    {% endblock %}
 
-{% block content %}
-<main>
-    <h2>{% if questao_form.instance.pk %}Editar Questão{% else %}Nova Questão{% endif %}</h2>
-    <form method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        
-        <div>
-            <label for="{{ questao_form.descricao.id_for_label }}">Descrição:</label>
-            {{ questao_form.descricao }}
-        </div>
-        <div class="select-boxes">
+    {% block content %}
+    <main>
+        <h2 class="edit-quest">{% if questao_form.instance.pk %}Editar Questão{% else %}Nova Questão{% endif %}</h2>
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            
             <div>
-                <label for="{{ questao_form.banca.id_for_label }}">Banca:</label>
-                {{ questao_form.banca }}
+                <label for="{{ questao_form.descricao.id_for_label }}">Descrição:</label>
+                {{ questao_form.descricao }}
             </div>
-            <div>
-                <label for="{{ questao_form.disciplina.id_for_label }}">Disciplina:</label>
-                {{ questao_form.disciplina }}
-            </div>
-            <div>
-                <label for="{{ questao_form.conteudo.id_for_label }}">Conteúdo:</label>
-                {{ questao_form.conteudo }}
-            </div>
-            <div>
-                <label for="{{ questao_form.topico.id_for_label }}">Tópico:</label>
-                {{ questao_form.topico }}
-            </div>
-        </div>
-        <div>
-            <label for="{{ questao_form.resolucao.id_for_label }}">Resolução:</label>
-            {{ questao_form.resolucao }}
-        </div>
-
-        <h3>Alternativas</h3>
-        {{ formset.management_form }}
-        <div class="alternativas">
-            {% for form in formset %}
-                <div class="alternativa">
-                    <div class="input-alternativa">
-                        <div class="descricao-alternativa">
-                            {{ form.descricao }}
-                        </div>
-                        <div class="correta-alternativa">
-                            {{ form.correta }}
-                        </div>
-                        <div class="imagem-alternativa">
-                            <label for="id_form-{{ forloop.counter0 }}-imagem">
-                                <img src="{% static 'assets/camera.svg' %}" id="uploadIcon_{{ forloop.counter }}" style="cursor: pointer" alt="">
-                            </label>
-                            {{ form.imagem }}
-                            <script>
-                                var imagemInput = document.getElementById("id_form-{{ forloop.counter0 }}-imagem");
-                                imagemInput.setAttribute('onchange', `previewImage(event, {{ forloop.counter|stringformat:"d" }})`);
-                            </script>                            
-                        </div>
-                    </div>
-                    <div class="imagePreview" id="imagePreview_{{ forloop.counter }}">
-                        {% if form.instance.imagem %}
-                            <!-- Se a imagem já existe, mostra a imagem associada -->
-                            <img id="imagePreviewImg_{{ forloop.counter }}" src="{{ form.instance.imagem.url }}" alt="Pré-visualização" style="display: block;"/>
-                        {% else %}
-                            <!-- Se não, mantém a pré-visualização oculta -->
-                            <img id="imagePreviewImg_{{ forloop.counter }}" src="" alt="Pré-visualização" style="display: none;"/>
-                        {% endif %}
-                    </div>
+            <div class="select-boxes">
+                <div>
+                    <label for="ano">Ano:</label>
+                    <select id="ano" name="ano" class="styled-select">
+                        <option value="" disabled selected>Informe o ano</option>
+                        {% for ano in anos %}
+                        <option value="{{ ano }}" {% if questao_form.instance.ano == ano %}selected{% endif %}>{{ ano }}</option>
+                        {% endfor %}
+                    </select>
                 </div>
-            {% endfor %}
-        </div>
-        <div>
-            <button type="submit" class="btn btn-save">Salvar</button>
-            <a href="{% url 'questao_list' %}" class="btn btn-cancel">Cancelar</a>
-        </div>
-    </form>  
-</main>
-{% endblock %}
+                <div>
+                    <label for="{{ questao_form.banca.id_for_label }}">Banca:</label>
+                    {{ questao_form.banca }}
+                </div>
+                <div>
+                    <label for="{{ questao_form.disciplina.id_for_label }}">Disciplina:</label>
+                    {{ questao_form.disciplina }}
+                </div>
+                <div>
+                    <label for="{{ questao_form.conteudo.id_for_label }}">Conteúdo:</label>
+                    {{ questao_form.conteudo }}
+                </div>
+                <div>
+                    <label for="{{ questao_form.topico.id_for_label }}">Tópico:</label>
+                    {{ questao_form.topico }}
+                </div>
+            </div>    
+            <div class="resolv">
+                <label for="{{ questao_form.resolucao.id_for_label }}">Resolução:</label>
+                {{ questao_form.resolucao }}
+            </div>               
+            <h3 class="alt">Alternativas</h3>
+            {{ formset.management_form }}
+            <div class="alternativas">
+                {% for form in formset %}
+                    <div class="alternativa">
+                        {{ form.id }} <!-- Campo oculto para rastrear instâncias -->
+                        <div class="input-alternativa">
+                            <div class="descricao-alternativa">
+                                {{ form.descricao }}
+                            </div>
+                            <div class="correta-alternativa">
+                                {{ form.correta }}
+                            </div>
+                            <div class="imagem-alternativa">
+                                <label for="id_form-{{ forloop.counter0 }}-imagem">
+                                    <img src="{% static 'assets/camera.svg' %}" id="uploadIcon_{{ forloop.counter }}" style="cursor: pointer" alt="">
+                                </label>
+                                {{ form.imagem }}
+                            </div>
+                        </div>
+                        <div class="imagePreview" id="imagePreview_{{ forloop.counter }}">
+                            {% if form.instance.imagem %}
+                                <img id="imagePreviewImg_{{ forloop.counter }}" src="{{ form.instance.imagem.url }}" alt="Pré-visualização"/>
+                            {% else %}
+                                <img id="imagePreviewImg_{{ forloop.counter }}" src="" alt="Pré-visualização" style="display: none;"/>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
 
 
-{% block scripts %}
-    {{ questao_form.media }}
-    <script src="{% static 'js/questao-form.js' %}"></script>
-{% endblock %}
+            <div>
+                <button type="submit" class="btn btn-save">Salvar</button>
+                <a href="{% url 'questao_list' %}" class="btn btn-cancel">Cancelar</a>
+            </div>
+
+            <!-- Mensagens de Erro -->
+            {% if questao_form.errors %}
+            <div class="errors">
+                <ul>
+                    {% for error in questao_form.non_field_errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                    {% for field, errors in questao_form.errors.items %}
+                        <li>{{ field }}: {{ errors }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+
+            {% if formset.errors %}
+            <div class="errors">
+                <ul>
+                    {% for form in formset %}
+                        {% for field, errors in form.errors.items %}
+                            <li>{{ field }}: {{ errors }}</li>
+                        {% endfor %}
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+        </form>
+    </main>
+    {% endblock %}
+
+    {% block scripts %}
+        {{ questao_form.media }}
+        <script src="{% static 'js/questao-form.js' %}"></script>
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+        var disciplinaField = document.querySelector("#id_disciplina");
+        var conteudoField = document.querySelector("#id_conteudo");
+        var topicoField = document.querySelector("#id_topico");
+        var selects = document.querySelectorAll("select");
+
+        function carregarConteudos(disciplinaId) {
+            fetch(`/api/conteudos/${disciplinaId}`)
+                .then(response => response.json())
+                .then(data => {
+                    conteudoField.innerHTML = '<option value="">---------</option>';
+                    data.forEach(item => {
+                        var option = document.createElement("option");
+                        option.value = item.id;
+                        option.textContent = item.nome;
+                        conteudoField.appendChild(option);
+                    });
+
+                    // Selecionar o valor atual se já existir
+                    if (conteudoField.dataset.selected) {
+                        conteudoField.value = conteudoField.dataset.selected;
+                    }
+
+                    conteudoField.disabled = false;
+                });
+        }
+
+        function carregarTopicos(conteudoId) {
+            fetch(`/api/topicos/${conteudoId}`)
+                .then(response => response.json())
+                .then(data => {
+                    topicoField.innerHTML = '<option value="">---------</option>';
+                    data.forEach(item => {
+                        var option = document.createElement("option");
+                        option.value = item.id;
+                        option.textContent = item.nome;
+                        topicoField.appendChild(option);
+                    });
+
+                    // Selecionar o valor atual se já existir
+                    if (topicoField.dataset.selected) {
+                        topicoField.value = topicoField.dataset.selected;
+                    }
+
+                    topicoField.disabled = false;
+                });
+        }
+
+        // Evento para carregar conteúdos
+        disciplinaField.addEventListener("change", function () {
+            if (disciplinaField.value) {
+                carregarConteudos(disciplinaField.value);
+            } else {
+                conteudoField.disabled = true;
+                conteudoField.innerHTML = '<option value="">---------</option>';
+                topicoField.disabled = true;
+                topicoField.innerHTML = '<option value="">---------</option>';
+            }
+        });
+
+        // Evento para carregar tópicos
+        conteudoField.addEventListener("change", function () {
+            if (conteudoField.value) {
+                carregarTopicos(conteudoField.value);
+            } else {
+                topicoField.disabled = true;
+                topicoField.innerHTML = '<option value="">---------</option>';
+            }
+        });
+
+        // Carregar valores iniciais ao editar
+        if (disciplinaField.value) {
+            carregarConteudos(disciplinaField.value);
+
+            if (conteudoField.dataset.selected) {
+                carregarTopicos(conteudoField.dataset.selected);
+            }
+        }
+
+        selects.forEach(select => {
+            select.addEventListener("focus", function () {
+                this.setAttribute("size", 8); // Mostra até 8 opções
+            });
+
+            select.addEventListener("blur", function () {
+                this.removeAttribute("size"); // Fecha após perder o foco
+            });
+
+            select.addEventListener("change", function () {
+                this.blur(); // Fecha o menu quando o valor é alterado
+            });
+        });
+    });
+        </script>
+    {% endblock %}

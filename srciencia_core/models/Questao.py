@@ -40,13 +40,16 @@ class Questao(models.Model):
     disciplina = models.ForeignKey(Disciplina, on_delete=models.SET_NULL, null=True, blank=True)
     conteudo = models.ForeignKey(Conteudo, on_delete=models.SET_NULL, null=True, blank=True)
     topico = models.ForeignKey(Topico, on_delete=models.SET_NULL, null=True, blank=True)
-    resolucao = CKEditor5Field('resolucao', config_name='default') 
+    resolucao = CKEditor5Field('resolucao', config_name='default', blank=True, null=True)
     dificuldade = models.IntegerField(choices=DIFICULDADE, default=1)
+    ano = models.PositiveIntegerField(null=True, blank=True, verbose_name="Ano") 
     data_criacao = models.DateTimeField(auto_now_add=True)
     data_atualizacao = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return f"Questão {self.id}: {self.descricao[:50]}"
+
+
 
 class Alternativa(models.Model):
     questao = models.ForeignKey(Questao, on_delete=models.CASCADE, related_name="alternativas")
