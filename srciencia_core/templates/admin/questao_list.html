@@ -6,7 +6,23 @@
 {% block content %}
 <main>
     <h2 class="quest">Questões</h2>
-    <a href="{% url 'questao_create' %}" class="btn btn-add">Adicionar questão</a>
+    <div class="btn-container">
+        <a href="{% url 'questao_create' %}" class="btn btn-add">Adicionar Questão</a>
+        <button id="open-add-modal" class="btn btn-add">Gerenciar detalhamento</button>
+    </div>    
+    <div id="add-item-modal" class="modal">
+        <div class="modal-content" style="margin: 150px auto;">
+            <span id="close-add-modal" class="close-icon">&times;</span>
+            <h2>Gerenciar detalhamento</h2>
+            <p>Escolha o detalhamento que você deseja gerenciar:</p>
+            <div class="modal-actions">
+                <a href="{% url 'gerenciar_banca' %}" class="btn btn-confirm">Gerenciar Banca</a>
+                <a href="{% url 'gerenciar_disciplina' %}" class="btn btn-confirm">Gerenciar Disciplina</a>
+                <a href="{% url 'gerenciar_conteudo' %}" class="btn btn-confirm">Gerenciar Conteúdo</a>
+                <a href="{% url 'gerenciar_topico' %}" class="btn btn-confirm">Gerenciar Tópico</a>
+            </div>
+        </div>
+    </div>
     <ul id="questoes" class="list-crud">
         {% for questao in questoes %}
         <li class="card" style="margin-bottom: 20px;">
@@ -45,9 +61,12 @@
                     {% for alternativa in questao.alternativas.all %}
                     <li>
                         {{ alternativa.descricao|safe }}
-                        {% if alternativa.correta %}
-                        <strong>(Correta)</strong>
-                        {% endif %}
+                        {% if alternativa.imagem %}
+                            <img src="{{ alternativa.imagem.url }}" alt="Imagem da alternativa" class="alternativa-imagem">
+                            {% endif %}
+                            {% if alternativa.correta %}
+                                <strong>(Correta)</strong>
+                            {% endif %}
                     </li>
                     {% endfor %}
                 </ul>
@@ -62,8 +81,10 @@
                     </button>
                 </h3>
                 <div id="resolucao-section-{{ forloop.counter }}" style="display: none; margin-top: 10px;">
-                    {{ questao.resolucao|safe }}
-                </div>
+                    <div class="resolucao-content">
+                        {{ questao.resolucao|safe }}
+                    </div>
+                </div>                
             </div>
             <!-- Botões de ação -->
             <div class="btn-group">
@@ -79,15 +100,18 @@
 </main>
 <script>
     document.addEventListener("DOMContentLoaded", () => {
-        const toggleButtons = document.querySelectorAll(".toggle-visibility");
+        var toggleButtons = document.querySelectorAll(".toggle-visibility");
+        var modal = document.getElementById("add-item-modal");
+        var openModalButton = document.getElementById("open-add-modal");
+        var closeModalButton = document.getElementById("close-add-modal");
 
         toggleButtons.forEach((button) => {
             button.addEventListener("click", () => {
-                const targetId = button.getAttribute("data-target");
-                const targetElement = document.getElementById(targetId);
+                var targetId = button.getAttribute("data-target");
+                var targetElement = document.getElementById(targetId);
 
-                const eyeOpen = button.querySelector(".eye-open");
-                const eyeClosed = button.querySelector(".eye-closed");
+                var eyeOpen = button.querySelector(".eye-open");
+                var eyeClosed = button.querySelector(".eye-closed");
 
                 if (targetElement.style.display === "none") {
                     targetElement.style.display = "block";
@@ -99,6 +123,19 @@
                     eyeClosed.style.display = "block";
                 }
             });
+        });
+        openModalButton.addEventListener("click", () => {
+            modal.style.display = "block";
+        });
+
+        closeModalButton.addEventListener("click", () => {
+            modal.style.display = "none";
+        });
+
+        window.addEventListener("click", (event) => {
+            if (event.target === modal) {
+                modal.style.display = "none";
+            }
         });
     });
 </script>

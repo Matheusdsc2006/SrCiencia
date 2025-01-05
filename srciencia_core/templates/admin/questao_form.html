@@ -8,13 +8,25 @@
 
     {% block content %}
     <main>
-        <h2 class="edit-quest">{% if questao_form.instance.pk %}Editar Questão{% else %}Nova Questão{% endif %}</h2>
+        <div class="header-container">
+            <a href="{% url 'questao_list' %}" class="btn-back">Voltar</a>
+            <h2 class="edit-quest">
+                {% if questao_form.instance.pk %}Editar Questão{% else %}Nova Questão{% endif %}
+            </h2>
+        </div>
         <form method="post" enctype="multipart/form-data">
             {% csrf_token %}
-            
+    
             <div>
                 <label for="{{ questao_form.descricao.id_for_label }}">Descrição:</label>
                 {{ questao_form.descricao }}
+                {% if questao_form.descricao.errors %}
+                <div class="error-messages">
+                    {% for error in questao_form.descricao.errors %}
+                    <span class="error">{{ error }}</span>
+                    {% endfor %}
+                </div>
+                {% endif %}
             </div>
             <div class="select-boxes">
                 <div>
@@ -22,7 +34,9 @@
                     <select id="ano" name="ano" class="styled-select">
                         <option value="" disabled selected>Informe o ano</option>
                         {% for ano in anos %}
-                        <option value="{{ ano }}" {% if questao_form.instance.ano == ano %}selected{% endif %}>{{ ano }}</option>
+                        <option value="{{ ano }}" {% if questao_form.instance.ano == ano %}selected{% endif %}>
+                            {{ ano }}
+                        </option>
                         {% endfor %}
                     </select>
                 </div>
@@ -36,81 +50,124 @@
                 </div>
                 <div>
                     <label for="{{ questao_form.conteudo.id_for_label }}">Conteúdo:</label>
-                    {{ questao_form.conteudo }}
+                    <select id="id_conteudo" name="conteudo" data-selected="{{ conteudo_id }}">
+                        <option value="">---------</option>
+                        {% for conteudo in conteudos %}
+                        <option value="{{ conteudo.id }}" {% if conteudo.id == conteudo_id %}selected{% endif %}>
+                            {{ conteudo.nome }}
+                        </option>
+                        {% endfor %}
+                    </select>
                 </div>
                 <div>
                     <label for="{{ questao_form.topico.id_for_label }}">Tópico:</label>
-                    {{ questao_form.topico }}
+                    <select id="id_topico" name="topico" data-selected="{{ topico_id }}">
+                        <option value="">---------</option>
+                        {% for topico in topicos %}
+                        <option value="{{ topico.id }}" {% if topico.id == topico_id %}selected{% endif %}>
+                            {{ topico.nome }}
+                        </option>
+                        {% endfor %}
+                    </select>
                 </div>
-            </div>    
+            </div>
             <div class="resolv">
                 <label for="{{ questao_form.resolucao.id_for_label }}">Resolução:</label>
                 {{ questao_form.resolucao }}
-            </div>               
+                {% if questao_form.resolucao.errors %}
+                <div class="error-messages">
+                    {% for error in questao_form.resolucao.errors %}
+                    <span class="error">{{ error }}</span>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
             <h3 class="alt">Alternativas</h3>
             {{ formset.management_form }}
             <div class="alternativas">
                 {% for form in formset %}
-                    <div class="alternativa">
-                        {{ form.id }} <!-- Campo oculto para rastrear instâncias -->
-                        <div class="input-alternativa">
-                            <div class="descricao-alternativa">
-                                {{ form.descricao }}
-                            </div>
-                            <div class="correta-alternativa">
-                                {{ form.correta }}
-                            </div>
-                            <div class="imagem-alternativa">
-                                <label for="id_form-{{ forloop.counter0 }}-imagem">
-                                    <img src="{% static 'assets/camera.svg' %}" id="uploadIcon_{{ forloop.counter }}" style="cursor: pointer" alt="">
-                                </label>
-                                {{ form.imagem }}
-                            </div>
-                        </div>
-                        <div class="imagePreview" id="imagePreview_{{ forloop.counter }}">
-                            {% if form.instance.imagem %}
-                                <img id="imagePreviewImg_{{ forloop.counter }}" src="{{ form.instance.imagem.url }}" alt="Pré-visualização"/>
+                <div class="alternativa">
+                    <!-- Exibe a descrição da alternativa -->
+                    <div class="descricao-alternativa">
+                        <input type="checkbox" name="alternativa_correta" id="alternativa_correta">
+                        <input type="text" name="descricao" placeholder="Digite a descrição da alternativa">
+                    </div>
+                
+                    <!-- Exibe a caixa de seleção para marcar como correta -->
+                    <div class="correta-alternativa">
+                        <label>
+                            {{ form.correta }} Correta
+                        </label>
+                    </div>
+                
+                    <!-- Exibe o botão de upload de imagem -->
+                    <div class="imagem-alternativa">
+                        {% if form.instance.imagem %}
+                            <!-- Ícone de olho roxo quando há uma imagem anexada -->
+                            <label>
+                                <img src="{% static 'assets/eye-show.svg' %}" alt="Visualizar imagem" 
+                                    id="viewImageIcon_{{ forloop.counter0 }}" 
+                                    style="cursor: pointer;" class="view-image-icon" 
+                                    data-target="#modalImagePreview_{{ forloop.counter0 }}">
+                            </label>
+                        {% else %}
+                            <!-- Ícone de câmera quando não há imagem anexada -->
+                            <label for="id_form-{{ forloop.counter0 }}-imagem">
+                                <img src="{% static 'assets/camera.svg' %}" alt="Adicionar imagem" 
+                                    style="cursor: pointer;" id="uploadIcon_{{ forloop.counter0 }}">
+                            </label>
+                            {{ form.imagem }}
+                        {% endif %}
+                    </div>
+                
+                    <!-- Modal para visualização de imagem -->
+                    <div id="modalImagePreview_{{ forloop.counter0 }}" class="image-modal" style="display: none;">
+                        <div class="image-modal-content">
+                            <span class="close-modal" data-target="#modalImagePreview_{{ forloop.counter0 }}">&times;</span>
+                            {% if form.instance.imagem and form.instance.imagem.url %}
+                                <img src="{{ form.instance.imagem.url }}" alt="Imagem da alternativa" class="modal-preview-image">
                             {% else %}
-                                <img id="imagePreviewImg_{{ forloop.counter }}" src="" alt="Pré-visualização" style="display: none;"/>
+                                <p>Sem imagem associada.</p>
                             {% endif %}
                         </div>
                     </div>
+                </div>                                                     
                 {% endfor %}
             </div>
-
-
+            <p>* Marque qual deve ser a(s) alternativa(s) correta(s)</p>
+                        
             <div>
                 <button type="submit" class="btn btn-save">Salvar</button>
                 <a href="{% url 'questao_list' %}" class="btn btn-cancel">Cancelar</a>
             </div>
-
+    
             <!-- Mensagens de Erro -->
             {% if questao_form.errors %}
             <div class="errors">
                 <ul>
                     {% for error in questao_form.non_field_errors %}
-                        <li>{{ error }}</li>
+                    <li>{{ error }}</li>
                     {% endfor %}
                     {% for field, errors in questao_form.errors.items %}
-                        <li>{{ field }}: {{ errors }}</li>
+                    <li>{{ field }}: {{ errors }}</li>
                     {% endfor %}
                 </ul>
             </div>
             {% endif %}
-
+    
             {% if formset.errors %}
             <div class="errors">
                 <ul>
                     {% for form in formset %}
-                        {% for field, errors in form.errors.items %}
-                            <li>{{ field }}: {{ errors }}</li>
-                        {% endfor %}
+                    {% for field, errors in form.errors.items %}
+                    <li>{{ field }}: {{ errors }}</li>
+                    {% endfor %}
                     {% endfor %}
                 </ul>
             </div>
             {% endif %}
         </form>
-    </main>
+    </main>    
     {% endblock %}
 
     {% block scripts %}

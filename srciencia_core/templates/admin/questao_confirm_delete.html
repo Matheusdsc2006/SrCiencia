@@ -4,14 +4,20 @@
 <link rel="stylesheet" href="{% static 'css/global-core.css' %}">
 {% block content %}
 <main>
-    <h2 class="certeza">Tem certeza de que deseja excluir esta questão?</h2>
-    <div class="container-exclusao">
-      <p>{{ questao.descricao | safe }}</p>
+    <div class="header-container">
+        <a href="{% url 'questao_list' %}" class="btn-back">Voltar</a>
+        <h2 class="quest">Excluir Questão</h2>
     </div>
-    <form method="post">
-      {% csrf_token %}
-      <button type="submit" class="btn btn-save">Sim, apagar</button>
-      <a href="{% url 'questao_list' %}" class="btn btn-cancel">Cancelar</a>
-    </form>
+    <div class="form-container">
+        <h2 class="certeza">Tem certeza de que deseja excluir esta questão?</h2>
+        <div class="container-exclusao">
+            <p>{{ questao.descricao | safe }}</p>
+        </div>
+        <form method="post" class="btn-group">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-save">Sim, apagar</button>
+            <a href="{% url 'questao_list' %}" class="btn btn-cancel">Cancelar</a>
+        </form>
+    </div>
 </main>
 {% endblock %}

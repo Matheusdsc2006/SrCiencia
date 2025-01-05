@@ -108,7 +108,7 @@
                     <img id="icon-eye-off-delete-password" src="{% static 'assets/eye-off.svg' %}" alt="Ocultar senha" style="display: none;">
                 </button>
             </div>
-            <button type="submit" class="btn-confirm">Confirmar</button>
+            <button type="submit" class="btn-confirm-sim">Confirmar</button>
         </form>
     </div>
 </div>
@@ -124,7 +124,7 @@
         <form id="add-account-form">
             <label for="new-account" class="email">E-mail:</label>
             <input type="email" id="new-account" placeholder="Digite um e-mail" required />
-            <button id="add-account-btn" class="btn-confirm">Adicionar Conta</button>
+            <button id="add-account-btn" class="btn-confirm-sim">Adicionar Conta</button>
         </form>
     </div>
 </div>
@@ -136,7 +136,7 @@
         <h2>Deseja realmente mudar de conta?</h2>
         <p style="font-size: 20px;">Você será redirecionado para a tela de login.</p>
         <div class="modal-actions">
-            <button id="confirm-change-btn" class="btn-confirm">Sim</button>
+            <button id="confirm-change-btn" class="btn-confirm-sim">Sim</button>
         </div>
     </div>
 </div>
@@ -161,7 +161,7 @@
             <form id="upload-form" method="POST" enctype="multipart/form-data">
                 {% csrf_token %}
                 <input type="file" name="arquivo" id="arquivo">
-                <button type="submit" class="btn-confirm">Anexar Arquivo</button>
+                <button type="submit" class="btn-confirm-sim">Anexar Arquivo</button>
             </form>            
         </div>
     </div>
@@ -257,7 +257,7 @@
 
     if (selectedEmail) {
         // Apenas redirecionar para a página de login com o e-mail selecionado
-        const loginUrl = `/auth/login/?email=${encodeURIComponent(selectedEmail)}`;
+        var loginUrl = `/auth/login/?email=${encodeURIComponent(selectedEmail)}`;
         window.location.href = loginUrl;
     } else {
         alert("Erro: Nenhum e-mail foi selecionado para redirecionamento.");
@@ -668,19 +668,20 @@ document.querySelectorAll(".view-students").forEach((button) => {
             }
         });
 
-        // Abrir modal de exclusão
+        // Função para abrir o modal de exclusão
         function openDeleteModal(turmaId) {
-            closeAllModals();
-            turmaIdToDelete = turmaId;
-            deleteClassModal.style.display = "block";
+        turmaIdToDelete = turmaId; // Armazena o ID da turma a ser excluída
+        var deleteClassModal = document.getElementById("delete-class-modal");
+        deleteClassModal.style.display = "block";
         }
 
         var closeDeleteModal = document.getElementById("close-delete-modal");
         // Fechar modal de exclusão
         closeDeleteModal.addEventListener("click", () => {
-            deleteClassModal.style.display = "none";
-            turmaIdToDelete = null;
-        });
+        var deleteClassModal = document.getElementById("delete-class-modal");
+        deleteClassModal.style.display = "none";
+        turmaIdToDelete = null; // Reseta o ID da turma
+    });
 
         var deleteClassModal = document.getElementById("delete-class-modal");
         // Fechar modal de exclusão ao clicar fora
@@ -733,54 +734,54 @@ document.querySelectorAll(".view-students").forEach((button) => {
         var deleteClassForm = document.getElementById("delete-class-form");
         deleteClassForm.addEventListener("submit", (event) => {
             event.preventDefault();
+            var deletePasswordInput = document.getElementById("delete-password-input").value.trim();
 
-            var deletePasswordInput = document.getElementById("delete-password-input");
-            var password = deletePasswordInput.value.trim();
-            if (!password) {
+            if (!turmaIdToDelete) {
+                alert("Erro: Nenhuma turma selecionada para exclusão.");
+                return;
+            }
+
+            if (!deletePasswordInput) {
                 alert("Por favor, insira sua senha.");
                 return;
             }
 
+            // Enviar requisição de exclusão
             fetch(`/professor_turmas/excluir_turma/${turmaIdToDelete}/`, {
                 method: "POST",
                 headers: {
                     "X-CSRFToken": document.querySelector('[name="csrfmiddlewaretoken"]').value,
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify({ senha: password }),
+                body: JSON.stringify({ senha: deletePasswordInput }),
             })
                 .then((response) => response.json())
                 .then((data) => {
                     if (data.success) {
                         alert("Turma excluída com sucesso.");
+                        var deleteClassModal = document.getElementById("delete-class-modal");
                         deleteClassModal.style.display = "none";
-                        window.location.reload(); // Atualiza a página
+                        window.location.reload(); // Recarrega a página
                     } else {
-                        alert("Erro ao excluir turma: " + data.message);
+                        alert(`Erro ao excluir turma: ${data.message}`);
                     }
                 })
                 .catch((error) => {
                     console.error("Erro ao excluir turma:", error);
-                    alert("Erro ao excluir turma. Reinicie a página e tente novamente.");
-                })
-                .finally(() => {
-                    deletePasswordInput.value = ""; // Limpa o campo de senha
-                    turmaIdToDelete = null; // Limpa o ID da turma
+                    alert("Erro ao excluir turma. Tente novamente.");
                 });
         });
 
-        // Capturar o evento de clique nos botões de exclusão
-        document.querySelectorAll(".cancel").forEach((button) => {
-            button.addEventListener("click", (event) => {
-                event.preventDefault(); // Impede o comportamento padrão de redirecionamento
-
-                var turmaId = button.getAttribute("data-turma-id");
-                var turmaName = button.getAttribute("data-turma-name");
-
-                // Abre o modal de exclusão
-                openDeleteModal(turmaId, turmaName);
-            });
+        document.querySelectorAll(".btn-danger").forEach((button) => {
+        button.addEventListener("click", (event) => {
+            var turmaId = button.getAttribute("data-turma-id");
+            if (!turmaId) {
+                alert("Erro: ID da turma não encontrado.");
+                return;
+            }
+            openDeleteModal(turmaId);
         });
+    });
 
 
 

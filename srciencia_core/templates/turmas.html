@@ -85,7 +85,7 @@
         <h2>Deseja realmente mudar de conta?</h2>
         <p style="font-size: 20px;">Você sairá da conta atual.</p>
         <div class="modal-actions">
-            <button id="confirm-change-btn" class="btn-confirm">Sim</button>
+            <button id="confirm-change-btn" class="btn-confirm-sim">Sim</button>
         </div>
     </div>
 </div>
@@ -100,7 +100,7 @@
         <div class="add-account">
             <label for="new-account">E-mail:</label>
             <input type="email" id="new-account" class="email" placeholder="Digite um e-mail" required />
-            <button id="add-account-btn" class="btn-confirm">Adicionar Conta</button>
+            <button id="add-account-btn" class="btn-confirm-sim">Adicionar Conta</button>
         </div>        
     </div>
 </div>
@@ -112,7 +112,7 @@
         <h2>Deseja realmente remover a conta atual?</h2>
         <p style="font-size: 20px;">Você será deslogado.</p>
         <div class="modal-actions">
-            <button id="confirm-remove-btn" class="btn-confirm">Sim</button>
+            <button id="confirm-remove-btn" class="btn-confirm-sim">Sim</button>
         </div>
     </div>
 </div>
@@ -123,7 +123,7 @@
         <span id="close-cancel-class-modal" class="close-icon">&times;</span>
         <h2>Deseja realmente sair da turma?</h2>
         <div class="modal-actions">
-            <button id="confirm-cancel-class-btn" class="btn-confirm">Sim</button>
+            <button id="confirm-cancel-class-btn" class="btn-confirm-sim">Sim</button>
         </div>
     </div>
 </div>
@@ -560,10 +560,9 @@
         .then((data) => {
             if (data.success) {
                 alert(data.message);
-                // Recarregar a página ao adicionar turma com sucesso
                 window.location.reload();
             } else {
-                alert(data.message);
+                alert("Código inexistente.");
             }
         })
         .catch((error) => {

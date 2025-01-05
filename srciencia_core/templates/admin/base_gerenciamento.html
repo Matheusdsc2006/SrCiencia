@@ -1,0 +1,31 @@
+{% extends "base-core.html" %}
+{% block content %}
+<main>
+    <h2 class="quest">Gerenciar {{ tipo }}</h2>
+    <form method="post" class="form-container">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <div class="btn-group">
+            <button type="submit" name="add" class="btn btn-save">Adicionar {{ tipo }}</button>
+            <a href="{% url 'questao_list' %}" class="btn btn-cancel">Cancelar</a>
+        </div>
+    </form>
+    <div class="list-container">
+        <h3>Lista de {{ tipo_plural }}</h3>
+        <ul class="item-list">
+            {% for item in itens %}
+            <li class="list-item">
+                <span>{{ item.nome }}</span>
+                <form method="post" style="display: inline;">
+                    {% csrf_token %}
+                    <input type="hidden" name="{{ tipo|lower }}_id" value="{{ item.id }}">
+                    <button type="submit" name="delete" class="btn-delete">Remover</button>
+                </form>
+            </li>
+            {% empty %}
+            <li class="list-item empty">Nenhum {{ tipo|lower }} encontrado.</li>
+            {% endfor %}
+        </ul>
+    </div>
+</main>
+{% endblock %}

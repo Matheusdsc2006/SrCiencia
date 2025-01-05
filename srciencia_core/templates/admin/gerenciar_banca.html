@@ -1,0 +1,67 @@
+{% extends "base-core.html" %}
+{% load static %}
+{% block content %}
+<main>
+    <div class="header-container">
+        <a href="{% url 'questao_list' %}" class="btn-back">Voltar</a>
+        <h2 class="quest">Gerenciar Banca</h2>
+    </div>
+    <h3 class="list-title">Adicionar Banca</h3>
+    <form method="post" class="form-container">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <div class="btn-group">
+            <button type="submit" name="add" class="btn btn-save">Salvar</button>
+        </div>
+    </form>
+    <div class="search-container">
+        <h3 class="list-title">Lista de Bancas</h3>
+        <input type="text" id="search-input" class="search-input" placeholder="Buscar Bancas...">
+    </div>
+    <div id="list-container" class="list-container">
+        {% for banca in bancas %}
+        <div class="list-item">
+            <span>{{ banca.nome }}</span>
+            <form method="post" class="delete-form">
+                {% csrf_token %}
+                <input type="hidden" name="banca_id" value="{{ banca.id }}">
+                <button type="submit" name="delete" class="btn-delete">Remover</button>
+            </form>
+        </div>
+        {% empty %}
+        <p>Nenhuma banca encontrada.</p>
+        {% endfor %}
+    </div>
+</main>
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const searchInput = document.getElementById("search-input");
+        const listContainer = document.getElementById("list-container");
+
+        searchInput.addEventListener("input", () => {
+            const query = searchInput.value;
+            fetch(`{% url 'buscar_bancas' %}?q=${query}`)
+                .then(response => response.json())
+                .then(data => {
+                    listContainer.innerHTML = "";
+                    if (data.length === 0) {
+                        listContainer.innerHTML = "<p>Nenhuma banca encontrada.</p>";
+                        return;
+                    }
+                    data.forEach(item => {
+                        const div = document.createElement("div");
+                        div.className = "list-item";
+                        div.innerHTML = `
+                            <span>${item.nome}</span>
+                            <form method="post" class="delete-form">
+                                {% csrf_token %}
+                                <input type="hidden" name="banca_id" value="${item.id}">
+                                <button type="submit" name="delete" class="btn-delete">Remover</button>
+                            </form>`;
+                        listContainer.appendChild(div);
+                    });
+                });
+        });
+    });
+</script>
+{% endblock %}

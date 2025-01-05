@@ -255,7 +255,7 @@ button:hover {
     width: 50%;
     max-width: 600px;
     margin: auto;
-    top: 50%;
+    top: 40%;
     transform: translateY(-50%);
     padding: 20px;
     background-color: #fff;
@@ -264,6 +264,11 @@ button:hover {
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
+}
+
+#add-account-form label{
+    display: flex;
+    justify-content: flex-start;
 }
 
 .modal-content h2 {
