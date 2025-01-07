@@ -23,15 +23,22 @@ def questao_create(request):
     anos_disponiveis = list(range(datetime.now().year, 1924, -1))  # Lista do ano atual para 1925
 
     if request.method == "POST":
-        questao_form = QuestaoForm(request.POST, request.FILES) 
-        formset = AlternativaFormSet(request.POST, request.FILES, queryset=Alternativa.objects.none()) 
+        questao_form = QuestaoForm(request.POST, request.FILES)
+        formset = AlternativaFormSet(request.POST, queryset=Alternativa.objects.none())
+
         if questao_form.is_valid() and formset.is_valid():
+            # Salvar a questão
             questao = questao_form.save()
+
+            # Iterar sobre o formset para salvar alternativas
             for form in formset:
-                alternativa = form.save(commit=False)
-                alternativa.questao = questao
-                alternativa.save()
+                if form.cleaned_data:  # Somente salvar formulários preenchidos
+                    alternativa = form.save(commit=False)
+                    alternativa.questao = questao
+                    alternativa.save()
+
             return redirect("questao_list")
+
     else:
         questao_form = QuestaoForm()
         formset = AlternativaFormSet(queryset=Alternativa.objects.none())
@@ -39,13 +46,17 @@ def questao_create(request):
     return render(request, "admin/questao_form.html", {
         "questao_form": questao_form,
         "formset": formset,
-        "anos": anos_disponiveis  # Lista de anos invertida
+        "anos": anos_disponiveis,
     })
+
 
 
 def questao_update(request, pk):
     questao = get_object_or_404(Questao, pk=pk)
     AlternativaFormSet = modelformset_factory(Alternativa, form=AlternativaForm, extra=0, can_delete=True)
+
+    conteudo_id = questao.conteudo.id if questao.conteudo else None
+    topico_id = questao.topico.id if questao.topico else None
 
     if request.method == "POST":
         questao_form = QuestaoForm(request.POST, request.FILES, instance=questao)
@@ -65,9 +76,6 @@ def questao_update(request, pk):
                     alternativa.save()
 
             return redirect("questao_list")
-        else:
-            print("Erros no formulário principal:", questao_form.errors)
-            print("Erros no formset:", formset.errors)
     else:
         questao_form = QuestaoForm(instance=questao)
         formset = AlternativaFormSet(queryset=questao.alternativas.all())
@@ -76,7 +84,11 @@ def questao_update(request, pk):
         "questao_form": questao_form,
         "formset": formset,
         "anos": list(range(datetime.now().year, 1924, -1)),
+        "conteudo_id": conteudo_id,
+        "topico_id": topico_id,
     })
+
+
 
 
 def questao_delete(request, pk):
@@ -106,6 +118,7 @@ def get_topicos(request, conteudo_id):
         return Response({'error': 'Tópicos não encontrados.'}, status=404)
     except Exception as e:
         return Response({'error': str(e)}, status=500)
+
 
 def gerenciar_banca(request):
     if request.method == "POST":
@@ -190,11 +203,6 @@ def gerenciar_conteudo(request):
         "conteudos": conteudos,
     })
 
-
-from django.shortcuts import render, get_object_or_404, redirect
-from django.contrib import messages
-from srciencia_core.models import Topico, Disciplina
-from srciencia_core.forms import TopicoForm
 
 def gerenciar_topico(request):
     if request.method == "POST":

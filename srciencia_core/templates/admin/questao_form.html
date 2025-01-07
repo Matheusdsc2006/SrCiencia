@@ -17,7 +17,7 @@
         <form method="post" enctype="multipart/form-data">
             {% csrf_token %}
     
-            <div>
+            <div class="descricao">
                 <label for="{{ questao_form.descricao.id_for_label }}">Descrição:</label>
                 {{ questao_form.descricao }}
                 {% if questao_form.descricao.errors %}
@@ -69,7 +69,7 @@
                         </option>
                         {% endfor %}
                     </select>
-                </div>
+                </div>                
             </div>
             <div class="resolv">
                 <label for="{{ questao_form.resolucao.id_for_label }}">Resolução:</label>
@@ -84,75 +84,52 @@
             </div>
             <h3 class="alt">Alternativas</h3>
             {{ formset.management_form }}
-            {{ formset.management_form }}
             <div class="alternativas">
                 {% for form in formset %}
                 <div class="alternativa">
-                    <!-- Campo escondido para ID -->
                     {{ form.id }}
-                    
-                    <!-- Exibe a descrição da alternativa -->
-                    <div class="descricao-alternativa">
-                        {{ form.descricao.label_tag }}
-                        {{ form.descricao }}
-                        {% if form.descricao.errors %}
-                        <div class="error-messages">
-                            {% for error in form.descricao.errors %}
-                            <span class="error">{{ error }}</span>
-                            {% endfor %}
+
+                    <!-- Linha com todos os campos alinhados -->
+                    <div class="linha-alternativa">
+                        <!-- Checkbox -->
+                        <div class="checkbox-correta">
+                            <input 
+                                type="checkbox" 
+                                id="correta-{{ forloop.counter }}" 
+                                name="correta-{{ forloop.counter }}" 
+                                {% if form.correta.value %} checked {% endif %}
+                            >
                         </div>
-                        {% endif %}
-                    </div>
-                    
-                    <!-- Exibe a caixa de seleção para marcar como correta -->
-                    <div class="correta-alternativa">
-                        <label>
-                            {{ form.correta }} Correta
-                        </label>
-                        {% if form.correta.errors %}
-                        <div class="error-messages">
-                            {% for error in form.correta.errors %}
-                            <span class="error">{{ error }}</span>
-                            {% endfor %}
+
+                        <!-- Campo de Descrição -->
+                        <div class="input-group descricao">
+                            <label for="{{ form.descricao.id_for_label }}">{{ form.descricao.label }}</label>
+                            {{ form.descricao }}
+                            {% if form.descricao.errors %}
+                            <div class="error-messages">
+                                {% for error in form.descricao.errors %}
+                                <span class="error">{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                            {% endif %}
                         </div>
-                        {% endif %}
-                    </div>
-                    
-                    <!-- Exibe o botão de upload de imagem -->
-                    <div class="imagem-alternativa">
-                        {% if form.instance.imagem %}
-                            <!-- Ícone de olho roxo quando há uma imagem anexada -->
-                            <label>
-                                <img src="{% static 'assets/eye-show.svg' %}" alt="Visualizar imagem" 
-                                    id="viewImageIcon_{{ forloop.counter0 }}" 
-                                    style="cursor: pointer;" class="view-image-icon" 
-                                    data-target="#modalImagePreview_{{ forloop.counter0 }}">
-                            </label>
-                        {% else %}
-                            <!-- Ícone de câmera quando não há imagem anexada -->
-                            <label for="id_form-{{ forloop.counter0 }}-imagem">
-                                <img src="{% static 'assets/camera.svg' %}" alt="Adicionar imagem" 
-                                    style="cursor: pointer;" id="uploadIcon_{{ forloop.counter0 }}">
-                            </label>
-                            {{ form.imagem }}
-                        {% endif %}
-                    </div>
-                    
-                    <!-- Modal para visualização de imagem -->
-                    <div id="modalImagePreview_{{ forloop.counter0 }}" class="image-modal" style="display: none;">
-                        <div class="image-modal-content">
-                            <span class="close-modal" data-target="#modalImagePreview_{{ forloop.counter0 }}">&times;</span>
-                            {% if form.instance.imagem and form.instance.imagem.url %}
-                                <img src="{{ form.instance.imagem.url }}" alt="Imagem da alternativa" class="modal-preview-image">
-                            {% else %}
-                                <p>Sem imagem associada.</p>
+
+                        <!-- Campo de URL da Imagem -->
+                        <div class="input-group url-imagem">
+                            <label for="{{ form.imagem_url.id_for_label }}">URL da Imagem (se necessário)</label>
+                            {{ form.imagem_url }}
+                            {% if form.imagem_url.errors %}
+                            <div class="error-messages">
+                                {% for error in form.imagem_url.errors %}
+                                <span class="error">{{ error }}</span>
+                                {% endfor %}
+                            </div>
                             {% endif %}
                         </div>
                     </div>
-                </div>                                                     
+                </div>
                 {% endfor %}
-            </div>            
-
+            </div>
             <p>* Marque qual deve ser a(s) alternativa(s) correta(s)</p>
                         
             <div>
@@ -192,99 +169,4 @@
     {% block scripts %}
         {{ questao_form.media }}
         <script src="{% static 'js/questao-form.js' %}"></script>
-        <script>
-            document.addEventListener("DOMContentLoaded", function () {
-        var disciplinaField = document.querySelector("#id_disciplina");
-        var conteudoField = document.querySelector("#id_conteudo");
-        var topicoField = document.querySelector("#id_topico");
-        var selects = document.querySelectorAll("select");
-
-        function carregarConteudos(disciplinaId) {
-            fetch(`/api/conteudos/${disciplinaId}`)
-                .then(response => response.json())
-                .then(data => {
-                    conteudoField.innerHTML = '<option value="">---------</option>';
-                    data.forEach(item => {
-                        var option = document.createElement("option");
-                        option.value = item.id;
-                        option.textContent = item.nome;
-                        conteudoField.appendChild(option);
-                    });
-
-                    // Selecionar o valor atual se já existir
-                    if (conteudoField.dataset.selected) {
-                        conteudoField.value = conteudoField.dataset.selected;
-                    }
-
-                    conteudoField.disabled = false;
-                });
-        }
-
-        function carregarTopicos(conteudoId) {
-            fetch(`/api/topicos/${conteudoId}`)
-                .then(response => response.json())
-                .then(data => {
-                    topicoField.innerHTML = '<option value="">---------</option>';
-                    data.forEach(item => {
-                        var option = document.createElement("option");
-                        option.value = item.id;
-                        option.textContent = item.nome;
-                        topicoField.appendChild(option);
-                    });
-
-                    // Selecionar o valor atual se já existir
-                    if (topicoField.dataset.selected) {
-                        topicoField.value = topicoField.dataset.selected;
-                    }
-
-                    topicoField.disabled = false;
-                });
-        }
-
-        // Evento para carregar conteúdos
-        disciplinaField.addEventListener("change", function () {
-            if (disciplinaField.value) {
-                carregarConteudos(disciplinaField.value);
-            } else {
-                conteudoField.disabled = true;
-                conteudoField.innerHTML = '<option value="">---------</option>';
-                topicoField.disabled = true;
-                topicoField.innerHTML = '<option value="">---------</option>';
-            }
-        });
-
-        // Evento para carregar tópicos
-        conteudoField.addEventListener("change", function () {
-            if (conteudoField.value) {
-                carregarTopicos(conteudoField.value);
-            } else {
-                topicoField.disabled = true;
-                topicoField.innerHTML = '<option value="">---------</option>';
-            }
-        });
-
-        // Carregar valores iniciais ao editar
-        if (disciplinaField.value) {
-            carregarConteudos(disciplinaField.value);
-
-            if (conteudoField.dataset.selected) {
-                carregarTopicos(conteudoField.dataset.selected);
-            }
-        }
-
-        selects.forEach(select => {
-            select.addEventListener("focus", function () {
-                this.setAttribute("size", 8); // Mostra até 8 opções
-            });
-
-            select.addEventListener("blur", function () {
-                this.removeAttribute("size"); // Fecha após perder o foco
-            });
-
-            select.addEventListener("change", function () {
-                this.blur(); // Fecha o menu quando o valor é alterado
-            });
-        });
-    });
-        </script>
     {% endblock %}

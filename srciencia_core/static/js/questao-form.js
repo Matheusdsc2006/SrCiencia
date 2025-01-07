@@ -1,114 +1,178 @@
-document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener("DOMContentLoaded", function () {
+    console.log("Arquivo JavaScript carregado.");
+    // Seletores de campos de disciplina, conteúdo, tópico e outros elementos
+    var disciplinaField = document.querySelector("#id_disciplina");
+    var conteudoField = document.querySelector("#id_conteudo");
+    var topicoField = document.querySelector("#id_topico");
+    var selects = document.querySelectorAll("select");
 
-    // Inicializações relacionadas aos selects de disciplina, conteúdo e tópico
-    const disciplinaSelect = document.querySelector('#id_disciplina');
-    const conteudoSelect = document.querySelector('#id_conteudo');
-    const topicoSelect = document.querySelector('#id_topico');
+    // Verifica se há valor inicial no campo de conteúdo e carrega os tópicos correspondentes
+    conteudoField.addEventListener("change", function () {
+        if (conteudoField.value) {
+            carregarTopicos(conteudoField.value);
+        } else {
+            topicoField.disabled = true;
+            topicoField.innerHTML = '<option value="">---------</option>';
+        }
+    });
+    
 
-    // Carregar valores iniciais para os selects ao abrir a página de edição
-    if (disciplinaSelect && disciplinaSelect.value) {
-        updateConteudos(disciplinaSelect.value, conteudoSelect.dataset.selected);
-    }
+    // Função para carregar conteúdos com base na disciplina selecionada
+    function carregarConteudos(disciplinaId) {
+        fetch(`/api/conteudos/${disciplinaId}`)
+            .then((response) => response.json())
+            .then((data) => {
+                conteudoField.innerHTML = '<option value="">---------</option>';
+                data.forEach((item) => {
+                    var option = document.createElement("option");
+                    option.value = item.id;
+                    option.textContent = item.nome;
+                    conteudoField.appendChild(option);
+                });
 
-    if (conteudoSelect && conteudoSelect.dataset.selected) {
-        updateTopicos(conteudoSelect.dataset.selected, topicoSelect.dataset.selected);
-    }
-
-    // Atualizar conteúdos ao alterar a disciplina
-    if (disciplinaSelect) {
-        disciplinaSelect.addEventListener('change', function () {
-            const disciplinaId = this.value;
-            updateConteudos(disciplinaId);
-        });
-    }
-
-    // Atualizar tópicos ao alterar o conteúdo
-    if (conteudoSelect) {
-        conteudoSelect.addEventListener('change', function () {
-            const conteudoId = this.value;
-            updateTopicos(conteudoId);
-        });
-    }
-
-    /**
-     * Atualiza o select de conteúdos com base na disciplina selecionada
-     * @param {Number} disciplinaId - ID da disciplina
-     * @param {Number|null} selectedConteudo - ID do conteúdo pré-selecionado
-     */
-    function updateConteudos(disciplinaId, selectedConteudo = null) {
-        fetch(`/api/conteudos/${disciplinaId}/`)
-            .then(response => response.json())
-            .then(data => {
-                conteudoSelect.innerHTML = '<option value="">---------</option>';
-                if (data.length > 0) {
-                    data.forEach(conteudo => {
-                        const option = new Option(conteudo.nome, conteudo.id);
-                        conteudoSelect.add(option);
-                    });
-                    conteudoSelect.disabled = false;
-
-                    // Preencher o valor selecionado, se houver
-                    if (selectedConteudo) {
-                        conteudoSelect.value = selectedConteudo;
-                        updateTopicos(selectedConteudo, topicoSelect.dataset.selected);
-                    }
-                } else {
-                    conteudoSelect.disabled = true;
-                    conteudoSelect.innerHTML = '<option value="">---------</option>';
-                    topicoSelect.disabled = true;
-                    topicoSelect.innerHTML = '<option value="">---------</option>';
+                // Selecionar o valor atual se já existir
+                if (conteudoField.dataset.selected) {
+                    conteudoField.value = conteudoField.dataset.selected;
                 }
+
+                conteudoField.disabled = false;
             })
-            .catch(error => console.error('Erro ao carregar conteúdos:', error));
+            .catch((error) => {
+                console.error("Erro ao carregar conteúdos:", error);
+            });
     }
 
-    /**
-     * Atualiza o select de tópicos com base no conteúdo selecionado
-     * @param {Number} conteudoId - ID do conteúdo
-     * @param {Number|null} selectedTopico - ID do tópico pré-selecionado
-     */
-    function updateTopicos(conteudoId, selectedTopico = null) {
+    // Função para carregar tópicos com base no conteúdo selecionado
+    function carregarTopicos(conteudoId) {
+        // Verifica se o conteúdo ID é válido
+        if (!conteudoId || conteudoId === "None") {
+            console.error("Conteúdo ID inválido:", conteudoId);
+            topicoField.innerHTML = '<option value="">---------</option>'; // Reseta o campo de tópicos
+            topicoField.disabled = true; // Desabilita o select de tópicos
+            return; // Interrompe a execução da função
+        }
+    
+        // Faz a requisição para o endpoint de tópicos
         fetch(`/api/topicos/${conteudoId}/`)
-            .then(response => response.json())
-            .then(data => {
-                topicoSelect.innerHTML = '<option value="">---------</option>';
-                if (data.length > 0) {
-                    data.forEach(topico => {
-                        const option = new Option(topico.nome, topico.id);
-                        topicoSelect.add(option);
-                    });
-                    topicoSelect.disabled = false;
-
-                    // Preencher o valor selecionado, se houver
-                    if (selectedTopico) {
-                        topicoSelect.value = selectedTopico;
-                    }
-                } else {
-                    topicoSelect.disabled = true;
-                    topicoSelect.innerHTML = '<option value="">---------</option>';
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error(`Erro ao carregar tópicos: ${response.statusText}`);
+                }
+                return response.json();
+            })
+            .then((data) => {
+                topicoField.innerHTML = '<option value="">---------</option>';
+                data.forEach((item) => {
+                    var option = document.createElement("option");
+                    option.value = item.id;
+                    option.textContent = item.nome;
+                    topicoField.appendChild(option);
+                });
+    
+                topicoField.disabled = false;
+    
+                // Selecionar o valor atual se já existir
+                if (topicoField.dataset.selected) {
+                    topicoField.value = topicoField.dataset.selected;
                 }
             })
-            .catch(error => console.error('Erro ao carregar tópicos:', error));
+            .catch((error) => {
+                console.error("Erro ao carregar tópicos:", error);
+            });
+    }
+    
+
+    // Carregar valores iniciais ao editar
+    if (disciplinaField.value) {
+        carregarConteudos(disciplinaField.value);
+        if (conteudoField.dataset.selected) {
+            carregarTopicos(conteudoField.dataset.selected);
+        }
     }
 
-    // Lógica para imagens e uploads
-    document.querySelectorAll('.uploadIcon').forEach(function (icon) {
-        const index = icon.id.split('_')[1];
-        icon.addEventListener('click', function () {
-            const fileInput = document.getElementById(`id_form-${index}-imagem`);
-            if (fileInput) {
-                fileInput.click();
-            } else {
-                console.error(`Input de arquivo não encontrado para o índice ${index}`);
-            }
-        });
+    // Eventos para atualizar os selects ao mudar valores
+    disciplinaField.addEventListener("change", function () {
+        if (disciplinaField.value) {
+            carregarConteudos(disciplinaField.value);
+        } else {
+            conteudoField.disabled = true;
+            conteudoField.innerHTML = '<option value="">---------</option>';
+            topicoField.disabled = true;
+            topicoField.innerHTML = '<option value="">---------</option>';
+        }
+    });
+
+    conteudoField.addEventListener("change", function () {
+        if (conteudoField.value) {
+            carregarTopicos(conteudoField.value);
+        } else {
+            topicoField.disabled = true;
+            topicoField.innerHTML = '<option value="">---------</option>';
+        }
     });    
 
-    document.addEventListener("DOMContentLoaded", function () {
-        input.addEventListener('change', function (event) {
-            const index = input.id.split('-')[1]; // Extrai o índice do ID do input
-            const file = event.target.files[0];
+    // Configurar selects para mostrar opções no foco
+    selects.forEach((select) => {
+        select.addEventListener("focus", function () {
+            this.setAttribute("size", 8);
+        });
+
+        select.addEventListener("blur", function () {
+            this.removeAttribute("size");
+        });
+
+        select.addEventListener("change", function () {
+            this.blur();
+        });
+    });
+
+
+    // Adicionar evento de clique em cada botão de remoção
+    document.addEventListener("click", function (event) {
+        if (event.target.classList.contains("btn-remove-image")) {
+            event.preventDefault();
+    
+            const index = event.target.dataset.index;
+            console.log(`Botão de remoção clicado. Índice: ${index}`);
+    
+            const fileInput = document.getElementById(`id_form-${index}-imagem`);
+            const uploadIcon = document.getElementById(`uploadIcon_${index}`);
+            const viewIcon = document.getElementById(`viewImageIcon_${index}`);
             const imagePreview = document.getElementById(`imagePreviewImg_${index}`);
+            const modal = document.getElementById(`modalImagePreview_${index}`);
+    
+            console.log("Verificando elementos:");
+            console.log(`fileInput: ${fileInput?.outerHTML || "não encontrado"}`);
+            console.log(`uploadIcon: ${uploadIcon?.outerHTML || "não encontrado"}`);
+            console.log(`viewIcon: ${viewIcon?.outerHTML || "não encontrado"}`);
+            console.log(`imagePreview: ${imagePreview?.outerHTML || "não encontrado"}`);
+            console.log(`modal: ${modal?.outerHTML || "não encontrado"}`);
+    
+            if (!fileInput || !uploadIcon || !viewIcon || !imagePreview || !modal) {
+                console.error("Um ou mais elementos não foram encontrados.");
+                return;
+            }
+    
+            fileInput.value = "";
+            uploadIcon.style.display = "block";
+            viewIcon.style.display = "none";
+            imagePreview.src = "";
+            imagePreview.style.display = "none";
+            modal.style.display = "none";
+    
+            console.log("Imagem removida e modal fechado.");
+            alert("Imagem excluída com sucesso!");
+        }
+    });
+    
+
+
+    // Atualizar pré-visualização ao carregar imagens
+    document.querySelectorAll("input[type='file']").forEach((input) => {
+        input.addEventListener("change", function (event) {
+            var index = input.id.split("-")[1];
+            var file = event.target.files[0];
+            var imagePreview = document.getElementById(`imagePreviewImg_${index}`);
 
             if (!imagePreview) {
                 console.error(`Elemento com ID imagePreviewImg_${index} não encontrado.`);
@@ -116,87 +180,49 @@ document.addEventListener('DOMContentLoaded', function () {
             }
 
             if (file) {
-                const reader = new FileReader();
+                var reader = new FileReader();
                 reader.onload = function () {
                     imagePreview.src = reader.result;
-                    imagePreview.style.display = 'block';
+                    imagePreview.style.display = "block";
+                    console.log("Pré-visualização atualizada.");
                 };
                 reader.readAsDataURL(file);
             } else {
-                imagePreview.src = '';
-                imagePreview.style.display = 'none';
+                imagePreview.src = "";
+                imagePreview.style.display = "none";
+                console.log("Pré-visualização removida.");
+            }
+        });
+    });
+
+    // Modais de visualização de imagem
+    document.querySelectorAll(".view-image-icon").forEach((icon) => {
+        icon.addEventListener("click", function () {
+            const modalId = this.dataset.target;
+            const modal = document.querySelector(modalId);
+            if (modal) {
+                modal.style.display = "block";
+            }
+        });
+    });
+
+    // Fechar modal ao clicar no botão de fechar
+    document.querySelectorAll(".close-modal").forEach((closeButton) => {
+        closeButton.addEventListener("click", function () {
+            const modalId = this.dataset.target;
+            const modal = document.querySelector(modalId);
+            if (modal) {
+                modal.style.display = "none";
+            }
+        });
+    });
+
+    // Fechar modal ao clicar fora do conteúdo
+    document.querySelectorAll(".image-modal").forEach((modal) => {
+        modal.addEventListener("click", function (event) {
+            if (event.target === modal) {
+                modal.style.display = "none";
             }
         });
     });
 });
-
-
-    document.querySelectorAll('.btn-remove').forEach(function (button) {
-        button.addEventListener('click', function () {
-            const index = this.dataset.index;
-            const imagePreview = document.getElementById(`imagePreviewImg_${index}`);
-            const uploadIcon = document.getElementById(`uploadIcon_${index}`);
-            const fileInput = document.getElementById(`id_form-${index}-imagem`);
-
-            if (imagePreview) {
-                imagePreview.src = '';
-                imagePreview.style.display = 'none';
-                uploadIcon.style.display = 'block';
-                fileInput.value = ''; // Limpar o input de arquivo
-            }
-        });
-    });
-
-    function previewImage(event, index) {
-        const file = event.target.files[0];
-        const imagePreview = document.getElementById(`imagePreviewImg_${index}`);
-    
-        if (!imagePreview) {
-            console.error(`Elemento com ID imagePreviewImg_${index} não encontrado.`);
-            return; 
-        }
-    
-        if (file) {
-            const reader = new FileReader();
-    
-            reader.onload = function () {
-                imagePreview.src = reader.result;
-                imagePreview.style.display = 'block';
-            };
-    
-            reader.readAsDataURL(file);
-        } else {
-            imagePreview.src = '';
-            imagePreview.style.display = 'none';
-        }
-    }
-    
-    document.querySelectorAll('.view-image-icon').forEach((icon) => {
-        icon.addEventListener('click', (event) => {
-            const modalId = icon.dataset.target;
-            const modal = document.querySelector(modalId);
-            if (modal) {
-                modal.style.display = 'block';
-            }
-        });
-    });
-
-    // Fechar o modal ao clicar no botão de fechar
-    document.querySelectorAll('.close-modal').forEach((closeButton) => {
-        closeButton.addEventListener('click', (event) => {
-            const target = closeButton.dataset.target;
-            const modal = document.querySelector(target);
-            if (modal) {
-                modal.style.display = 'none';
-            }
-        });
-    });
-
-    // Fechar o modal ao clicar fora do conteúdo
-    document.querySelectorAll('.image-modal').forEach((modal) => {
-        modal.addEventListener('click', (event) => {
-            if (event.target === modal) {
-                modal.style.display = 'none';
-            }
-        });
-    });

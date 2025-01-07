@@ -50,12 +50,22 @@ class QuestaoForm(forms.ModelForm):
 class AlternativaForm(forms.ModelForm):
     class Meta:
         model = Alternativa
-        fields = ["descricao", "correta", "imagem"]
+        fields = ["descricao", "correta", "imagem_url"]
         widgets = {
             'descricao': forms.TextInput(attrs={'placeholder': 'Descrição da alternativa'}),
             'correta': forms.CheckboxInput(),
-            'imagem': forms.ClearableFileInput(attrs={'style': 'display: none;'}),
         }
+
+    def clean(self):
+        cleaned_data = super().clean()
+        descricao = cleaned_data.get("descricao")
+        correta = cleaned_data.get("correta")
+
+        # Validação personalizada
+        if not descricao and not correta:
+            raise forms.ValidationError("A descrição ou a imagem deve ser preenchida.")
+        
+        return cleaned_data
 
 
 class BancaForm(forms.ModelForm):
