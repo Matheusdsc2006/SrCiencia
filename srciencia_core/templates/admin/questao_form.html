@@ -27,7 +27,7 @@
                     {% endfor %}
                 </div>
                 {% endif %}
-            </div>
+            </div>            
             <div class="select-boxes">
                 <div>
                     <label for="ano">Ano:</label>
@@ -84,22 +84,40 @@
             </div>
             <h3 class="alt">Alternativas</h3>
             {{ formset.management_form }}
+            {{ formset.management_form }}
             <div class="alternativas">
                 {% for form in formset %}
                 <div class="alternativa">
+                    <!-- Campo escondido para ID -->
+                    {{ form.id }}
+                    
                     <!-- Exibe a descrição da alternativa -->
                     <div class="descricao-alternativa">
-                        <input type="checkbox" name="alternativa_correta" id="alternativa_correta">
-                        <input type="text" name="descricao" placeholder="Digite a descrição da alternativa">
+                        {{ form.descricao.label_tag }}
+                        {{ form.descricao }}
+                        {% if form.descricao.errors %}
+                        <div class="error-messages">
+                            {% for error in form.descricao.errors %}
+                            <span class="error">{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
                     </div>
-                
+                    
                     <!-- Exibe a caixa de seleção para marcar como correta -->
                     <div class="correta-alternativa">
                         <label>
                             {{ form.correta }} Correta
                         </label>
+                        {% if form.correta.errors %}
+                        <div class="error-messages">
+                            {% for error in form.correta.errors %}
+                            <span class="error">{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
                     </div>
-                
+                    
                     <!-- Exibe o botão de upload de imagem -->
                     <div class="imagem-alternativa">
                         {% if form.instance.imagem %}
@@ -119,7 +137,7 @@
                             {{ form.imagem }}
                         {% endif %}
                     </div>
-                
+                    
                     <!-- Modal para visualização de imagem -->
                     <div id="modalImagePreview_{{ forloop.counter0 }}" class="image-modal" style="display: none;">
                         <div class="image-modal-content">
@@ -133,7 +151,8 @@
                     </div>
                 </div>                                                     
                 {% endfor %}
-            </div>
+            </div>            
+
             <p>* Marque qual deve ser a(s) alternativa(s) correta(s)</p>
                         
             <div>
