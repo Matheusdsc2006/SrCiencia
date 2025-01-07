@@ -9,22 +9,37 @@
     <h3 class="list-title">Adicionar Tópico</h3>
     <form method="post" class="form-container">
         {% csrf_token %}
-        {{ form.as_p }}
+        <div class="form-group">
+            <label for="id_nome">Tópico:</label>
+            {{ form.nome }}
+        </div>
+        <div class="form-group">
+            <label for="id_disciplina">Disciplina:</label>
+            {{ form.disciplina }}
+        </div>
+        <div class="form-group">
+            <label for="id_conteudo">Conteúdo:</label>
+            {{ form.conteudo }}
+        </div>
         <div class="btn-group">
             <button type="submit" name="add" class="btn btn-save">Salvar</button>
         </div>
     </form>
     <div class="search-container">
         <h3 class="list-title">Lista de Tópicos</h3>
-        <input type="text" id="search-input" class="search-input" placeholder="Buscar tópicos...">
+        <div style="display: flex; align-items: center;">
+            <button id="search-button" class="btn btn-search">Buscar</button>
+            <input type="text" id="search-input" class="search-input" placeholder="Buscar tópicos..." style="width: 100%;">
+        </div>
     </div>
+    <p style="margin-top: -20px;">*Recarregue a página para ver o botão "Ver mais" após uma busca</p>
     <div id="list-container" class="list-container">
         {% for topico in topicos|slice:":5" %}
         <div class="list-item">
             <span>
                 {{ topico.nome }}
                 <span style="font-weight: 400; color: var(--gray);">
-                    ({{ topico.conteudo.nome }})
+                    ({{ topico.conteudo.disciplina.nome }} - {{ topico.conteudo.nome }})
                 </span>
             </span>
             <form method="post" class="delete-form">
@@ -34,15 +49,13 @@
             </form>
         </div>
         {% endfor %}
-        {% if topicos|length > 5 %}
         <button id="view-more-btn" class="btn btn-back full-width">Ver mais</button>
-        {% endif %}
     </div>
     <div id="all-topics-modal" class="modal">
         <div class="modal-content">
             <span id="close-modal" class="close-icon">&times;</span>
             <h3 class="list-title">Todos os Tópicos</h3>
-            <input type="text" id="modal-search-input" class="search-input" placeholder="Buscar tópicos no modal...">
+            <input type="text" id="modal-search-input" class="search-input" placeholder="Buscar tópicos...">
             <div id="modal-list-container" class="modal-list-container">
                 {% for topico in topicos %}
                 <div class="list-item">
@@ -65,56 +78,132 @@
 </main>
 <script>
     document.addEventListener("DOMContentLoaded", () => {
+    var searchButton = document.getElementById("search-button");
     var searchInput = document.getElementById("search-input");
+    var modalSearchInput = document.getElementById("modal-search-input");
     var listContainer = document.getElementById("list-container");
+    var modalListContainer = document.getElementById("modal-list-container");
     var viewMoreBtn = document.getElementById("view-more-btn");
     var modal = document.getElementById("all-topics-modal");
     var closeModal = document.getElementById("close-modal");
+    var disciplinaSelect = document.getElementById("id_disciplina");
+    var conteudoSelect = document.getElementById("id_conteudo");
 
+    // Abre o modal ao clicar em "Ver mais"
     if (viewMoreBtn) {
         viewMoreBtn.addEventListener("click", () => {
             modal.style.display = "block";
         });
     }
 
+    // Fecha o modal ao clicar no botão de fechar
     closeModal.addEventListener("click", () => {
         modal.style.display = "none";
     });
 
+    // Fecha o modal ao clicar fora do conteúdo do modal
     window.addEventListener("click", (event) => {
         if (event.target === modal) {
             modal.style.display = "none";
         }
     });
+
+    // Função para realizar a busca e atualizar o contêiner especificado
+    var fetchTopics = (query, container, isModal = false) => {
+    fetch(`{% url 'buscar_topicos' %}?q=${query}`)
+        .then(response => response.json())
+        .then(data => {
+            // Limpa o conteúdo anterior
+            container.innerHTML = "";
+
+            if (data.topicos.length === 0) {
+                container.innerHTML = "<p>Nenhum tópico encontrado.</p>";
+            } else {
+                // Verifica IDs já existentes no container
+                const existingIds = new Set(
+                    Array.from(container.querySelectorAll("input[name='topico_id']")).map(input => input.value)
+                );
+
+                var topicsToDisplay = isModal ? data.topicos : data.topicos.slice(0, 5);
+
+                topicsToDisplay.forEach(item => {
+                    // Só adiciona se o ID ainda não estiver no container
+                    if (!existingIds.has(String(item.id))) {
+                        var div = document.createElement("div");
+                        div.className = "list-item";
+                        div.innerHTML = `
+                            <span>${item.nome} 
+                                <span style="font-weight: 400; color: gray;">
+                                    (${item.disciplina_nome} - ${item.conteudo_nome})
+                                </span>
+                            </span>
+                            <form method="post" class="delete-form">
+                                {% csrf_token %}
+                                <input type="hidden" name="topico_id" value="${item.id}">
+                                <button type="submit" name="delete" class="btn-delete">Remover</button>
+                            </form>`;
+                        container.appendChild(div);
+                    }
+                });
+            }
+
+            // Exibe ou oculta o botão "Ver mais" dependendo do número de tópicos
+            if (!isModal && data.topicos.length > 5) {
+                viewMoreBtn.style.display = "block";
+            } else {
+                viewMoreBtn.style.display = "none";
+            }
+        })
+        .catch(error => {
+            console.error("Erro ao buscar tópicos:", error);
+            container.innerHTML = "<p>Erro ao buscar tópicos. Tente novamente.</p>";
+        });
+};
+
+    // Busca ao clicar no botão "Buscar" fora do modal
+    if (searchButton) {
+        searchButton.addEventListener("click", (event) => {
+            event.preventDefault(); // Impede o comportamento padrão
+            const query = searchInput.value.trim();
+            fetchTopics(query, document.getElementById("list-container"));
+        });
+    }
+
+    // Busca dinâmica dentro do modal
+    modalSearchInput.addEventListener("input", () => {
+        var query = modalSearchInput.value.trim();
+        fetchTopics(query, modalListContainer, true); // Atualiza a lista no modal
+    });
+
+    // Garante que o botão "Ver mais" nunca desapareça ao carregar a página
+    if (viewMoreBtn) {
+        viewMoreBtn.style.display = "block";
+    }
+    disciplinaSelect.addEventListener("change", () => {
+        const disciplinaId = disciplinaSelect.value;
+
+        // Limpa e desabilita o campo de conteúdo inicialmente
+        conteudoSelect.innerHTML = '<option value="">Selecione o conteúdo</option>';
+        conteudoSelect.disabled = true;
+
+        if (disciplinaId) {
+            fetch(`/api/conteudos/${disciplinaId}/`)
+                .then((response) => response.json())
+                .then((data) => {
+                    conteudoSelect.disabled = false;
+                    data.forEach((conteudo) => {
+                        const option = document.createElement("option");
+                        option.value = conteudo.id;
+                        option.textContent = conteudo.nome;
+                        conteudoSelect.appendChild(option);
+                    });
+                })
+                .catch((error) => {
+                    console.error("Erro ao carregar conteúdos:", error);
+                });
+        }
+    });
 });
 
-    searchInput.addEventListener("input", () => {
-        var query = searchInput.value;
-        fetch(`{% url 'buscar_topicos' %}?q=${query}`)
-            .then(response => response.json())
-            .then(data => {
-                listContainer.innerHTML = "";
-                if (data.length === 0) {
-                    listContainer.innerHTML = "<p>Nenhum tópico encontrado.</p>";
-                    return;
-                }
-                data.forEach(item => {
-                    var div = document.createElement("div");
-                    div.className = "list-item";
-                    div.innerHTML = `
-                        <span>${item.nome} 
-                            <span style="font-weight: 400; color: gray;">
-                                (${item.conteudo_nome})
-                            </span>
-                        </span>
-                        <form method="post" class="delete-form">
-                            {% csrf_token %}
-                            <input type="hidden" name="topico_id" value="${item.id}">
-                            <button type="submit" name="delete" class="btn-delete">Remover</button>
-                        </form>`;
-                    listContainer.appendChild(div);
-                });
-            });
-    });
 </script>
 {% endblock %}

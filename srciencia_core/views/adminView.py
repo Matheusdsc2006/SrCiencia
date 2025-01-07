@@ -191,6 +191,11 @@ def gerenciar_conteudo(request):
     })
 
 
+from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib import messages
+from srciencia_core.models import Topico, Disciplina
+from srciencia_core.forms import TopicoForm
+
 def gerenciar_topico(request):
     if request.method == "POST":
         if "add" in request.POST:
@@ -199,7 +204,7 @@ def gerenciar_topico(request):
                 form.save()
                 messages.success(request, "Tópico adicionado com sucesso!")
             else:
-                messages.error(request, "Erro ao adicionar tópico.")
+                messages.error(request, "Erro ao adicionar tópico. Verifique os dados informados.")
         elif "delete" in request.POST:
             topico_id = request.POST.get("topico_id")
             try:
@@ -210,11 +215,18 @@ def gerenciar_topico(request):
                 messages.error(request, f"Erro ao remover tópico: {str(e)}")
 
     form = TopicoForm()
-    topicos = Topico.objects.all()
+
+    topicos = Topico.objects.select_related('conteudo__disciplina').all()
+
+    disciplinas = Disciplina.objects.all()
+
     return render(request, "admin/gerenciar_topico.html", {
         "form": form,
         "topicos": topicos,
+        "disciplinas": disciplinas,
     })
+
+
 
 def remover_tipo(request, tipo, id):
     if request.method == 'POST':
@@ -263,19 +275,29 @@ def buscar_conteudos(request):
 
 def buscar_topicos(request):
     query = unidecode(request.GET.get('q', '').lower())
-    topicos = Topico.objects.all().select_related('conteudo')
-    
-    data = [
+    topicos = Topico.objects.select_related('conteudo__disciplina').distinct()
+
+    topicos_filtrados = [
         {
             'id': topico.id,
             'nome': topico.nome,
-            'conteudo_nome': topico.conteudo.nome if topico.conteudo else "Sem Conteúdo"
+            'conteudo_nome': topico.conteudo.nome if topico.conteudo else "Sem Conteúdo",
+            'disciplina_nome': topico.conteudo.disciplina.nome if topico.conteudo and topico.conteudo.disciplina else "Sem Disciplina"
         }
         for topico in topicos
         if query in unidecode(topico.nome.lower()) or
-           (topico.conteudo and query in unidecode(topico.conteudo.nome.lower()))
+           (topico.conteudo and query in unidecode(topico.conteudo.nome.lower())) or
+           (topico.conteudo and topico.conteudo.disciplina and query in unidecode(topico.conteudo.disciplina.nome.lower()))
     ]
-    return JsonResponse(data, safe=False)
+
+    response = {
+        'total': len(topicos_filtrados),
+        'topicos': topicos_filtrados,
+    }
+    return JsonResponse(response, safe=False)
+
+
+
 
 def buscar_disciplinas(request):
     query = unidecode(request.GET.get('q', '').lower())

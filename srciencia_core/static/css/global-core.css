@@ -743,18 +743,6 @@ select option {
     overflow: auto;
 }
 
-.modal {
-    display: none;
-    position: fixed;
-    z-index: 10;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    overflow: auto;
-    background-color: rgba(0, 0, 0, 0.4);
-}
-
 .modal-content {
     position: relative;
     width: 50%;
@@ -824,6 +812,10 @@ select option {
     transition: background-color 0.3s ease;
 }
 
+.modal-actions .btn-confirm:hover {
+    background-color: var(--light-purple);
+}
+
 .modal-actions .btn-confirm-sim {
     width: 100%;
     padding: 10px;
@@ -833,10 +825,6 @@ select option {
     border-radius: 5px;
     cursor: pointer;
     transition: background-color 0.3s ease;
-}
-
-.modal-actions .btn-confirm:hover {
-    background-color: var(--dark-purple);
 }
 
 .close-icon {
@@ -914,8 +902,10 @@ select option {
     border: 1px solid var(--primary-purple); 
     display: inline-flex;
     align-items: center;
+    justify-content: center;
     gap: 5px; 
     transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+    cursor: pointer;
 }
 
 .btn-back:hover {
@@ -940,7 +930,6 @@ select option {
 
 .search-input {
     width: 100%;
-    max-width: 300px;
     padding: 10px;
     font-size: 1rem;
     border: 1px solid var(--light-gray);
@@ -1181,4 +1170,21 @@ input[type="text"] {
     padding: 10px;
     border: 1px solid var(--light-gray);
     border-radius: 5px;
+}
+
+.btn-search {
+    background-color: var(--primary-purple); 
+    color: var(--white); 
+    cursor: pointer; 
+    padding: 0.5rem 2rem; 
+    border-radius: 5px;
+    border: none; 
+    font-size: 1rem; 
+    transition: background-color 0.3s ease, color 0.3s ease;
+    margin-right: 10px;
+}
+
+.btn-search:hover {
+    background-color: var(--dark-purple); 
+    color: var(--white); 
 }

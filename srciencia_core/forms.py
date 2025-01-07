@@ -87,11 +87,32 @@ class ConteudoForm(forms.ModelForm):
 
 
 class TopicoForm(forms.ModelForm):
+    disciplina = forms.ModelChoiceField(
+        queryset=Disciplina.objects.all(),
+        empty_label="---------",
+        widget=forms.Select(attrs={"class": "form-select", "id": "id_disciplina"})
+    )
+
     class Meta:
         model = Topico
-        fields = ["nome", "conteudo"]
+        fields = ["nome", "disciplina", "conteudo"]
         widgets = {
-            "nome": forms.TextInput(attrs={"placeholder": "Nome do Tópico", "class": "form-control"}),
-            "conteudo": forms.Select(attrs={"class": "form-select"}),
+            "nome": forms.TextInput(attrs={"placeholder": "Ex.: Densidade", "class": "form-control"}),
+            "conteudo": forms.Select(attrs={"class": "form-select", "id": "id_conteudo", "disabled": "disabled"}),
         }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["conteudo"].queryset = Conteudo.objects.none()
+
+        if "disciplina" in self.data:
+            try:
+                disciplina_id = int(self.data.get("disciplina"))
+                self.fields["conteudo"].queryset = Conteudo.objects.filter(disciplina_id=disciplina_id)
+                self.fields["conteudo"].widget.attrs.pop("disabled", None)
+            except (ValueError, TypeError):
+                pass 
+        elif self.instance.pk and self.instance.conteudo:
+            self.fields["conteudo"].queryset = self.instance.conteudo.disciplina.conteudos.all()
+            self.fields["conteudo"].widget.attrs.pop("disabled", None)
 
