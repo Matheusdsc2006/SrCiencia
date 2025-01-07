@@ -95,15 +95,16 @@
                         <div class="checkbox-correta">
                             <input 
                                 type="checkbox" 
-                                id="correta-{{ forloop.counter }}" 
-                                name="correta-{{ forloop.counter }}" 
-                                {% if form.correta.value %} checked {% endif %}
+                                id="{{ form.correta.id_for_label }}" 
+                                name="{{ form.correta.html_name }}" 
+                                {% if form.correta.value %}checked{% endif %}
                             >
-                        </div>
+                            <label for="{{ form.correta.id_for_label }}"></label>
+                        </div>                        
 
                         <!-- Campo de Descrição -->
                         <div class="input-group descricao">
-                            <label for="{{ form.descricao.id_for_label }}">{{ form.descricao.label }}</label>
+                            <label for="{{ form.descricao.id_for_label }}">Descrição:</label>
                             {{ form.descricao }}
                             {% if form.descricao.errors %}
                             <div class="error-messages">
@@ -116,7 +117,7 @@
 
                         <!-- Campo de URL da Imagem -->
                         <div class="input-group url-imagem">
-                            <label for="{{ form.imagem_url.id_for_label }}">URL da Imagem (se necessário)</label>
+                            <label for="{{ form.imagem_url.id_for_label }}">URL da Imagem (opcional):</label>
                             {{ form.imagem_url }}
                             {% if form.imagem_url.errors %}
                             <div class="error-messages">

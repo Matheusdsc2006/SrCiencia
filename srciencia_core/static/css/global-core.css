@@ -10,10 +10,14 @@
     --orange: #ff9800;
 }
 
-html {
-    overflow-y: scroll;
+html, body {
+    height: 100%;
+    overflow: hidden;
 }
 
+body {
+    overflow-y: auto;
+}
 
 .header {
     display: flex;
@@ -32,7 +36,7 @@ html {
     flex: 1;
     padding: 20px;
     overflow-y: auto;
-    margin-left: 60px;
+    margin-left: 70px;
 }
 
 
@@ -1280,32 +1284,32 @@ input[type="text"] {
 
 .linha-alternativa {
     display: flex;
-    align-items: center; /* Alinha todos os elementos verticalmente */
-    gap: 20px; /* Espaço entre os campos */
-    width: 100%; /* Garante que a linha preencha a largura total */
+    align-items: center;
+    gap: 20px; 
+    width: 100%;
 }
 
 .checkbox-correta {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 50px; /* Largura fixa para a checkbox */
-    flex-shrink: 0; /* Impede que a checkbox diminua */
+    width: 50px;
+    flex-shrink: 0;
 }
 
 .checkbox-correta input[type="checkbox"] {
-    width: 1.5rem; /* Define largura */
-    height: 2.5rem; /* Define altura igual aos campos */
-    cursor: pointer; /* Adiciona cursor de ponteiro */
-    border: 1px solid var(--light-gray); /* Adiciona borda para consistência */
-    border-radius: 5px; /* Bordas arredondadas */
+    width: 1.5rem; 
+    height: 2.5rem; 
+    cursor: pointer; 
+    border: 1px solid var(--light-gray); 
+    border-radius: 5px; 
     margin-top: 33px;
 }
 
 .input-group {
     display: flex;
     flex-direction: column;
-    flex: 1; /* Garante que o campo preencha o espaço disponível */
+    flex: 1;
 }
 
 .input-group label {
@@ -1329,11 +1333,11 @@ input[type="text"] {
 }
 
 .descricao {
-    flex: 2; /* Campo de descrição ocupa mais espaço */
+    flex: 2;
 }
 
 .url-imagem {
-    flex: 1; /* Campo de URL ocupa menos espaço */
+    flex: 1; 
 }
 
 .error-messages {
@@ -1386,8 +1390,8 @@ input[type="text"] {
 }
 
 .alternativa-conteudo input[type="checkbox"].correta {
-    border: 2px solid var(--green); /* Indicação visual da alternativa correta */
-    background-color: var(--green); /* Fundo verde para alternativa correta */
+    border: 2px solid var(--green); 
+    background-color: var(--green);
     cursor: not-allowed;
 }
 
@@ -1395,7 +1399,7 @@ input[type="text"] {
     color: var(--primary-purple);
     text-decoration: underline;
     font-size: 1rem;
-    margin-left: auto; /* Aproxima o link da alternativa */
+    margin-left: auto; 
 }
 
 .alternativa-conteudo a:hover {
@@ -1435,3 +1439,37 @@ input[type="text"] {
 .toggle-visibility.active .eye-closed {
     display: none;
 }
+
+.alt{
+    color: var(--primary-purple);
+    margin-top: 20px;
+}
+
+.resolv label{
+    color: var(--primary-purple);
+}
+
+.checkbox-container input[type="checkbox"] {
+    appearance: none;
+    -webkit-appearance: none; 
+    width: 20px;
+    height: 20px;
+    margin: 0;
+    border: 2px solid #ccc;
+    border-radius: 4px;
+    outline: none;
+    cursor: pointer;
+}
+
+.checkbox-container input[type="checkbox"]:checked {
+    background-color: var(--green);
+    border-color: darkgreen;
+}
+
+.checkbox-container.correta input[type="checkbox"] {
+    background-color: #d4edda; 
+    border-color: darkgreen;
+    cursor: not-allowed;
+}
+
+

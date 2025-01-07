@@ -20,7 +20,7 @@ def questao_list(request):
 
 def questao_create(request):
     AlternativaFormSet = modelformset_factory(Alternativa, form=AlternativaForm, extra=5)
-    anos_disponiveis = list(range(datetime.now().year, 1924, -1))  # Lista do ano atual para 1925
+    anos_disponiveis = list(range(datetime.now().year, 1924, -1))
 
     if request.method == "POST":
         questao_form = QuestaoForm(request.POST, request.FILES)
@@ -35,6 +35,7 @@ def questao_create(request):
                 if form.cleaned_data:  # Somente salvar formulários preenchidos
                     alternativa = form.save(commit=False)
                     alternativa.questao = questao
+                    alternativa.correta = form.cleaned_data.get('correta', False)
                     alternativa.save()
 
             return redirect("questao_list")
@@ -50,7 +51,6 @@ def questao_create(request):
     })
 
 
-
 def questao_update(request, pk):
     questao = get_object_or_404(Questao, pk=pk)
     AlternativaFormSet = modelformset_factory(Alternativa, form=AlternativaForm, extra=0, can_delete=True)
@@ -61,7 +61,7 @@ def questao_update(request, pk):
     if request.method == "POST":
         questao_form = QuestaoForm(request.POST, request.FILES, instance=questao)
         formset = AlternativaFormSet(request.POST, request.FILES, queryset=questao.alternativas.all())
-        
+
         if questao_form.is_valid() and formset.is_valid():
             questao = questao_form.save(commit=False)
             questao.ano = request.POST.get("ano")
@@ -73,9 +73,11 @@ def questao_update(request, pk):
                 elif form.cleaned_data:
                     alternativa = form.save(commit=False)
                     alternativa.questao = questao
+                    alternativa.correta = form.cleaned_data.get('correta', False)
                     alternativa.save()
 
             return redirect("questao_list")
+
     else:
         questao_form = QuestaoForm(instance=questao)
         formset = AlternativaFormSet(queryset=questao.alternativas.all())
@@ -87,9 +89,6 @@ def questao_update(request, pk):
         "conteudo_id": conteudo_id,
         "topico_id": topico_id,
     })
-
-
-
 
 def questao_delete(request, pk):
     questao = get_object_or_404(Questao, pk=pk)

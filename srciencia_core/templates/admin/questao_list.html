@@ -63,11 +63,13 @@
         <li style="margin-bottom: 10px;">
             <div class="alternativa-conteudo" style="display: flex; align-items: center; gap: 10px;">
                 <!-- Checkbox indicando se é correta -->
-                <input
-                    type="checkbox"
-                    {% if alternativa.correta %}checked class="correta"{% endif %}
-                    disabled
-                >
+                <div class="checkbox-container {% if alternativa.correta %}correta{% endif %}">
+                    <input
+                        type="checkbox"
+                        {% if alternativa.correta %}checked{% endif %}
+                        disabled
+                    >
+                </div>                
                 <!-- Descrição -->
                 <span {% if alternativa.correta %}style="color: var(--green); font-weight: bold;"{% endif %}>
                     {{ alternativa.descricao|safe }}

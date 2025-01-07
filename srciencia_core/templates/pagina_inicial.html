@@ -1,15 +1,15 @@
+    {% load static %}
     <!DOCTYPE html>
     <html lang="pt-br">
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>SR. Ciência - Página Inicial</title>
-        {% load static %}
         <link rel="stylesheet" href="{% static 'css/pagina_inicial.css' %}">
         <link rel="stylesheet" href="{% static 'css/global.css' %}">
         <link rel="stylesheet" href="{% static 'css/global-core.css' %}">
     </head>
-    <body class="pagina-inicial">
+    <body>
         <div class="container">
             <!-- Barra Lateral -->
             <aside class="sidebar">
@@ -21,71 +21,71 @@
                         <li><a href="{% url 'pagina_inicial' %}" class="active"><img src="{% static 'assets/home.svg' %}" alt="">Página inicial</a></li>
                         <li><a href="#"><img src="{% static 'assets/profile.svg' %}" alt="">Meu perfil</a></li>
                         <li><a href="{% url 'questao_list' %}"><img src="{% static 'assets/practice.svg' %}" alt="">Praticar</a></li>
-                        <li><a href="{% if user.is_staff %}{% url 'turmas' %}{% else %}{% url 'turmas' %}{% endif %}" class="{% if active_menu == 'turmas' %}active{% endif %}"><img src="{% static 'assets/classes.svg' %}" alt="">Turmas</a></li>
+                        <li><a href="{% url 'turmas' %}"><img src="{% static 'assets/classes.svg' %}" alt="">Turmas</a></li>
                         <li><a href="#"><img src="{% static 'assets/forum.svg' %}" alt="">Fórum</a></li>
                         <li><a href="#"><img src="{% static 'assets/help.svg' %}" alt="">Ajuda</a></li>
                         <li><a href="{% url 'login' %}" class="logout"><img src="{% static 'assets/logout.svg' %}" alt="">Sair</a></li>
                     </ul>
                 </nav>
             </aside>
-
+    
             <!-- Conteúdo Principal -->
-            <main>
-                <div class="main-container">
-                    <div class="header-container-inicio">
-                        <h1 class="welcome">Bem-vindo, <span class="highlight">{{ username }}</span></h1>
-                        <div class="header-card">
-                            <div class="user-info">
-                                <div class="user-avatar">
-                                    <figure>
-                                        <img src="{% static 'assets/user.avif' %}" alt="Usuário">
-                                    </figure>
-                                </div>
-                                <div>
-                                    <p class="user-name">{{ user.username }}</p>
-                                    <p class="user-email">{{ user.email }}</p>
-                                </div>
+            <main class="main-container">
+                <div class="header-container-inicio">
+                    <h1 class="welcome">Bem-vindo, <span class="highlight">{{ username }}</span></h1>
+                    <div class="header-card">
+                        <div class="user-info">
+                            <div class="user-avatar">
+                                <figure>
+                                    <img src="{% static 'assets/user.avif' %}" alt="Usuário">
+                                </figure>
                             </div>
-                            <button id="change-account-btn" class="change-account">Mudar de conta</button>
+                            <div>
+                                <p class="user-name">{{ user.username }}</p>
+                                <p class="user-email">{{ user.email }}</p>
+                            </div>
                         </div>
+                        <button id="change-account-btn" class="change-account">Mudar de conta</button>
                     </div>
-                
-                    <div class="content-grid">
-                        <section class="left-column">
-                            {% if user.perfil == 2 %} <!-- Exibir apenas para alunos -->
-                            <div class="activities">
-                                <h2 class="font-anexos">Você tem anexos não vistos em</h2>
-                                <div id="anexos-pendentes-container">
-                                    <ul>
-                                        <li>
-                                            <button class="marcar-visto" data-anexo-id="1">
-                                                <img src="{% static 'assets/eye-show.svg' %}" alt="Olho aberto" class="eye-open">
-                                                <img src="{% static 'assets/eye-off.svg' %}" alt="Olho fechado" class="eye-closed">
-                                            </button>
-                                        </li>
-                                    </ul>
-                                </div>
-                                
+                </div>
+    
+                <div class="content-grid">
+                    <!-- Coluna Esquerda -->
+                    <section class="left-column">
+                        {% if user.perfil == 2 %}
+                        <div class="activities">
+                            <h2>Você tem anexos não vistos em</h2>
+                            <div id="anexos-pendentes-container">
+                                <ul>
+                                    <li>
+                                        <button class="marcar-visto" data-anexo-id="1">
+                                            <img src="{% static 'assets/eye-show.svg' %}" alt="Olho aberto" class="eye-open">
+                                            <img src="{% static 'assets/eye-off.svg' %}" alt="Olho fechado" class="eye-closed">
+                                        </button>
+                                    </li>
+                                </ul>
                             </div>
-                            {% endif %}
-                            <div class="practicing">
-                                <h2>Continuar praticando</h2>
-                                <div class="practice-card">
-                                    <!-- Conteúdo -->
-                                </div>
-                            </div>
-                        </section>
-                        <aside class="right-column">
-                            <div class="daily-goal">
-                                <h2>Meta diária</h2>
+                        </div>
+                        {% endif %}
+                        <div class="practicing">
+                            <h2>Continuar praticando</h2>
+                            <div class="practice-card">
                                 <!-- Conteúdo -->
                             </div>
-                            <div class="ranking">
-                                <h2>Ranking Semanal</h2>
-                                <!-- Conteúdo -->
-                            </div>
-                        </aside>
-                    </div>
+                        </div>
+                    </section>
+    
+                    <!-- Coluna Direita -->
+                    <aside class="right-column">
+                        <div class="daily-goal">
+                            <h2>Meta diária</h2>
+                            <!-- Conteúdo -->
+                        </div>
+                        <div class="ranking">
+                            <h2>Ranking Semanal</h2>
+                            <!-- Conteúdo -->
+                        </div>
+                    </aside>
                 </div>
             </main>
         </div>
@@ -604,4 +604,4 @@ carregarAnexosPendentes();
 });
     </script>
     </body>
-    </html>
+</html>
