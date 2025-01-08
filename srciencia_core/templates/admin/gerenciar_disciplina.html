@@ -4,20 +4,27 @@
 <main>
     <div class="header-container">
         <a href="{% url 'questao_list' %}" class="btn-back">Voltar</a>
-        <h2 class="quest">Gerenciar Disciplina</h2>
+        <h2 class="quest">Gerenciar Disciplinas</h2>
     </div>
     <h3 class="list-title">Adicionar Disciplina</h3>
     <form method="post" class="form-container">
         {% csrf_token %}
-        {{ form.as_p }}
+        <div class="form-group">
+            <label for="id_nome">Disciplina:</label>
+            {{ form.nome }}
+        </div>
         <div class="btn-group">
             <button type="submit" name="add" class="btn btn-save">Salvar</button>
         </div>
     </form>
     <div class="search-container">
         <h3 class="list-title">Lista de Disciplinas</h3>
-        <input type="text" id="search-input" class="search-input" placeholder="Buscar Disciplinas...">
+        <div style="display: flex; align-items: center;">
+            <button id="search-button" class="btn btn-search">Buscar</button>
+            <input type="text" id="search-input" class="search-input" placeholder="Buscar disciplinas..." style="width: 100%;">
+        </div>
     </div>
+    <p style="margin-top: -20px;">*Recarregue a página para ver o botão "Ver mais" após uma busca</p>
     <div id="list-container" class="list-container">
         {% for disciplina in disciplinas %}
         <div class="list-item">
@@ -28,40 +35,126 @@
                 <button type="submit" name="delete" class="btn-delete">Remover</button>
             </form>
         </div>
-        {% empty %}
-        <p>Nenhuma disciplina encontrada.</p>
         {% endfor %}
+        {% if tem_mais %}
+        <button id="view-more-btn" class="btn btn-back full-width">Ver mais</button>
+        {% endif %}
+    </div>
+    <div id="all-disciplinas-modal" class="modal">
+        <div class="modal-content">
+            <span id="close-modal" class="close-icon">&times;</span>
+            <h3 class="list-title">Todas as Disciplinas</h3>
+            <input type="text" id="modal-search-input" class="search-input" placeholder="Buscar disciplinas...">
+            <div id="modal-list-container" class="modal-list-container">
+                {% for disciplina in todas_disciplinas %}
+                <div class="list-item">
+                    <span>{{ disciplina.nome }}</span>
+                    <form method="post" class="delete-form">
+                        {% csrf_token %}
+                        <input type="hidden" name="disciplina_id" value="{{ disciplina.id }}">
+                        <button type="submit" name="delete" class="btn-delete">Remover</button>
+                    </form>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
     </div>
 </main>
 <script>
-    document.addEventListener("DOMContentLoaded", () => {
-        const searchInput = document.getElementById("search-input");
-        const listContainer = document.getElementById("list-container");
+   document.addEventListener("DOMContentLoaded", () => {
+    const searchButton = document.getElementById("search-button");
+    const searchInput = document.getElementById("search-input");
+    const modalSearchInput = document.getElementById("modal-search-input");
+    const listContainer = document.getElementById("list-container");
+    const modalListContainer = document.getElementById("modal-list-container");
+    const viewMoreBtn = document.getElementById("view-more-btn"); // Pode ser null se não renderizado
+    const modal = document.getElementById("all-disciplinas-modal");
+    const closeModal = document.getElementById("close-modal");
 
-        searchInput.addEventListener("input", () => {
-            const query = searchInput.value;
-            fetch(`{% url 'buscar_disciplinas' %}?q=${query}`)
-                .then(response => response.json())
-                .then(data => {
-                    listContainer.innerHTML = "";
-                    if (data.length === 0) {
-                        listContainer.innerHTML = "<p>Nenhuma disciplina encontrada.</p>";
-                        return;
-                    }
-                    data.forEach(item => {
-                        const div = document.createElement("div");
-                        div.className = "list-item";
-                        div.innerHTML = `
-                            <span>${item.nome}</span>
-                            <form method="post" class="delete-form">
-                                {% csrf_token %}
-                                <input type="hidden" name="disciplina_id" value="${item.id}">
-                                <button type="submit" name="delete" class="btn-delete">Remover</button>
-                            </form>`;
-                        listContainer.appendChild(div);
-                    });
-                });
+    // Abre o modal ao clicar em "Ver mais"
+    if (viewMoreBtn) {
+        viewMoreBtn.addEventListener("click", () => {
+            modal.style.display = "block";
         });
-    });
+    }
+
+    // Fecha o modal ao clicar no botão de fechar
+    if (closeModal) {
+        closeModal.addEventListener("click", () => {
+            modal.style.display = "none";
+        });
+    }
+
+    // Fecha o modal ao clicar fora do conteúdo do modal
+    if (modal) {
+        window.addEventListener("click", (event) => {
+            if (event.target === modal) {
+                modal.style.display = "none";
+            }
+        });
+    }
+
+    // Função para realizar a busca e atualizar o contêiner especificado
+    const fetchDisciplinas = (query, container, isModal = false) => {
+        fetch(`/app/u/0/buscar_disciplinas/?q=${query}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                container.innerHTML = "";
+                if (data.length === 0) {
+                    container.innerHTML = "<p>Nenhuma disciplina encontrada.</p>";
+                } else {
+                    const existingIds = new Set(
+                        Array.from(container.querySelectorAll("input[name='disciplina_id']")).map(input => input.value)
+                    );
+                    const itemsToDisplay = isModal ? data : data.slice(0, 5);
+                    itemsToDisplay.forEach(item => {
+                        if (!existingIds.has(String(item.id))) {
+                            const div = document.createElement("div");
+                            div.className = "list-item";
+                            div.innerHTML = `
+                                <span>${item.nome}</span>
+                                <form method="post" class="delete-form">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="disciplina_id" value="${item.id}">
+                                    <button type="submit" name="delete" class="btn-delete">Remover</button>
+                                </form>`;
+                            container.appendChild(div);
+                        }
+                    });
+                }
+                if (!isModal && data.length > 5) {
+                    if (viewMoreBtn) viewMoreBtn.style.display = "block";
+                } else {
+                    if (viewMoreBtn) viewMoreBtn.style.display = "none";
+                }
+            })
+            .catch(error => {
+                console.error("Erro ao buscar disciplinas:", error);
+                container.innerHTML = "<p>Erro ao buscar disciplinas. Tente novamente.</p>";
+            });
+    };
+
+    // Busca ao clicar no botão "Buscar"
+    if (searchButton) {
+        searchButton.addEventListener("click", () => {
+            const query = searchInput.value.trim();
+            fetchDisciplinas(query, listContainer);
+        });
+    }
+
+    // Busca dinâmica dentro do modal
+    if (modalSearchInput) {
+        modalSearchInput.addEventListener("input", () => {
+            const query = modalSearchInput.value.trim();
+            fetchDisciplinas(query, modalListContainer, true);
+        });
+    }
+});
+
 </script>
 {% endblock %}

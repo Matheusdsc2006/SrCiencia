@@ -11,41 +11,45 @@ class QuestaoForm(forms.ModelForm):
         widgets = {
             'banca': forms.Select(),
             'disciplina': forms.Select(attrs={'id': 'id_disciplina'}),
-            'conteudo': forms.Select(attrs={'id': 'id_conteudo', 'disabled': 'disabled'}),
-            'topico': forms.Select(attrs={'id': 'id_topico', 'disabled': 'disabled'}),
+            'conteudo': forms.Select(attrs={'id': 'id_conteudo'}),
+            'topico': forms.Select(attrs={'id': 'id_topico'}),
             'alteravel': forms.CheckboxInput(),
         }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
         self.fields['banca'].queryset = Banca.objects.all()
         self.fields['disciplina'].queryset = Disciplina.objects.all()
 
-        # Adicionar uma opção inicial vazia
-        self.fields['banca'].empty_label = "Selecione a banca examinadora"
-        self.fields['disciplina'].empty_label = "Selecione a disciplina"
-        self.fields['conteudo'].empty_label = "Selecione o conteúdo"
-        self.fields['topico'].empty_label = "Selecione o tópico"
+        # Preencher as opções de Conteúdo e Tópico com base na instância
+        if self.instance.pk:
+            if self.instance.disciplina:
+                self.fields['conteudo'].queryset = Conteudo.objects.filter(disciplina=self.instance.disciplina)
+            else:
+                self.fields['conteudo'].queryset = Conteudo.objects.none()
 
-        # Habilitar "conteudo" e "topico" se valores já estiverem preenchidos (edição)
-        if self.instance and self.instance.conteudo:
-            self.fields['conteudo'].widget.attrs.pop('disabled', None)
-        if self.instance and self.instance.topico:
-            self.fields['topico'].widget.attrs.pop('disabled', None)
+            if self.instance.conteudo:
+                self.fields['topico'].queryset = Topico.objects.filter(conteudo=self.instance.conteudo)
+            else:
+                self.fields['topico'].queryset = Topico.objects.none()
 
-    def clean(self):
-        cleaned_data = super().clean()
-        disciplina = cleaned_data.get('disciplina')
-        conteudo = cleaned_data.get('conteudo')
-        topico = cleaned_data.get('topico')
+        # Preencher dinamicamente os campos Conteúdo e Tópico com base nos dados enviados no POST
+        if 'disciplina' in self.data:
+            try:
+                disciplina_id = int(self.data.get("disciplina"))
+                self.fields['conteudo'].queryset = Conteudo.objects.filter(disciplina_id=disciplina_id)
+            except (ValueError, TypeError):
+                self.fields['conteudo'].queryset = Conteudo.objects.none()
 
-        if conteudo and conteudo.disciplina != disciplina:
-            raise forms.ValidationError("O conteúdo selecionado não pertence à disciplina escolhida.")
+        if 'conteudo' in self.data:
+            try:
+                conteudo_id = int(self.data.get("conteudo"))
+                self.fields['topico'].queryset = Topico.objects.filter(conteudo_id=conteudo_id)
+            except (ValueError, TypeError):
+                self.fields['topico'].queryset = Topico.objects.none()
 
-        if topico and topico.conteudo != conteudo:
-            raise forms.ValidationError("O tópico selecionado não pertence ao conteúdo escolhido.")
 
-        return cleaned_data
 
 
 class AlternativaForm(forms.ModelForm):

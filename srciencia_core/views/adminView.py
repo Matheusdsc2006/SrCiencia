@@ -70,10 +70,10 @@ def questao_update(request, pk):
     AlternativaFormSet = modelformset_factory(
         Alternativa,
         form=AlternativaForm,
-        formset=CustomAlternativaFormSet,  # Use a classe renomeada para evitar conflitos
-        extra=0,  # Não adiciona formulários extras automaticamente
-        max_num=5,  # Limite de 5 alternativas
-        validate_max=True  # Habilita a validação do limite máximo
+        formset=CustomAlternativaFormSet,
+        extra=0,
+        max_num=5,
+        validate_max=True
     )
 
     if request.method == "POST":
@@ -82,7 +82,7 @@ def questao_update(request, pk):
         formset = AlternativaFormSet(request.POST, queryset=questao.alternativas.all())
 
         if questao_form.is_valid() and formset.is_valid():
-            # Salve a questão
+            # Salvar a questão
             questao = questao_form.save()
 
             # Salvar as alternativas
@@ -107,12 +107,23 @@ def questao_update(request, pk):
         questao_form = QuestaoForm(instance=questao)
         formset = AlternativaFormSet(queryset=questao.alternativas.all())
 
+    # Recuperar valores selecionados para Conteúdo e Tópico
+    conteudo_id = questao.conteudo.id if questao.conteudo else None
+    topico_id = questao.topico.id if questao.topico else None
+    conteudos = Conteudo.objects.filter(disciplina=questao.disciplina) if questao.disciplina else Conteudo.objects.none()
+    topicos = Topico.objects.filter(conteudo=questao.conteudo) if questao.conteudo else Topico.objects.none()
+
     # Renderizar o template com os formulários
     return render(request, "admin/questao_form.html", {
         "questao_form": questao_form,
         "formset": formset,
         "anos": list(range(datetime.now().year, 1924, -1)),
+        "conteudo_id": conteudo_id,
+        "topico_id": topico_id,
+        "conteudos": conteudos,
+        "topicos": topicos,
     })
+
 
 
 def questao_delete(request, pk):
@@ -163,16 +174,21 @@ def gerenciar_banca(request):
                 messages.error(request, f"Erro ao remover banca: {str(e)}")
 
     form = BancaForm()
-    bancas = Banca.objects.all()
+    todas_bancas = Banca.objects.all()
+    bancas_iniciais = todas_bancas[:5]
+    tem_mais = todas_bancas.count() > 5
+
     return render(request, "admin/gerenciar_banca.html", {
         "form": form,
-        "bancas": bancas,
+        "bancas": bancas_iniciais,
+        "todas_bancas": todas_bancas,
+        "tem_mais": tem_mais,
     })
+
 
 
 def gerenciar_disciplina(request):
     if request.method == "POST":
-        # Caso seja um POST para adicionar
         if "add" in request.POST:
             form = DisciplinaForm(request.POST)
             if form.is_valid():
@@ -180,8 +196,6 @@ def gerenciar_disciplina(request):
                 messages.success(request, "Disciplina adicionada com sucesso!")
             else:
                 messages.error(request, "Erro ao adicionar disciplina. Verifique os dados e tente novamente.")
-        
-        # Caso seja um POST para deletar
         elif "delete" in request.POST:
             disciplina_id = request.POST.get("disciplina_id")
             try:
@@ -191,14 +205,16 @@ def gerenciar_disciplina(request):
             except Exception as e:
                 messages.error(request, f"Erro ao remover disciplina: {str(e)}")
 
-    # Instancia um formulário vazio para exibição
     form = DisciplinaForm()
-    disciplinas = Disciplina.objects.all()
+    todas_disciplinas = Disciplina.objects.all()  # Todas as disciplinas
+    disciplinas_iniciais = todas_disciplinas[:5]  # Apenas as 5 primeiras
+    tem_mais = todas_disciplinas.count() > 5  # Flag para o botão "Ver mais"
 
-    # Renderiza a página com o formulário e a lista de disciplinas
     return render(request, "admin/gerenciar_disciplina.html", {
         "form": form,
-        "disciplinas": disciplinas,
+        "disciplinas": disciplinas_iniciais,  # Lista inicial de 5 itens
+        "todas_disciplinas": todas_disciplinas,  # Todas as disciplinas para o modal
+        "tem_mais": tem_mais,
     })
 
 
@@ -221,11 +237,17 @@ def gerenciar_conteudo(request):
                 messages.error(request, f"Erro ao remover conteúdo: {str(e)}")
 
     form = ConteudoForm()
-    conteudos = Conteudo.objects.all()
+    todos_conteudos = Conteudo.objects.select_related("disciplina").all()
+    conteudos_iniciais = todos_conteudos[:5]
+    tem_mais = todos_conteudos.count() > 5
+
     return render(request, "admin/gerenciar_conteudo.html", {
         "form": form,
-        "conteudos": conteudos,
+        "conteudos": conteudos_iniciais,
+        "todos_conteudos": todos_conteudos,
+        "tem_mais": tem_mais,
     })
+
 
 
 def gerenciar_topico(request):
@@ -291,13 +313,13 @@ def buscar_bancas(request):
 
 def buscar_conteudos(request):
     query = unidecode(request.GET.get('q', '').lower())
-    conteudos = Conteudo.objects.all().select_related('disciplina')
+    conteudos = Conteudo.objects.select_related('disciplina').all()
     
     data = [
         {
             'id': conteudo.id,
             'nome': conteudo.nome,
-            'disciplina_nome': conteudo.disciplina.nome if conteudo.disciplina else "Sem Disciplina"
+            'disciplina_nome': conteudo.disciplina.nome if conteudo.disciplina else "Sem Disciplina",
         }
         for conteudo in conteudos
         if query in unidecode(conteudo.nome.lower()) or
@@ -329,12 +351,10 @@ def buscar_topicos(request):
     return JsonResponse(response, safe=False)
 
 
-
-
 def buscar_disciplinas(request):
     query = unidecode(request.GET.get('q', '').lower())
     disciplinas = Disciplina.objects.all()
-    
+
     data = [
         {
             'id': disciplina.id,

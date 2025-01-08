@@ -9,11 +9,13 @@
     <div class="btn-container">
         <a href="{% url 'questao_create' %}" class="btn btn-add">Adicionar Questão</a>
         <button id="open-add-modal" class="btn btn-add">Gerenciar detalhamento</button>
-    </div>    
-    <div id="add-item-modal" class="modal">
+    </div>
+
+    <!-- Modal para Gerenciar Detalhamento -->
+    <div id="add-item-modal" class="modal" style="display: none;">
         <div class="modal-content" style="margin: auto;">
             <span id="close-add-modal" class="close-icon">&times;</span>
-            <h2>Gerenciar detalhamento</h2>
+            <h2>Gerenciar Detalhamento</h2>
             <p>Escolha o detalhamento que você deseja gerenciar:</p>
             <div class="modal-actions">
                 <a href="{% url 'gerenciar_banca' %}" class="btn btn-confirm">Gerenciar Banca</a>
@@ -114,69 +116,81 @@
     <div id="imageModal" class="modal" style="display: none;">
         <span id="closeModal" class="close">&times;</span>
         <img id="modalImage" class="modal-content" src="" alt="Imagem ampliada">
-    </div>    
+    </div>
 </main>
 <script>
     document.addEventListener("DOMContentLoaded", () => {
-        var toggleButtons = document.querySelectorAll(".toggle-visibility");
-        var modal = document.getElementById("add-item-modal");
-        var openModalButton = document.getElementById("open-add-modal");
-        var closeModalButton = document.getElementById("close-add-modal");
-        var modal = document.getElementById("imageModal");
-        var modalImage = document.getElementById("modalImage");
-        var closeModal = document.getElementById("closeModal");
-        var imagens = document.querySelectorAll(".ampliar-imagem");
+    // Variáveis para Gerenciar Detalhamento Modal
+    const detalhamentoModal = document.getElementById("add-item-modal");
+    const openDetalhamentoButton = document.getElementById("open-add-modal");
+    const closeDetalhamentoButton = document.getElementById("close-add-modal");
 
-        toggleButtons.forEach((button) => {
-            button.addEventListener("click", () => {
-                var targetId = button.getAttribute("data-target");
-                var targetElement = document.getElementById(targetId);
+    // Variáveis para Ampliar Imagem Modal
+    const imageModal = document.getElementById("imageModal");
+    const modalImage = document.getElementById("modalImage");
+    const closeImageModal = document.getElementById("closeModal");
+    const imagens = document.querySelectorAll(".ampliar-imagem");
 
-                var eyeOpen = button.querySelector(".eye-open");
-                var eyeClosed = button.querySelector(".eye-closed");
+    // Variáveis para Toggle de Visibilidade
+    const toggleButtons = document.querySelectorAll(".toggle-visibility");
 
-                if (targetElement.style.display === "none") {
-                    targetElement.style.display = "block";
-                    eyeOpen.style.display = "block";
-                    eyeClosed.style.display = "none";
-                } else {
-                    targetElement.style.display = "none";
-                    eyeOpen.style.display = "none";
-                    eyeClosed.style.display = "block";
-                }
-            });
-        });
-        openModalButton.addEventListener("click", () => {
-            modal.style.display = "block";
-        });
+    // Lógica para Toggle de Visibilidade
+    toggleButtons.forEach((button) => {
+        button.addEventListener("click", () => {
+            const targetId = button.getAttribute("data-target");
+            const targetElement = document.getElementById(targetId);
 
-        closeModalButton.addEventListener("click", () => {
-            modal.style.display = "none";
-        });
+            const eyeOpen = button.querySelector(".eye-open");
+            const eyeClosed = button.querySelector(".eye-closed");
 
-        window.addEventListener("click", (event) => {
-            if (event.target === modal) {
-                modal.style.display = "none";
-            }
-        });
-        imagens.forEach((imagem) => {
-            imagem.addEventListener("click", function () {
-                modal.style.display = "block"; // Exibe o modal
-                modalImage.src = this.src; // Define a imagem no modal
-            });
-        });
-
-        // Fechar o modal ao clicar no "X"
-        closeModal.addEventListener("click", function () {
-            modal.style.display = "none"; // Oculta o modal
-        });
-
-        // Fechar o modal ao clicar fora da imagem
-        modal.addEventListener("click", function (event) {
-            if (event.target === modal) {
-                modal.style.display = "none"; // Oculta o modal
+            if (targetElement.style.display === "none") {
+                targetElement.style.display = "block";
+                eyeOpen.style.display = "block";
+                eyeClosed.style.display = "none";
+            } else {
+                targetElement.style.display = "none";
+                eyeOpen.style.display = "none";
+                eyeClosed.style.display = "block";
             }
         });
     });
+
+    // Abrir Modal de Gerenciar Detalhamento
+    openDetalhamentoButton.addEventListener("click", () => {
+        detalhamentoModal.style.display = "block";
+    });
+
+    // Fechar Modal de Gerenciar Detalhamento
+    closeDetalhamentoButton.addEventListener("click", () => {
+        detalhamentoModal.style.display = "none";
+    });
+
+    // Fechar Modal de Gerenciar Detalhamento ao clicar fora
+    window.addEventListener("click", (event) => {
+        if (event.target === detalhamentoModal) {
+            detalhamentoModal.style.display = "none";
+        }
+    });
+
+    // Abrir Modal de Ampliar Imagem
+    imagens.forEach((imagem) => {
+        imagem.addEventListener("click", () => {
+            imageModal.style.display = "block";
+            modalImage.src = imagem.src; // Define a imagem no modal
+        });
+    });
+
+    // Fechar Modal de Ampliar Imagem ao clicar no "X"
+    closeImageModal.addEventListener("click", () => {
+        imageModal.style.display = "none";
+    });
+
+    // Fechar Modal de Ampliar Imagem ao clicar fora da imagem
+    imageModal.addEventListener("click", (event) => {
+        if (event.target === imageModal) {
+            imageModal.style.display = "none";
+        }
+    });
+});
 </script>
 {% endblock %}

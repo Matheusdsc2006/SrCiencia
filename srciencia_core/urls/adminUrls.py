@@ -23,7 +23,7 @@ urlpatterns = [
 
     # Buscar tipos
     path("buscar_bancas/", buscar_bancas, name="buscar_bancas"),
-    path("buscar_disciplinas/", buscar_disciplinas, name="buscar_disciplinas"),
+    path('buscar_disciplinas/', buscar_disciplinas, name='buscar_disciplinas'),
     path("buscar_conteudos/", buscar_conteudos, name="buscar_conteudos"),
     path("buscar_topicos/", buscar_topicos, name="buscar_topicos"),
 

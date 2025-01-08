@@ -8,16 +8,18 @@ document.addEventListener("DOMContentLoaded", function () {
     var form = document.querySelector("form");  
     var alternativas = document.querySelectorAll(".alternativa"); 
 
-    // Verifica se há valor inicial no campo de conteúdo e carrega os tópicos correspondentes
+    // Atualizar os campos dinamicamente ao alterar Conteúdo
     conteudoField.addEventListener("change", function () {
-        if (conteudoField.value) {
-            carregarTopicos(conteudoField.value);
-        } else {
-            topicoField.disabled = true;
-            topicoField.innerHTML = '<option value="">---------</option>';
-        }
+        fetch(`/get_topicos/${this.value}/`)
+            .then(response => response.json())
+            .then(data => {
+                topicoField.innerHTML = '<option value="">Selecione o tópico</option>';
+                data.forEach(topico => {
+                    topicoField.innerHTML += `<option value="${topico.id}">${topico.nome}</option>`;
+                });
+                topicoField.disabled = false;
+            });
     });
-    
 
     // Função para carregar conteúdos com base na disciplina selecionada
     function carregarConteudos(disciplinaId) {
@@ -94,24 +96,16 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Eventos para atualizar os selects ao mudar valores
     disciplinaField.addEventListener("change", function () {
-        if (disciplinaField.value) {
-            carregarConteudos(disciplinaField.value);
-        } else {
-            conteudoField.disabled = true;
-            conteudoField.innerHTML = '<option value="">---------</option>';
-            topicoField.disabled = true;
-            topicoField.innerHTML = '<option value="">---------</option>';
-        }
-    });
-
-    conteudoField.addEventListener("change", function () {
-        if (conteudoField.value) {
-            carregarTopicos(conteudoField.value);
-        } else {
-            topicoField.disabled = true;
-            topicoField.innerHTML = '<option value="">---------</option>';
-        }
-    });    
+        fetch(`/get_conteudos/${this.value}/`)
+            .then(response => response.json())
+            .then(data => {
+                conteudoField.innerHTML = '<option value="">Selecione o conteúdo</option>';
+                data.forEach(conteudo => {
+                    conteudoField.innerHTML += `<option value="${conteudo.id}">${conteudo.nome}</option>`;
+                });
+                conteudoField.disabled = false;
+            });
+    }); 
 
     // Configurar selects para mostrar opções no foco
     selects.forEach((select) => {
