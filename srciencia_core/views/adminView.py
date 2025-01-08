@@ -1,7 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
 from srciencia_core.models import Questao, Alternativa
-from srciencia_core.forms import QuestaoForm, AlternativaForm
 from django.forms import modelformset_factory
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -12,17 +11,27 @@ from django.contrib import messages
 from django.http import JsonResponse
 from unidecode import unidecode
 from srciencia_core.models.Questao import Banca, Disciplina, Conteudo, Topico
-from srciencia_core.forms import BancaForm, DisciplinaForm, ConteudoForm, TopicoForm
+from srciencia_core.forms import QuestaoForm, BancaForm, DisciplinaForm, ConteudoForm, TopicoForm, AlternativaForm, CustomAlternativaFormSet
 
 def questao_list(request):
     questoes = Questao.objects.prefetch_related('alternativas')
     return render(request, "admin/questao_list.html", {"questoes": questoes})
 
 def questao_create(request):
-    AlternativaFormSet = modelformset_factory(Alternativa, form=AlternativaForm, extra=5)
+    # Definição correta do modelformset_factory
+    AlternativaFormSet = modelformset_factory(
+        Alternativa,
+        form=AlternativaForm,
+        formset=CustomAlternativaFormSet,  # Use o formset personalizado
+        extra=5,  # Exibe 5 formulários de alternativas inicialmente
+        max_num=5,  # Limita o número máximo de alternativas a 5
+        validate_max=True,  # Valida o limite máximo
+    )
+
     anos_disponiveis = list(range(datetime.now().year, 1924, -1))
 
     if request.method == "POST":
+        # Processa os formulários enviados
         questao_form = QuestaoForm(request.POST, request.FILES)
         formset = AlternativaFormSet(request.POST, queryset=Alternativa.objects.none())
 
@@ -30,17 +39,19 @@ def questao_create(request):
             # Salvar a questão
             questao = questao_form.save()
 
-            # Iterar sobre o formset para salvar alternativas
-            for form in formset:
-                if form.cleaned_data:  # Somente salvar formulários preenchidos
-                    alternativa = form.save(commit=False)
-                    alternativa.questao = questao
-                    alternativa.correta = form.cleaned_data.get('correta', False)
-                    alternativa.save()
+            # Salvar as alternativas preenchidas
+            alternativas = formset.save(commit=False)
+            for alternativa in alternativas:
+                alternativa.questao = questao
+                alternativa.save()
 
-            return redirect("questao_list")
+            # Preencher com alternativas vazias, se necessário
+            while Alternativa.objects.filter(questao=questao).count() < 5:
+                Alternativa.objects.create(questao=questao)
 
+            return redirect(reverse("questao_list"))
     else:
+        # Exibe os formulários vazios na criação
         questao_form = QuestaoForm()
         formset = AlternativaFormSet(queryset=Alternativa.objects.none())
 
@@ -52,43 +63,57 @@ def questao_create(request):
 
 
 def questao_update(request, pk):
+    # Recuperar a questão pelo ID
     questao = get_object_or_404(Questao, pk=pk)
-    AlternativaFormSet = modelformset_factory(Alternativa, form=AlternativaForm, extra=0, can_delete=True)
 
-    conteudo_id = questao.conteudo.id if questao.conteudo else None
-    topico_id = questao.topico.id if questao.topico else None
+    # Configurar o modelformset_factory para Alternativas
+    AlternativaFormSet = modelformset_factory(
+        Alternativa,
+        form=AlternativaForm,
+        formset=CustomAlternativaFormSet,  # Use a classe renomeada para evitar conflitos
+        extra=0,  # Não adiciona formulários extras automaticamente
+        max_num=5,  # Limite de 5 alternativas
+        validate_max=True  # Habilita a validação do limite máximo
+    )
 
     if request.method == "POST":
+        # Formulários de questão e alternativas
         questao_form = QuestaoForm(request.POST, request.FILES, instance=questao)
-        formset = AlternativaFormSet(request.POST, request.FILES, queryset=questao.alternativas.all())
+        formset = AlternativaFormSet(request.POST, queryset=questao.alternativas.all())
 
         if questao_form.is_valid() and formset.is_valid():
-            questao = questao_form.save(commit=False)
-            questao.ano = request.POST.get("ano")
-            questao.save()
+            # Salve a questão
+            questao = questao_form.save()
 
-            for form in formset:
-                if form.cleaned_data.get('DELETE'):
-                    form.instance.delete()
-                elif form.cleaned_data:
-                    alternativa = form.save(commit=False)
-                    alternativa.questao = questao
-                    alternativa.correta = form.cleaned_data.get('correta', False)
-                    alternativa.save()
+            # Salvar as alternativas
+            alternativas = formset.save(commit=False)
+            for alternativa in alternativas:
+                alternativa.questao = questao
+                alternativa.save()
 
-            return redirect("questao_list")
+            # Remover alternativas extras
+            alternativas_atuais = Alternativa.objects.filter(questao=questao)
+            if alternativas_atuais.count() > 5:
+                alternativas_atuais[5:].delete()
 
+            # Completar com alternativas vazias, se necessário
+            while alternativas_atuais.count() < 5:
+                Alternativa.objects.create(questao=questao)
+
+            # Redirecionar para a lista de questões
+            return redirect(reverse("questao_list"))
     else:
+        # Preencher os formulários com os dados atuais
         questao_form = QuestaoForm(instance=questao)
         formset = AlternativaFormSet(queryset=questao.alternativas.all())
 
+    # Renderizar o template com os formulários
     return render(request, "admin/questao_form.html", {
         "questao_form": questao_form,
         "formset": formset,
         "anos": list(range(datetime.now().year, 1924, -1)),
-        "conteudo_id": conteudo_id,
-        "topico_id": topico_id,
     })
+
 
 def questao_delete(request, pk):
     questao = get_object_or_404(Questao, pk=pk)

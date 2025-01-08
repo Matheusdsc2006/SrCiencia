@@ -5,6 +5,8 @@ document.addEventListener("DOMContentLoaded", function () {
     var conteudoField = document.querySelector("#id_conteudo");
     var topicoField = document.querySelector("#id_topico");
     var selects = document.querySelectorAll("select");
+    var form = document.querySelector("form");  
+    var alternativas = document.querySelectorAll(".alternativa"); 
 
     // Verifica se há valor inicial no campo de conteúdo e carrega os tópicos correspondentes
     conteudoField.addEventListener("change", function () {
@@ -132,14 +134,14 @@ document.addEventListener("DOMContentLoaded", function () {
         if (event.target.classList.contains("btn-remove-image")) {
             event.preventDefault();
     
-            const index = event.target.dataset.index;
+            var index = event.target.dataset.index;
             console.log(`Botão de remoção clicado. Índice: ${index}`);
     
-            const fileInput = document.getElementById(`id_form-${index}-imagem`);
-            const uploadIcon = document.getElementById(`uploadIcon_${index}`);
-            const viewIcon = document.getElementById(`viewImageIcon_${index}`);
-            const imagePreview = document.getElementById(`imagePreviewImg_${index}`);
-            const modal = document.getElementById(`modalImagePreview_${index}`);
+            var fileInput = document.getElementById(`id_form-${index}-imagem`);
+            var uploadIcon = document.getElementById(`uploadIcon_${index}`);
+            var viewIcon = document.getElementById(`viewImageIcon_${index}`);
+            var imagePreview = document.getElementById(`imagePreviewImg_${index}`);
+            var modal = document.getElementById(`modalImagePreview_${index}`);
     
             console.log("Verificando elementos:");
             console.log(`fileInput: ${fileInput?.outerHTML || "não encontrado"}`);
@@ -198,8 +200,8 @@ document.addEventListener("DOMContentLoaded", function () {
     // Modais de visualização de imagem
     document.querySelectorAll(".view-image-icon").forEach((icon) => {
         icon.addEventListener("click", function () {
-            const modalId = this.dataset.target;
-            const modal = document.querySelector(modalId);
+            var modalId = this.dataset.target;
+            var modal = document.querySelector(modalId);
             if (modal) {
                 modal.style.display = "block";
             }
@@ -209,8 +211,8 @@ document.addEventListener("DOMContentLoaded", function () {
     // Fechar modal ao clicar no botão de fechar
     document.querySelectorAll(".close-modal").forEach((closeButton) => {
         closeButton.addEventListener("click", function () {
-            const modalId = this.dataset.target;
-            const modal = document.querySelector(modalId);
+            var modalId = this.dataset.target;
+            var modal = document.querySelector(modalId);
             if (modal) {
                 modal.style.display = "none";
             }
@@ -225,4 +227,28 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         });
     });
+    form.addEventListener("submit", function (event) {
+        let algumVazio = false;
+
+        alternativas.forEach((alternativa) => {
+            var descricao = alternativa.querySelector("input[name*='descricao']");
+            var imagemUrl = alternativa.querySelector("input[name*='imagem_url']");
+            var descricaoVazia = !descricao.value.trim();
+            var imagemUrlVazia = !imagemUrl.value.trim();
+
+            // Se descrição e imagem estiverem vazias
+            if (descricaoVazia && imagemUrlVazia) {
+                algumVazio = true;
+                alternativa.classList.add("erro-alternativa"); // Adiciona uma classe de erro para destaque (opcional)
+            } else {
+                alternativa.classList.remove("erro-alternativa");
+            }
+        });
+
+        if (algumVazio) {
+            event.preventDefault(); // Impede o envio do formulário
+            alert("Alguma alternativa ficou vazia! Adicione pelo menos a descrição.");
+        }
+    });
 });
+

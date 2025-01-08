@@ -49,44 +49,41 @@
                 {{ questao.descricao|safe }}
             </div>
             <!-- Alternativas -->
-            <!-- Alternativas -->
-<div class="alternativas-lista">
-    <h3 class="alternativas-header">
-        <span>Alternativas:</span>
-        <button class="toggle-visibility" data-target="alternativas-section-{{ forloop.counter }}">
-            <img src="{% static 'assets/eye-off.svg' %}" alt="Olho fechado" class="eye-closed">
-            <img src="{% static 'assets/eye-show.svg' %}" alt="Olho aberto" class="eye-open">
-        </button>
-    </h3>
-    <ul id="alternativas-section-{{ forloop.counter }}" style="display: none; margin-top: 10px;">
-        {% for alternativa in questao.alternativas.all %}
-        <li style="margin-bottom: 10px;">
-            <div class="alternativa-conteudo" style="display: flex; align-items: center; gap: 10px;">
-                <!-- Checkbox indicando se é correta -->
-                <div class="checkbox-container {% if alternativa.correta %}correta{% endif %}">
-                    <input
-                        type="checkbox"
-                        {% if alternativa.correta %}checked{% endif %}
-                        disabled
-                    >
-                </div>                
-                <!-- Descrição -->
-                <span {% if alternativa.correta %}style="color: var(--green); font-weight: bold;"{% endif %}>
-                    {{ alternativa.descricao|safe }}
-                </span>
-
-                <!-- URL da Imagem -->
-                {% if alternativa.imagem_url %}
-                <a href="{{ alternativa.imagem_url }}" target="_blank" style="margin-left: auto; color: var(--primary-purple); text-decoration: underline;">
-                    Ver Imagem
-                </a>
-                {% endif %}
-            </div>
-        </li>
-        {% endfor %}
-    </ul>
-</div>
+            <div class="alternativas-lista">
+                <h3 class="alternativas-header">
+                    <span>Alternativas:</span>
+                    <button class="toggle-visibility" data-target="alternativas-section-{{ forloop.counter }}">
+                        <img src="{% static 'assets/eye-off.svg' %}" alt="Olho fechado" class="eye-closed">
+                        <img src="{% static 'assets/eye-show.svg' %}" alt="Olho aberto" class="eye-open">
+                    </button>
+                </h3>
+                <ul id="alternativas-section-{{ forloop.counter }}" style="display: none; margin-top: 10px;">
+                    {% for alternativa in questao.alternativas.all %}
+                    <li style="margin-bottom: 10px;">
+                        <div class="alternativa-conteudo" style="display: flex; align-items: center; gap: 10px;">
+                            <!-- Checkbox indicando se é correta -->
+                            <div class="checkbox-container {% if alternativa.correta %}correta{% endif %}">
+                                <input
+                                    type="checkbox"
+                                    {% if alternativa.correta %}checked{% endif %}
+                                    disabled
+                                >
+                            </div>
             
+                            <!-- Imagem clicável -->
+                            {% if alternativa.imagem_url %}
+                            <img class="ampliar-imagem" src="{{ alternativa.imagem_url }}" alt="Imagem da alternativa" style="max-width: 50px; max-height: 50px; cursor: pointer;">
+                            {% endif %}
+            
+                            <!-- Descrição -->
+                            <span {% if alternativa.correta %}style="color: var(--green); font-weight: bold;"{% endif %}>
+                                {{ alternativa.descricao|safe }}
+                            </span>
+                        </div>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>            
                  
             <!-- Resolução -->
             <div class="resolucao" style="border: 1px solid var(--light-gray); border-radius: 8px; padding: 10px; margin-bottom: 10px;">
@@ -114,6 +111,10 @@
         </li>
         {% endfor %}
     </ul>
+    <div id="imageModal" class="modal" style="display: none;">
+        <span id="closeModal" class="close">&times;</span>
+        <img id="modalImage" class="modal-content" src="" alt="Imagem ampliada">
+    </div>    
 </main>
 <script>
     document.addEventListener("DOMContentLoaded", () => {
@@ -121,6 +122,10 @@
         var modal = document.getElementById("add-item-modal");
         var openModalButton = document.getElementById("open-add-modal");
         var closeModalButton = document.getElementById("close-add-modal");
+        var modal = document.getElementById("imageModal");
+        var modalImage = document.getElementById("modalImage");
+        var closeModal = document.getElementById("closeModal");
+        var imagens = document.querySelectorAll(".ampliar-imagem");
 
         toggleButtons.forEach((button) => {
             button.addEventListener("click", () => {
@@ -152,6 +157,24 @@
         window.addEventListener("click", (event) => {
             if (event.target === modal) {
                 modal.style.display = "none";
+            }
+        });
+        imagens.forEach((imagem) => {
+            imagem.addEventListener("click", function () {
+                modal.style.display = "block"; // Exibe o modal
+                modalImage.src = this.src; // Define a imagem no modal
+            });
+        });
+
+        // Fechar o modal ao clicar no "X"
+        closeModal.addEventListener("click", function () {
+            modal.style.display = "none"; // Oculta o modal
+        });
+
+        // Fechar o modal ao clicar fora da imagem
+        modal.addEventListener("click", function (event) {
+            if (event.target === modal) {
+                modal.style.display = "none"; // Oculta o modal
             }
         });
     });

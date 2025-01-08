@@ -1,4 +1,5 @@
 from django import forms
+from django.forms import BaseModelFormSet, ValidationError
 from srciencia_core.models import Questao, Alternativa, Banca, Disciplina, Conteudo, Topico
 
 class QuestaoForm(forms.ModelForm):
@@ -59,13 +60,24 @@ class AlternativaForm(forms.ModelForm):
     def clean(self):
         cleaned_data = super().clean()
         descricao = cleaned_data.get("descricao")
-        correta = cleaned_data.get("correta")
+        imagem_url = cleaned_data.get("imagem_url")
 
-        # Validação personalizada
-        if not descricao and not correta:
-            raise forms.ValidationError("A descrição ou a imagem deve ser preenchida.")
-        
+        # Verificar apenas os formulários realmente enviados
+        if not descricao and not imagem_url:
+            raise forms.ValidationError("A descrição ou a URL da imagem deve ser preenchida.")
+
         return cleaned_data
+
+
+class CustomAlternativaFormSet(BaseModelFormSet):
+    def clean(self):
+        """Valida se há pelo menos 1 alternativa correta."""
+        super().clean()
+        alternativas_validas = [
+            form for form in self.forms if form.cleaned_data and not form.cleaned_data.get('DELETE', False)
+        ]
+        if not any(form.cleaned_data.get('correta', False) for form in alternativas_validas):
+            raise ValidationError("Pelo menos uma alternativa deve ser marcada como correta.")
 
 
 class BancaForm(forms.ModelForm):
