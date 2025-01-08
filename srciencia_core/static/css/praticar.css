@@ -1,0 +1,533 @@
+:root {
+    --light-purple: #f3eaff;
+    --dark-purple: #5e4b8a;
+    --primary-purple: #7d5baa;
+    --white: #ffffff;
+    --gray: #666666;
+    --light-gray: #cccccc;
+    --danger-red: #ff4d4d;
+    --green: #4caf50;
+    --orange: #ff9800;
+}
+
+html, body {
+    height: 100%;
+    overflow: hidden;
+}
+
+body {
+    overflow-y: auto;
+}
+
+/* Menu Lateral */
+.sidebar {
+    width: 280px;
+    min-width: 280px;
+    background-color: var(--white);
+    padding: 20px;
+    box-shadow: 2px 0 6px rgba(0, 0, 0, 0.1);
+    position: sticky;
+    top: 0; 
+    height: 100vh; 
+    overflow-y: auto;
+}
+
+.sidebar .logo img {
+    width: 100%;
+    max-width: 200px;
+    margin: 15px 0 10px 10px;
+}
+
+.sidebar nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    margin-top: 10px;
+}
+
+.sidebar nav ul li {
+    margin-bottom: 20px;
+}
+
+.sidebar nav ul li a {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 10px;
+    text-decoration: none;
+    color: var(--gray);
+    border-radius: 8px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.sidebar nav ul li a img {
+    width: 20px;
+    height: 20px;
+}
+
+.sidebar nav ul li a:hover {
+    background-color: var(--light-purple);
+    color: var(--dark-purple);
+}
+
+.sidebar nav ul li a.active {
+    background-color: var(--light-purple);
+    color: var(--dark-purple);
+    font-weight: bold;
+}
+
+.sidebar nav ul li a.logout {
+    color: var(--danger-red);
+    font-weight: bold;
+}
+
+/* Outros estilos */
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: var(--light-purple);
+    color: var(--gray);
+    margin: 0;
+}
+
+.container {
+    display: flex;
+    min-height: 100vh;
+}
+
+.main-container {
+    flex: 1;
+    padding: 20px;
+}
+
+.header-container {
+    display: flex;
+    align-items: center;
+    justify-content: start;
+    gap: 20px; 
+    width: 100%;
+}
+
+.header-container .quest {
+    font-size: 2rem;
+    font-weight: bold;
+    color: var(--dark-purple);
+    margin: 0px 0 15px 5px;
+}
+
+/* Filtros em disposição horizontal */
+.form-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    background-color: var(--white);
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    max-width: 1100px;
+    margin: 0 auto;
+    align-items: flex-end;
+    justify-content: space-between;
+}
+
+.form-container .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    flex: 1 1 200px; /* Responsividade */
+    min-width: 200px;
+}
+
+.form-container label {
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--gray);
+}
+
+.form-container input,
+.form-container select {
+    padding: 10px;
+    font-size: 1rem;
+    border: 1px solid var(--light-gray);
+    border-radius: 5px;
+    width: 100%;
+}
+
+/* Estilo para o grupo de caixas de seleção */
+.form-container .status-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 35px;
+    flex: 1 1 auto;
+    align-items: center;
+}
+
+.status-options label {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 1rem;
+    color: var(--gray);
+}
+
+.status-options label input{
+    width: 20px;
+}
+
+/* Botões alinhados no canto inferior esquerdo */
+.form-container .btn-group {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-start;
+    flex: 1 1 100%
+}
+
+.form-container .btn {
+    padding: 0.5rem 1.5rem;
+    border: none;
+    border-radius: 5px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.btn-cancel {
+    background-color: var(--white);
+    color: var(--primary-purple);
+    border: 2px solid var(--primary-purple) !important;
+    border-radius: 8px;
+    padding: 0.5rem 1.5rem;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-left: 5px;
+}
+
+.btn-cancel:hover {
+    background-color: var(--light-purple);
+}
+
+
+.btn-save {
+    background-color: var(--primary-purple);
+    color: var(--white);
+}
+
+.btn-save:hover {
+    background-color: var(--dark-purple);
+}
+
+
+/* Container de questões */
+#questoes-container {
+    margin-top: 20px;
+}
+
+.questao-item {
+    background-color: var(--white);
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+}
+
+.questao-item h3 {
+    font-size: 1.5rem;
+    color: var(--dark-purple);
+}
+
+.questao-item p {
+    font-size: 1rem;
+    color: var(--gray);
+}
+
+.questao-item ul {
+    list-style: none;
+    padding-left: 0;
+}
+
+.questao-item ul li {
+    padding: 5px 0;
+    font-size: 1rem;
+    color: var(--gray);
+}
+
+.header-container-inicio { 
+    display: flex;
+    justify-content: flex-end; 
+    align-items: center;
+    padding: 0;
+    max-width: 1100px;
+    margin: 0 auto; 
+    margin-top: 20px;
+}
+
+.header-card {
+    background-color: var(--white);
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: space-between; 
+    flex: 1;
+    max-width: 650px; 
+    margin-left: auto; 
+}
+
+
+
+.welcome {
+    font-size: 2rem;
+    font-weight: bold;
+    color: var(--dark-purple);
+    width: 400px;
+}
+
+.highlight {
+    color: var(--primary-purple);
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+}
+
+.user-avatar img {
+    border-radius: 50%;
+    width: 50px;
+    margin-top: 25px;
+}
+
+.user-name {
+    font-size: 1rem;
+    font-weight: bold;
+    color: var(--gray);
+    margin: 0;
+    margin-top: 17px;
+    margin-left: 10px;
+}
+
+.user-email {
+    font-size: 0.9rem;
+    max-width: 300px;
+    color: var(--gray);
+    margin: 0;
+    margin-left: 10px;
+}
+
+.change-account {
+    padding: 0.8rem 1.5rem;
+    font-size: 1rem;
+    color: var(--primary-purple);
+    background-color: var(--white);
+    border: 2px solid var(--primary-purple);
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s;
+    margin-top: 15px;
+    margin-left: 50px;
+    width: 230px;
+    font-weight: 400;
+}
+
+.change-account:hover {
+    background-color: var(--primary-purple);
+    color: var(--white);
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 10;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.4);
+    overflow: auto;
+}
+
+.modal-content {
+    position: relative;
+    width: 50%;
+    max-width: 600px;
+    margin: auto;
+    top: 50%;
+    transform: translateY(-50%);
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+#add-account-form label{
+    display: flex;
+    justify-content: flex-start;
+}
+
+.modal-content h2 {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--primary-purple);
+    text-align: left;
+    width: 100%;
+}
+
+.modal-content label {
+    font-size: 1rem;
+    font-weight: bold;
+    color: var(--gray);
+    align-self: flex-start;
+}
+
+.modal-content input {
+    width: 100%;
+    padding: 0.8rem;
+    border: 1px solid var(--light-gray);
+    border-radius: 5px;
+    font-size: 1rem;
+    box-sizing: border-box;
+}
+
+.modal-content p {
+    font-size: 1rem;
+    color: var(--gray);
+}
+
+.modal-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.modal-actions .btn-confirm {
+    width: 100%;
+    padding: 10px;
+    font-size: 1rem;
+    background-color: var(--white);
+    color: var(--primary-purple);
+    border: 2px solid var(--primary-purple);
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.modal-actions .btn-confirm:hover {
+    background-color: var(--light-purple);
+}
+
+.modal-actions .btn-confirm-sim {
+    width: 100%;
+    padding: 10px;
+    font-size: 1rem;
+    background-color: var(--primary-purple);
+    color: var(--white);
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.close-icon {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 1.5rem;
+    color: var(--gray);
+    cursor: pointer;
+}
+
+.close-icon:hover {
+    color: var(--danger-red);
+}
+
+.account-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 0;
+    margin: 0;
+    list-style-type: none;
+    max-height: 250px;
+    overflow-y: auto;
+}
+
+.account-list li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 0.5px solid var(--light-gray);
+    border-radius: 5px;
+    font-size: 1rem;
+    color: var(--gray);
+    background-color: var(--white);
+}
+
+.account-list li:hover {
+    background-color: var(--light-purple);
+}
+
+.account-list li.empty {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.2em;
+    color: #aaa;
+    font-style: italic;
+    height: 100%;
+    text-align: center;
+}
+
+.account-list li button {
+    background: none;
+    border: none;
+    color: #e72427;
+    font-size: 0.9rem;
+    font-weight: normal;
+    cursor: pointer;
+}
+
+.btn-confirm-sim {
+    width: 100%;
+    padding: 10px;
+    font-size: 1rem;
+    background-color: var(--primary-purple);
+    color: var(--white);
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    border: none;
+    margin-top: 15px;
+}
+
+.btn-confirm-sim:hover{
+    background-color: var(--dark-purple);
+}
+
+#white-space {
+    width: 100%;
+    max-width: 1100px; 
+    height: 350px; 
+    margin: 30px auto;
+    background-color: var(--white);
+    opacity: 0.66;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.gerar{
+    padding: 30px;
+    color: var(--dark-purple);
+    font-size: 3em;
+    opacity: 0.33;
+    border: 3px dashed var(--dark-purple);
+    border-radius: 10px;
+}

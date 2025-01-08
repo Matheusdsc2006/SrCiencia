@@ -21,7 +21,7 @@
                 <ul>
                     <li><a href="{% url 'pagina_inicial' %}"><img src="{% static 'assets/home.svg' %}" alt="">Página inicial</a></li>
                     <li><a href="#"><img src="{% static 'assets/profile.svg' %}" alt="">Meu perfil</a></li>
-                    <li><a href="{% url 'questao_list' %}"><img src="{% static 'assets/practice.svg' %}" alt="">Praticar</a></li>
+                    <li><a href="{% url 'aluno_praticar' %}"><img src="{% static 'assets/practice.svg' %}" alt="">Praticar</a></li>
                     <li><a href="{% if user.is_staff %}{% url 'turmas' %}{% else %}{% url 'turmas' %}{% endif %}" class="{% if active_menu == 'turmas' %}active{% endif %}"><img src="{% static 'assets/classes.svg' %}" alt="">Turmas</a></li>
                     <li><a href="#"><img src="{% static 'assets/forum.svg' %}" alt="">Fórum</a></li>
                     <li><a href="#"><img src="{% static 'assets/help.svg' %}" alt="">Ajuda</a></li>

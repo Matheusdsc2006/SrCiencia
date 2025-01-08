@@ -22,6 +22,7 @@ urlpatterns = [
     path('pagina_inicial/', include('srciencia_core.urls.Pagina_inicialUrls')),
     path('turmas/', include('srciencia_core.urls.TurmasUrls')),
     path('professor_turmas/', include('srciencia_core.urls.Professor_turmasUrls')),
+    path('aluno/praticar/', include('srciencia_core.urls.Aluno_praticarUrls')),
     path('turmas/<int:turma_id>/alunos/', listar_alunos_turma, name='listar_alunos_turma'),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

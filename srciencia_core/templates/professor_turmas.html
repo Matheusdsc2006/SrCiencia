@@ -104,15 +104,14 @@
                 <label for="delete-password-input" class="senha">Senha:</label>
                 <input type="password" id="delete-password-input" placeholder="Digite sua senha" required>
                 <button type="button" id="toggle-password-visibility" class="eye-icon">
-                    <img id="icon-eye-show-delete-password" src="{% static 'assets/eye-show.svg' %}" alt="Mostrar senha">
-                    <img id="icon-eye-off-delete-password" src="{% static 'assets/eye-off.svg' %}" alt="Ocultar senha" style="display: none;">
+                    <img id="icon-eye-show-delete-password" src="{% static 'assets/eye-show.svg' %}" alt="Mostrar senha" style="display: none;">
+                    <img id="icon-eye-off-delete-password" src="{% static 'assets/eye-off.svg' %}" alt="Ocultar senha">
                 </button>
             </div>
             <button type="submit" class="btn-confirm">Confirmar</button>
         </form>
     </div>
 </div>
-
 
 <!-- Modal de Mudar conta -->
 <div id="account-modal" class="modal">
@@ -205,24 +204,37 @@
         var deletePasswordInput = document.getElementById("delete-password-input");
         var eyeShowDeletePassword = document.getElementById("icon-eye-show-delete-password");
         var eyeOffDeletePassword = document.getElementById("icon-eye-off-delete-password");
+        var eyeShowIcon = document.getElementById("icon-eye-show-delete-password");
+        var eyeOffIcon = document.getElementById("icon-eye-off-delete-password");
 
 
         let turmaIdToDelete = null;
         let selectedEmail = null;
 
         function toggleDeletePasswordVisibility() {
-            if (deletePasswordInput.type === "password") {
-                deletePasswordInput.type = "text";
-                eyeShowDeletePassword.style.display = "none";
-                eyeOffDeletePassword.style.display = "inline";
-            } else {
-                deletePasswordInput.type = "password";
-                eyeShowDeletePassword.style.display = "inline";
-                eyeOffDeletePassword.style.display = "none";
-            }
+        if (deletePasswordInput.type === "password") {
+            deletePasswordInput.type = "text"; 
+            eyeShowIcon.style.display = "inline"; 
+            eyeOffIcon.style.display = "none";
+        } else {
+            deletePasswordInput.type = "password"; 
+            eyeShowIcon.style.display = "none"; 
+            eyeOffIcon.style.display = "inline";
         }
-        eyeShowDeletePassword.addEventListener("click", toggleDeletePasswordVisibility);
-        eyeOffDeletePassword.addEventListener("click", toggleDeletePasswordVisibility);
+    }
+
+            // Adiciona eventos de clique aos ícones
+            eyeShowIcon.addEventListener("click", toggleDeletePasswordVisibility);
+            eyeOffIcon.addEventListener("click", toggleDeletePasswordVisibility);
+
+            // Configuração inicial dos ícones
+            if (deletePasswordInput.type === "password") {
+                eyeShowIcon.style.display = "none";
+                eyeOffIcon.style.display = "inline";
+            } else {
+                eyeShowIcon.style.display = "inline";
+                eyeOffIcon.style.display = "none";
+            }
 
         function adicionarItemNaLista(email) {
             var listItem = document.createElement("li");

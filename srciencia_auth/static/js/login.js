@@ -3,20 +3,29 @@ document.addEventListener("DOMContentLoaded", function () {
     const eyeShowIcon = document.getElementById("icon-eye-show");
     const eyeOffIcon = document.getElementById("icon-eye-off");
 
-    // Função para alternar a visibilidade da senha e dos ícones
+    // Função para alternar a visibilidade da senha
     function togglePasswordVisibility() {
         if (passwordInput.type === "password") {
-            passwordInput.type = "text";
-            eyeShowIcon.style.display = "none";
-            eyeOffIcon.style.display = "inline"; // Mostra o ícone de olho cortado
+            passwordInput.type = "text"; // Mostra a senha
+            eyeShowIcon.style.display = "inline"; // Mostra o ícone de "mostrar senha"
+            eyeOffIcon.style.display = "none"; // Esconde o ícone de "esconder senha"
         } else {
-            passwordInput.type = "password";
-            eyeShowIcon.style.display = "inline"; // Mostra o ícone de olho aberto
-            eyeOffIcon.style.display = "none";
+            passwordInput.type = "password"; // Oculta a senha
+            eyeShowIcon.style.display = "none"; // Esconde o ícone de "mostrar senha"
+            eyeOffIcon.style.display = "inline"; // Mostra o ícone de "esconder senha"
         }
     }
 
-    // Adiciona o evento de clique nos ícones
+    // Adiciona eventos de clique aos ícones
     eyeShowIcon.addEventListener("click", togglePasswordVisibility);
     eyeOffIcon.addEventListener("click", togglePasswordVisibility);
+
+    // Configura o estado inicial dos ícones
+    if (passwordInput.type === "password") {
+        eyeShowIcon.style.display = "none"; // Esconde "mostrar senha"
+        eyeOffIcon.style.display = "inline"; // Mostra "esconder senha"
+    } else {
+        eyeShowIcon.style.display = "inline"; // Mostra "mostrar senha"
+        eyeOffIcon.style.display = "none"; // Esconde "esconder senha"
+    }
 });

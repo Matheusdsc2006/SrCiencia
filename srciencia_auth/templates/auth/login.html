@@ -20,8 +20,8 @@
                 <div class="form-group">
                     <label for="id_password">Senha:</label>
                     {{ form.password }}
-                    <img id="icon-eye-show" src="{% static 'assets/eye-show.svg' %}" alt="Mostrar senha">
-                    <img id="icon-eye-off" src="{% static 'assets/eye-off.svg' %}" alt="Ocultar senha" style="display: none;">
+                    <img id="icon-eye-show" class="toggle-password" src="{% static 'assets/eye-show.svg' %}" alt="Mostrar senha" style="display: none;">
+                    <img id="icon-eye-off" class="toggle-password" src="{% static 'assets/eye-off.svg' %}" alt="Ocultar senha">
                     <a href="{% url 'password_reset' %}" id="password-recover">Esqueci minha senha</a>
                 </div>
                 

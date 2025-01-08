@@ -12,12 +12,12 @@ document.addEventListener("DOMContentLoaded", function () {
     function togglePasswordVisibility1() {
         if (password1Input.type === "password") {
             password1Input.type = "text";
-            eyeShowIcon1.style.display = "none";
-            eyeOffIcon1.style.display = "inline";
-        } else {
-            password1Input.type = "password";
             eyeShowIcon1.style.display = "inline";
             eyeOffIcon1.style.display = "none";
+        } else {
+            password1Input.type = "password";
+            eyeShowIcon1.style.display = "none";
+            eyeOffIcon1.style.display = "inline";
         }
     }
 
@@ -25,12 +25,12 @@ document.addEventListener("DOMContentLoaded", function () {
     function togglePasswordVisibility2() {
         if (password2Input.type === "password") {
             password2Input.type = "text";
-            eyeShowIcon2.style.display = "none";
-            eyeOffIcon2.style.display = "inline";
-        } else {
-            password2Input.type = "password";
             eyeShowIcon2.style.display = "inline";
             eyeOffIcon2.style.display = "none";
+        } else {
+            password2Input.type = "password";
+            eyeShowIcon2.style.display = "none";
+            eyeOffIcon2.style.display = "inline";
         }
     }
 
@@ -39,4 +39,22 @@ document.addEventListener("DOMContentLoaded", function () {
     eyeOffIcon1.addEventListener("click", togglePasswordVisibility1);
     eyeShowIcon2.addEventListener("click", togglePasswordVisibility2);
     eyeOffIcon2.addEventListener("click", togglePasswordVisibility2);
+
+    // Configuração inicial dos ícones para o campo password1
+    if (password1Input.type === "password") {
+        eyeShowIcon1.style.display = "none";
+        eyeOffIcon1.style.display = "inline";
+    } else {
+        eyeShowIcon1.style.display = "inline";
+        eyeOffIcon1.style.display = "none";
+    }
+
+    // Configuração inicial dos ícones para o campo password2
+    if (password2Input.type === "password") {
+        eyeShowIcon2.style.display = "none";
+        eyeOffIcon2.style.display = "inline";
+    } else {
+        eyeShowIcon2.style.display = "inline";
+        eyeOffIcon2.style.display = "none";
+    }
 });

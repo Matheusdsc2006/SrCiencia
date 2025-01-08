@@ -1,0 +1,396 @@
+{% load static %}    
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token }}">
+    <title>SR. Ciência - Turmas</title>
+    <link rel="stylesheet" href="{% static 'css/praticar.css' %}">
+    <link rel="stylesheet" href="{% static 'css/global.css' %}">
+</head>
+<body>
+    <main>
+        <div class="container">
+            <!-- Menu Lateral -->
+            <aside class="sidebar">
+                <div class="logo">
+                    <img src="{% static 'assets/sr_ciencia.svg' %}" alt="SR. Ciência">
+                </div>
+                <nav>
+                    <ul>
+                        <li><a href="{% url 'pagina_inicial' %}"><img src="{% static 'assets/home.svg' %}" alt="">Página inicial</a></li>
+                        <li><a href="#"><img src="{% static 'assets/profile.svg' %}" alt="">Meu perfil</a></li>
+                        <li><a href="{% url 'aluno_praticar' %}" class="active"><img src="{% static 'assets/practice.svg' %}" alt="">Praticar</a></li>
+                        <li><a href="{% url 'turmas' %}"><img src="{% static 'assets/classes.svg' %}" alt="">Turmas</a></li>
+                        <li><a href="#"><img src="{% static 'assets/forum.svg' %}" alt="">Fórum</a></li>
+                        <li><a href="#"><img src="{% static 'assets/help.svg' %}" alt="">Ajuda</a></li>
+                        <li><a href="{% url 'login' %}" class="logout"><img src="{% static 'assets/logout.svg' %}" alt="">Sair</a></li>
+                    </ul>
+                </nav>
+            </aside>
+    
+            <!-- Cabeçalho -->
+            <main class="main-container">
+                <div class="header-container-inicio">
+                    <div class="header-card">
+                        <div class="user-info">
+                            <div class="user-avatar">
+                                <figure>
+                                    <img src="{% static 'assets/user.avif' %}" alt="Usuário">
+                                </figure>
+                            </div>
+                            <div>
+                                <p class="user-name">{{ user.username }}</p>
+                                <p class="user-email">{{ user.email }}</p>
+                            </div>
+                        </div>
+                        <button id="change-account-btn" class="change-account">Mudar de conta</button>
+                    </div>
+                </div>
+
+                <!-- Conteúdo da Página de Praticar -->
+                <div class="header-container">
+                    <h2 class="quest">Praticar</h2>
+                </div>
+
+                <!-- Filtros de Busca -->
+                <form class="form-container">
+                    <div class="form-group">
+                        <label for="quantidade">Quantidade de questões: <span style="color: red;">*</span></label>
+                        <input type="number" id="quantidade" name="quantidade" placeholder="Máx. 50">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="disciplina">Disciplina:</label>
+                        <select id="disciplina" name="disciplina">
+                            <option value="">Todas</option>
+                            {% for disciplina in disciplinas %}
+                            <option value="{{ disciplina.id }}">{{ disciplina.nome }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="conteudo">Conteúdo:</label>
+                        <select id="conteudo" name="conteudo">
+                            <option value="">Todos</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="dificuldade">Dificuldade:</label>
+                        <select id="dificuldade" name="dificuldade">
+                            <option value="">Todas</option>
+                            <option value="1">Fácil</option>
+                            <option value="2">Médio</option>
+                            <option value="3">Difícil</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Status:</label>
+                        <div class="status-options">
+                            <label><input type="checkbox" name="status" value="nao_resolvidas"> Não resolvidas</label>
+                            <label><input type="checkbox" name="status" value="com_resolucao"> Com resolução</label>
+                            <label><input type="checkbox" name="status" value="que_errei"> Que errei</label>
+                        </div>
+                    </div>
+
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-save" id="gerar-atividade">Gerar atividade</button>
+                        <button type="reset" class="btn btn-cancel">Limpar</button>
+                    </div>
+                </form>
+                <div id="white-space" class="hidden">
+                    <h2 class="gerar">Aguardando filtro...</h2>
+                </div>
+                <section id="questoes-container">
+                    <!-- Conteúdo gerado dinamicamente -->
+                </section>
+            </main>
+        </div>
+    </main>    
+
+    <!-- Modal de Gerenciamento de Contas -->
+    <div id="account-modal" class="modal">
+        <div class="modal-content">
+            <span id="close-account-modal" class="close-icon">&times;</span>
+            <h2>Selecione ou remova uma conta</h2>
+            <ul class="account-list"></ul>
+            <form id="add-account-form">
+                {% csrf_token %}
+                <label for="new-account">E-mail:</label>
+                <input type="email" id="new-account" placeholder="Digite um e-mail" required />
+                <button id="add-account-btn" class="btn-confirm-sim" type="button">Adicionar Conta</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal de Confirmação para Mudar de Conta -->
+    <div id="account-confirmation-modal" class="modal">
+        <div class="modal-content">
+            <span id="close-account-confirmation-modal" class="close-icon">&times;</span>
+            <h2>Deseja realmente mudar de conta?</h2>
+            <p style="font-size: 20px;">Você será redirecionado para a tela de login.</p>
+            <div class="modal-actions">
+                <button id="confirm-change-btn" class="btn-confirm-sim" style="font-weight: 400;">Sim</button>
+            </div>
+        </div>
+    </div>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+    // Referências dos elementos
+    const disciplinaSelect = document.getElementById("disciplina");
+    const conteudoSelect = document.getElementById("conteudo");
+    const topicoSelect = document.getElementById("topico");
+    const gerarAtividadeBtn = document.getElementById("gerar-atividade");
+    const questoesContainer = document.getElementById("questoes-container");
+
+    var accountModal = document.getElementById("account-modal");
+    var accountConfirmationModal = document.getElementById("account-confirmation-modal");
+    var changeAccountButton = document.getElementById("change-account-btn");
+    var closeAccountModal = document.getElementById("close-account-modal");
+    var closeAccountConfirmationModal = document.getElementById("close-account-confirmation-modal");
+    var confirmChangeButton = document.getElementById("confirm-change-btn");
+    var addAccountButton = document.getElementById("add-account-btn");
+    var accountList = document.querySelector(".account-list");
+    var newAccountInput = document.getElementById("new-account");
+    let selectedEmail = null;
+
+    // Carregar conteúdos ao mudar disciplina
+    disciplinaSelect.addEventListener("change", function () {
+        const disciplinaId = this.value;
+
+        conteudoSelect.innerHTML = '<option value="">Todos</option>';
+        topicoSelect.innerHTML = '<option value="">Todos</option>';
+
+        if (disciplinaId) {
+            fetch(`/api/conteudos/${disciplinaId}/`)
+                .then(response => response.json())
+                .then(data => {
+                    data.forEach(conteudo => {
+                        const option = document.createElement("option");
+                        option.value = conteudo.id;
+                        option.textContent = conteudo.nome;
+                        conteudoSelect.appendChild(option);
+                    });
+                });
+        }
+    });
+
+    // Carregar tópicos ao mudar conteúdo
+    conteudoSelect.addEventListener("change", function () {
+        const conteudoId = this.value;
+
+        topicoSelect.innerHTML = '<option value="">Todos</option>';
+
+        if (conteudoId) {
+            fetch(`/api/topicos/${conteudoId}/`)
+                .then(response => response.json())
+                .then(data => {
+                    data.forEach(topico => {
+                        const option = document.createElement("option");
+                        option.value = topico.id;
+                        option.textContent = topico.nome;
+                        topicoSelect.appendChild(option);
+                    });
+                });
+        }
+    });
+
+    // Gerar atividade ao clicar no botão
+    gerarAtividadeBtn.addEventListener("click", function () {
+        const params = new URLSearchParams(new FormData(document.querySelector("form")));
+
+        fetch(`/api/questoes?${params.toString()}`)
+            .then(response => response.json())
+            .then(data => {
+                questoesContainer.innerHTML = "";
+
+                if (data.length === 0) {
+                    questoesContainer.innerHTML = "<p>Nenhuma questão encontrada.</p>";
+                    return;
+                }
+
+                data.forEach((questao, index) => {
+                    const questaoElement = document.createElement("div");
+                    questaoElement.classList.add("questao-item");
+
+                    questaoElement.innerHTML = `
+                        <h3>Questão ${index + 1}</h3>
+                        <p>${questao.texto}</p>
+                        <ul>
+                            ${questao.alternativas.map(alt => `<li>${alt.texto}</li>`).join("")}
+                        </ul>
+                    `;
+
+                    questoesContainer.appendChild(questaoElement);
+                });
+            });
+    });
+
+    // Lógica de "Mudar de Conta"
+    // Função para renderizar as contas no modal
+    function renderAccounts(accounts, currentEmail) {
+        accountList.innerHTML = ""; // Limpar lista atual
+        if (accounts.length === 0) {
+            accountList.innerHTML = "<li class='empty'>Nenhuma conta adicionada.</li>";
+        } else {
+            accounts.forEach(account => {
+                const listItem = document.createElement("li");
+                listItem.textContent = account;
+                listItem.setAttribute("data-email", account);
+
+                // Se a conta for a atual
+                if (account === currentEmail) {
+                    listItem.textContent += " (atual)";
+                    listItem.classList.add("current-account");
+
+                    // Alerta ao clicar na conta atual
+                    listItem.addEventListener("click", () => {
+                        alert("Você já está logado com essa conta.");
+                    });
+                } else {
+                    // Botão de remoção
+                    const removeButton = document.createElement("button");
+                    removeButton.textContent = "Remover";
+                    removeButton.className = "btn-remove";
+
+                    removeButton.addEventListener("click", event => {
+                        event.stopPropagation(); // Impedir seleção acidental de conta
+                        removeAccount(account);
+                    });
+
+                    listItem.appendChild(removeButton);
+
+                    // Exibir modal de confirmação de mudança de conta
+                    listItem.addEventListener("click", () => {
+                        selectedEmail = account;
+                        accountModal.style.display = "none";
+                        accountConfirmationModal.style.display = "block";
+                    });
+                }
+
+                accountList.appendChild(listItem);
+            });
+        }
+    }
+
+    // Buscar contas do backend
+    function fetchAccounts() {
+        fetch("/turmas/listar-contas/")
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    renderAccounts(data.contas, data.conta_atual);
+                } else {
+                    alert(data.message);
+                }
+            })
+            .catch(error => console.error("Erro ao buscar contas:", error));
+    }
+
+    // Remover conta
+    function removeAccount(email) {
+        fetch("/turmas/remover-conta/", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": document.querySelector("[name='csrfmiddlewaretoken']").value
+            },
+            body: JSON.stringify({ conta: email })
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert("Conta removida com sucesso.");
+                    fetchAccounts(); // Atualizar lista de contas
+                } else {
+                    alert(data.message);
+                }
+            })
+            .catch(error => console.error("Erro ao remover conta:", error));
+    }
+
+    addAccountButton.addEventListener("click", event => {
+    event.preventDefault(); // Evita comportamento padrão (se necessário)
+    const newAccount = newAccountInput.value.trim();
+    if (!newAccount) {
+        alert("Por favor, insira um e-mail válido.");
+        return;
+    }
+
+    // Verifica se a conta já está na lista antes de adicionar
+    fetch("/turmas/listar-contas/")
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                if (data.contas.includes(newAccount)) {
+                    alert("Essa conta já está na lista.");
+                    newAccountInput.value = ""; // Limpar o campo de entrada
+                    return;
+                }
+
+                // Adiciona a nova conta ao backend
+                fetch("/turmas/mudar-conta/", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRFToken": document.querySelector("[name='csrfmiddlewaretoken']").value
+                    },
+                    body: JSON.stringify({ nova_conta: newAccount })
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            alert("Conta adicionada com sucesso.");
+                            newAccountInput.value = ""; // Limpar o campo de entrada
+                            fetchAccounts(); // Atualizar lista de contas
+                        } else {
+                            alert(data.message);
+                        }
+                    })
+                    .catch(error => console.error("Erro ao adicionar conta:", error));
+            } else {
+                alert(data.message);
+            }
+        })
+        .catch(error => console.error("Erro ao verificar contas existentes:", error));
+});
+
+
+    // Confirmar mudança de conta
+    confirmChangeButton.addEventListener("click", () => {
+        if (selectedEmail) {
+            accountConfirmationModal.style.display = "none";
+            window.location.href = `/auth/login/?email=${encodeURIComponent(selectedEmail)}`;
+        }
+    });
+
+    // Abrir modal de contas
+    changeAccountButton.addEventListener("click", () => {
+        fetchAccounts();
+        accountModal.style.display = "block";
+    });
+
+    // Fechar modal de contas ao clicar no "X"
+    closeAccountModal.addEventListener("click", () => {
+        accountModal.style.display = "none";
+    });
+
+    // Fechar modal de confirmação ao clicar no "X"
+    closeAccountConfirmationModal.addEventListener("click", () => {
+        accountConfirmationModal.style.display = "none";
+    });
+
+    // Fechar modal ao clicar fora dele
+    window.addEventListener("click", event => {
+        if (event.target === accountModal) {
+            accountModal.style.display = "none";
+        } else if (event.target === accountConfirmationModal) {
+            accountConfirmationModal.style.display = "none";
+        }
+    });
+});
+</script>
