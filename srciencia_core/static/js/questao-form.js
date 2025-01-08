@@ -7,6 +7,10 @@ document.addEventListener("DOMContentLoaded", function () {
     var selects = document.querySelectorAll("select");
     var form = document.querySelector("form");  
     var alternativas = document.querySelectorAll(".alternativa"); 
+    var conteudoSelect = document.getElementById("id_conteudo");
+    var topicoSelect = document.getElementById("id_topico");
+    var form = document.getElementById("questao-form");
+    var disciplinaSelect = document.getElementById("id_disciplina");
 
     // Atualizar os campos dinamicamente ao alterar Conteúdo
     conteudoField.addEventListener("change", function () {
@@ -242,6 +246,128 @@ document.addEventListener("DOMContentLoaded", function () {
         if (algumVazio) {
             event.preventDefault(); // Impede o envio do formulário
             alert("Alguma alternativa ficou vazia! Adicione pelo menos a descrição.");
+        }
+    });
+    function atualizarTopicos(conteudoId) {
+        // Limpar opções de tópicos
+        topicoSelect.innerHTML = '<option value="">---------</option>';
+
+        if (conteudoId) {
+            // Fazer requisição para buscar tópicos relacionados
+            fetch(`/app/u/0/api/topicos/${conteudoId}/`) // Certifique-se de usar o caminho correto
+                .then((response) => response.json())
+                .then((data) => {
+                    if (data.length > 0) {
+                        // Adicionar os tópicos ao select
+                        data.forEach((topico) => {
+                            var option = document.createElement("option");
+                            option.value = topico.id;
+                            option.textContent = topico.nome;
+                            topicoSelect.appendChild(option);
+                        });
+                    } else {
+                        console.log("Nenhum tópico encontrado para este conteúdo.");
+                    }
+                })
+                .catch((error) => {
+                    console.error("Erro ao carregar tópicos:", error);
+                });
+        }
+    }
+
+    // Evento para detectar mudanças no select de conteúdo
+    conteudoSelect.addEventListener("change", () => {
+        var conteudoId = conteudoSelect.value;
+        atualizarTopicos(conteudoId); // Atualizar os tópicos dinamicamente
+    });
+    form.addEventListener("submit", (event) => {
+        var conteudoValue = conteudoSelect.value;
+        var topicoValue = topicoSelect.value;
+
+        // Verificar se o conteúdo ou tópico estão vazios
+        if (!conteudoValue || !topicoValue) {
+            event.preventDefault(); // Impedir o envio do formulário
+            alert("Você esqueceu de adicionar um conteúdo ou tópico!"); // Exibir alerta
+        }
+    });
+    const loadConteudos = (disciplinaId) => {
+        fetch(`/app/u/0/api/conteudos/${disciplinaId}/`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Erro ao buscar conteúdos');
+                }
+                return response.json();
+            })
+            .then(data => {
+                const conteudoSelect = document.getElementById('id_conteudo');
+                conteudoSelect.innerHTML = '<option value="">---------</option>';
+                data.forEach(conteudo => {
+                    const option = document.createElement('option');
+                    option.value = conteudo.id;
+                    option.textContent = conteudo.nome;
+                    conteudoSelect.appendChild(option);
+                });
+            })
+            .catch(error => console.error('Erro ao carregar conteúdos:', error));
+    };
+    
+    const loadTopicos = (conteudoId) => {
+        fetch(`/app/u/0/api/topicos/${conteudoId}/`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Erro ao buscar tópicos');
+                }
+                return response.json();
+            })
+            .then(data => {
+                const topicoSelect = document.getElementById('id_topico');
+                topicoSelect.innerHTML = '<option value="">---------</option>';
+                data.forEach(topico => {
+                    const option = document.createElement('option');
+                    option.value = topico.id;
+                    option.textContent = topico.nome;
+                    topicoSelect.appendChild(option);
+                });
+            })
+            .catch(error => console.error('Erro ao carregar tópicos:', error));
+    };
+
+    disciplinaSelect.addEventListener("change", () => {
+        var disciplinaId = disciplinaSelect.value;
+        loadConteudos(disciplinaId);
+    });
+
+    conteudoSelect.addEventListener("change", () => {
+        var conteudoId = conteudoSelect.value;
+        loadTopicos(conteudoId);
+    });
+
+    // Carregar Conteúdos e Tópicos no carregamento da página (apenas criação)
+    var disciplinaId = disciplinaSelect.value;
+    if (disciplinaId) {
+        loadConteudos(disciplinaId);
+    }
+
+    var conteudoId = conteudoSelect.value;
+    if (conteudoId) {
+        loadTopicos(conteudoId);
+    }
+    form.addEventListener("submit", function (event) {
+        // Obter todos os checkboxes de alternativas
+        const checkboxes = document.querySelectorAll("input[type='checkbox'][name*='correta']");
+        let atLeastOneChecked = false;
+
+        // Verificar se pelo menos um checkbox está marcado
+        checkboxes.forEach((checkbox) => {
+            if (checkbox.checked) {
+                atLeastOneChecked = true;
+            }
+        });
+
+        // Se nenhuma alternativa estiver marcada, mostrar alerta e impedir o envio
+        if (!atLeastOneChecked) {
+            event.preventDefault(); // Impede o envio do formulário
+            alert("Você esqueceu de indicar a(s) alternativa(s) correta(s).");
         }
     });
 });

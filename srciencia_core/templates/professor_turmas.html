@@ -108,7 +108,7 @@
                     <img id="icon-eye-off-delete-password" src="{% static 'assets/eye-off.svg' %}" alt="Ocultar senha" style="display: none;">
                 </button>
             </div>
-            <button type="submit" class="btn-confirm-sim">Confirmar</button>
+            <button type="submit" class="btn-confirm">Confirmar</button>
         </form>
     </div>
 </div>
@@ -394,12 +394,6 @@ addAccountButton.addEventListener("click", (event) => {
             // Verifica se a conta já existe na lista
             if (data.contas.includes(newAccount)) {
                 alert("Essa conta já está na lista.");
-                return;
-            }
-
-            // Verifica o limite de contas
-            if (data.contas.length >= 4) {
-                alert("Você atingiu o limite de 4 contas. Remova uma conta para adicionar outra.");
                 return;
             }
 

@@ -136,6 +136,19 @@ footer .footer-copyright a:hover{
     color: var(--color-medium-gray)
 }
 
+input[type="password"]::-ms-reveal, 
+input[type="password"]::-ms-clear {
+    display: none;
+}
+
+input[type="password"] {
+    -webkit-text-security: disc; 
+    -webkit-appearance: none; 
+    appearance: none; 
+}
+
+
+
 @media (min-width: 769px) and (max-width: 1024px){
 
     footer .footer-logo{

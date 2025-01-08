@@ -1,4 +1,4 @@
-    {% extends "base-core.html" %}
+    {% extends "base-admin.html" %}
     {% load static %}
     {% block styles %}
     <link rel="stylesheet" href="{% static 'css/questoes.css' %}">
@@ -14,7 +14,7 @@
                 {% if questao_form.instance.pk %}Editar Questão{% else %}Nova Questão{% endif %}
             </h2>
         </div>
-        <form method="post" enctype="multipart/form-data">
+        <form method="post" enctype="multipart/form-data" id="questao-form">
             {% csrf_token %}
     
             <div class="descricao">
@@ -59,6 +59,7 @@
                         {% endfor %}
                     </select>
                 </div>
+                
                 <div>
                     <label for="{{ questao_form.topico.id_for_label }}">Tópico:</label>
                     <select id="id_topico" name="topico" data-selected="{{ topico_id }}">
@@ -69,7 +70,7 @@
                         </option>
                         {% endfor %}
                     </select>
-                </div>                
+                </div>                                     
             </div>
             <div class="resolv">
                 <label for="{{ questao_form.resolucao.id_for_label }}">Resolução:</label>

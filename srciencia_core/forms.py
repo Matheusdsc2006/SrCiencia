@@ -6,7 +6,7 @@ class QuestaoForm(forms.ModelForm):
     class Meta:
         model = Questao
         fields = [
-            "descricao", "banca", "disciplina", "conteudo", "topico", "resolucao", "alteravel"
+            "descricao", "banca", "disciplina", "conteudo", "topico", "resolucao", "alteravel", "ano"
         ]
         widgets = {
             'banca': forms.Select(),

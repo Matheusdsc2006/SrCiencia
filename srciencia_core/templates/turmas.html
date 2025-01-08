@@ -425,10 +425,6 @@
         addAccountButton.addEventListener("click", () => {
             var newAccount = newAccountInput.value.trim();
 
-            if (accounts.length >= MAX_ACCOUNTS) {
-                alert("Você atingiu o limite de 4 contas. Remova uma conta para adicionar outra.");
-                return;
-            }
 
             if (!newAccount || !validateEmail(newAccount)) {
                 alert("Por favor, insira um e-mail válido.");

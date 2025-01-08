@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate, get_user_model
-from srciencia_auth.forms import UsuarioLoginForm, PasswordResetForm
+from srciencia_auth.forms import UsuarioLoginForm, PasswordResetForm, AuthenticationForm
 from django.contrib.auth.tokens import default_token_generator
 from django.utils.http import urlsafe_base64_encode
 from django.utils.encoding import force_bytes
@@ -9,6 +9,16 @@ from django.template.loader import render_to_string
 from django.views import View
 from django.contrib import messages
 from django.contrib.auth.forms import SetPasswordForm
+from django.http import JsonResponse
+
+def login_api_view(request):
+    if request.method == "POST":
+        form = AuthenticationForm(data=request.POST)
+        if form.is_valid():
+            user = form.get_user()
+            login(request, user)
+            return JsonResponse({"is_admin": user.is_superuser})
+    return JsonResponse({"error": "Invalid login"}, status=400)
 
 
 def login_view(request):
@@ -20,14 +30,17 @@ def login_view(request):
             user = authenticate(username=username, password=password)
             if user is not None:
                 login(request, user)
-                # Salvar o email da conta atual na sessão
+                
                 request.session['conta_atual'] = user.email
                 request.session.modified = True
-                return redirect('pagina_inicial')
+                
+                if user.is_superuser:
+                    return redirect('questao_list') 
+                return redirect('pagina_inicial')  
             else:
                 messages.error(request, "Credenciais inválidas. Por favor, tente novamente.")
     else:
-        form = UsuarioLoginForm()
+        form = UsuarioLoginForm() 
     return render(request, './auth/login.html', {'form': form})
 
 

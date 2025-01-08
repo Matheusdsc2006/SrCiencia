@@ -18,48 +18,49 @@ def questao_list(request):
     return render(request, "admin/questao_list.html", {"questoes": questoes})
 
 def questao_create(request):
-    # Definição correta do modelformset_factory
     AlternativaFormSet = modelformset_factory(
         Alternativa,
         form=AlternativaForm,
-        formset=CustomAlternativaFormSet,  # Use o formset personalizado
-        extra=5,  # Exibe 5 formulários de alternativas inicialmente
-        max_num=5,  # Limita o número máximo de alternativas a 5
-        validate_max=True,  # Valida o limite máximo
+        formset=CustomAlternativaFormSet,
+        extra=5,
+        max_num=5,
+        validate_max=True,
     )
 
     anos_disponiveis = list(range(datetime.now().year, 1924, -1))
 
     if request.method == "POST":
-        # Processa os formulários enviados
         questao_form = QuestaoForm(request.POST, request.FILES)
         formset = AlternativaFormSet(request.POST, queryset=Alternativa.objects.none())
 
         if questao_form.is_valid() and formset.is_valid():
-            # Salvar a questão
             questao = questao_form.save()
-
-            # Salvar as alternativas preenchidas
             alternativas = formset.save(commit=False)
             for alternativa in alternativas:
                 alternativa.questao = questao
                 alternativa.save()
 
-            # Preencher com alternativas vazias, se necessário
             while Alternativa.objects.filter(questao=questao).count() < 5:
                 Alternativa.objects.create(questao=questao)
 
             return redirect(reverse("questao_list"))
     else:
-        # Exibe os formulários vazios na criação
         questao_form = QuestaoForm()
         formset = AlternativaFormSet(queryset=Alternativa.objects.none())
+
+    # Adicione as disciplinas disponíveis ao contexto
+    disciplinas = Disciplina.objects.all()
 
     return render(request, "admin/questao_form.html", {
         "questao_form": questao_form,
         "formset": formset,
         "anos": anos_disponiveis,
+        "disciplinas": disciplinas,
+        "conteudos": Conteudo.objects.none(), 
+        "topicos": Topico.objects.none(),  
     })
+
+
 
 
 def questao_update(request, pk):
@@ -148,11 +149,12 @@ def get_conteudos(request, disciplina_id):
 def get_topicos(request, conteudo_id):
     try:
         topicos = Topico.objects.filter(conteudo_id=conteudo_id).values('id', 'nome')
-        return Response(list(topicos))
+        return Response(list(topicos))  
     except Topico.DoesNotExist:
-        return Response({'error': 'Tópicos não encontrados.'}, status=404)
+        return Response({'error': 'Nenhum tópico encontrado.'}, status=404)
     except Exception as e:
         return Response({'error': str(e)}, status=500)
+
 
 
 def gerenciar_banca(request):
@@ -206,14 +208,14 @@ def gerenciar_disciplina(request):
                 messages.error(request, f"Erro ao remover disciplina: {str(e)}")
 
     form = DisciplinaForm()
-    todas_disciplinas = Disciplina.objects.all()  # Todas as disciplinas
-    disciplinas_iniciais = todas_disciplinas[:5]  # Apenas as 5 primeiras
-    tem_mais = todas_disciplinas.count() > 5  # Flag para o botão "Ver mais"
+    todas_disciplinas = Disciplina.objects.all() 
+    disciplinas_iniciais = todas_disciplinas[:5] 
+    tem_mais = todas_disciplinas.count() > 5
 
     return render(request, "admin/gerenciar_disciplina.html", {
         "form": form,
-        "disciplinas": disciplinas_iniciais,  # Lista inicial de 5 itens
-        "todas_disciplinas": todas_disciplinas,  # Todas as disciplinas para o modal
+        "disciplinas": disciplinas_iniciais,  
+        "todas_disciplinas": todas_disciplinas,  
         "tem_mais": tem_mais,
     })
 
@@ -270,7 +272,7 @@ def gerenciar_topico(request):
 
     form = TopicoForm()
 
-    topicos = Topico.objects.select_related('conteudo__disciplina').all()
+    topicos = Topico.objects.select_related('conteudo__disciplina').distinct()
 
     disciplinas = Disciplina.objects.all()
 
@@ -279,8 +281,6 @@ def gerenciar_topico(request):
         "topicos": topicos,
         "disciplinas": disciplinas,
     })
-
-
 
 def remover_tipo(request, tipo, id):
     if request.method == 'POST':
@@ -293,14 +293,14 @@ def remover_tipo(request, tipo, id):
         elif tipo == 'topico':
             item = get_object_or_404(Topico, id=id)
         item.delete()
-        return redirect(request.META.get('HTTP_REFERER'))  # Retorna para a página anterior
+        return redirect(request.META.get('HTTP_REFERER'))
     return HttpResponseNotAllowed(['POST'])
 
 
 def buscar_bancas(request):
     query = unidecode(request.GET.get('q', '').lower())
-    bancas = Banca.objects.all()
-    
+    bancas = Banca.objects.distinct()
+
     data = [
         {
             'id': banca.id,
@@ -309,12 +309,12 @@ def buscar_bancas(request):
         for banca in bancas
         if query in unidecode(banca.nome.lower())
     ]
-    return JsonResponse(data, safe=False)
+    return JsonResponse({'bancas': data, 'total': len(data)}, safe=False)
 
 def buscar_conteudos(request):
     query = unidecode(request.GET.get('q', '').lower())
-    conteudos = Conteudo.objects.select_related('disciplina').all()
-    
+    conteudos = Conteudo.objects.select_related('disciplina').distinct()
+
     data = [
         {
             'id': conteudo.id,
@@ -325,7 +325,8 @@ def buscar_conteudos(request):
         if query in unidecode(conteudo.nome.lower()) or
            (conteudo.disciplina and query in unidecode(conteudo.disciplina.nome.lower()))
     ]
-    return JsonResponse(data, safe=False)
+    return JsonResponse({'conteudos': data, 'total': len(data)}, safe=False)
+
 
 def buscar_topicos(request):
     query = unidecode(request.GET.get('q', '').lower())
@@ -353,7 +354,7 @@ def buscar_topicos(request):
 
 def buscar_disciplinas(request):
     query = unidecode(request.GET.get('q', '').lower())
-    disciplinas = Disciplina.objects.all()
+    disciplinas = Disciplina.objects.distinct() 
 
     data = [
         {
@@ -363,4 +364,5 @@ def buscar_disciplinas(request):
         for disciplina in disciplinas
         if query in unidecode(disciplina.nome.lower())
     ]
-    return JsonResponse(data, safe=False)
+    return JsonResponse({'disciplinas': data, 'total': len(data)}, safe=False)
+
