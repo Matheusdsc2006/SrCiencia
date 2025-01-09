@@ -139,11 +139,12 @@ def questao_delete(request, pk):
 def get_conteudos(request, disciplina_id):
     try:
         conteudos = Conteudo.objects.filter(disciplina_id=disciplina_id).values('id', 'nome')
-        return Response(list(conteudos))
-    except Conteudo.DoesNotExist:
-        return Response({'error': 'Conteúdos não encontrados.'}, status=404)
+        if not conteudos:
+            return Response([], status=200) 
+        return Response(list(conteudos), status=200)
     except Exception as e:
         return Response({'error': str(e)}, status=500)
+
 
 @api_view(['GET'])
 def get_topicos(request, conteudo_id):

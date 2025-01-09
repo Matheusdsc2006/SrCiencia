@@ -44,9 +44,23 @@ class Questao(models.Model):
     ano = models.PositiveIntegerField(null=True, blank=True, verbose_name="Ano") 
     data_criacao = models.DateTimeField(auto_now_add=True)
     data_atualizacao = models.DateTimeField(auto_now=True)
+    taxa_acertos = models.FloatField(default=0, verbose_name="Taxa de Acertos (%)")  # Novo campo
 
     def __str__(self):
         return f"Questão {self.id}: {self.descricao[:50]}"
+
+    def calcular_dificuldade(self):
+        """
+        Atualiza a dificuldade da questão com base na taxa de acertos.
+        """
+        if self.taxa_acertos >= 67:
+            self.dificuldade = 1  # Fácil
+        elif 34 <= self.taxa_acertos < 67:
+            self.dificuldade = 2  # Médio
+        else:
+            self.dificuldade = 3  # Difícil
+        self.save()
+
 
 
 

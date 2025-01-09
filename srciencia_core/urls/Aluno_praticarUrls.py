@@ -6,7 +6,7 @@ urlpatterns = [
     path('', aluno_praticar, name='aluno_praticar'),
 
     # Rota para buscar questões filtradas
-    path('buscar_questoes/', buscar_questoes, name='buscar_questoes'),
+    path('api/questoes', buscar_questoes, name='buscar_questoes'),
 
     # Rota para registrar a resposta do aluno
     path('registrar_resposta/', registrar_resposta, name='registrar_resposta'),

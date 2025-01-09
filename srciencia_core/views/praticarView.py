@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-from srciencia_core.models.Questao import Questao
+from srciencia_core.models.Questao import Questao, Disciplina
 from srciencia_core.models.Praticar import RespostaAluno, RelatorioQuestao
 from django.contrib.auth.decorators import login_required
 import json
@@ -11,8 +11,9 @@ def aluno_praticar(request):
     """
     Renderiza a página de prática para o aluno.
     """
+    disciplinas = Disciplina.objects.all()  
     return render(request, 'aluno_praticar.html', {
-        'disciplinas': [],  
+        'disciplinas': disciplinas,  
         'conteudos': [],   
         'topicos': [],    
     })
@@ -28,10 +29,10 @@ def buscar_questoes(request):
         disciplina_id = request.GET.get('disciplina')
         conteudo_id = request.GET.get('conteudo')
         topico_id = request.GET.get('topico')
-        dificuldade = request.GET.get('dificuldade')
+        dificuldade = request.GET.get('dificuldade')  # 1, 2, 3 para Fácil, Médio, Difícil
         quantidade = int(request.GET.get('quantidade', 10))  # Padrão: 10 questões
 
-        # Filtra as questões com base nos parâmetros fornecidos
+        # Filtra as questões
         questoes = Questao.objects.all()
 
         if disciplina_id:
@@ -43,22 +44,25 @@ def buscar_questoes(request):
         if dificuldade:
             questoes = questoes.filter(dificuldade=dificuldade)
 
-        # Limita a quantidade de questões retornadas
+        # Limita a quantidade
         questoes = questoes[:quantidade]
 
-        # Retorna as questões como JSON
+        # Serializa as questões
         data = [
             {
                 'id': questao.id,
-                'enunciado': questao.enunciado,
+                'descricao': questao.descricao,
                 'alternativas': list(questao.alternativas.values('id', 'descricao', 'correta')),
-                'dificuldade': questao.dificuldade,
+                'dificuldade': questao.get_dificuldade_display(),
+                'taxa_acertos': questao.taxa_acertos,
             }
             for questao in questoes
         ]
         return JsonResponse({'questoes': data})
 
     return JsonResponse({'error': 'Método não permitido'}, status=405)
+
+
 
 
 @csrf_exempt

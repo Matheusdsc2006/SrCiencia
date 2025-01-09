@@ -6,6 +6,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token }}">
     <title>SR. Ciência - Turmas</title>
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']],
+                processEscapes: true,
+            },
+            svg: {
+                fontCache: 'global',
+            },
+        };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>     
     <link rel="stylesheet" href="{% static 'css/praticar.css' %}">
     <link rel="stylesheet" href="{% static 'css/global.css' %}">
 </head>
@@ -55,12 +68,12 @@
                 </div>
 
                 <!-- Filtros de Busca -->
-                <form class="form-container">
+                <form id="filtro-questoes-form" class="form-container">
                     <div class="form-group">
                         <label for="quantidade">Quantidade de questões: <span style="color: red;">*</span></label>
-                        <input type="number" id="quantidade" name="quantidade" placeholder="Máx. 50">
+                        <input type="number" id="quantidade" name="quantidade" placeholder="Máx. 50" min="1" max="50" required>
                     </div>
-
+                
                     <div class="form-group">
                         <label for="disciplina">Disciplina:</label>
                         <select id="disciplina" name="disciplina">
@@ -68,16 +81,16 @@
                             {% for disciplina in disciplinas %}
                             <option value="{{ disciplina.id }}">{{ disciplina.nome }}</option>
                             {% endfor %}
-                        </select>
+                        </select>                                               
                     </div>
-
+                
                     <div class="form-group">
                         <label for="conteudo">Conteúdo:</label>
-                        <select id="conteudo" name="conteudo">
+                        <select id="conteudo" name="conteudo" disabled>
                             <option value="">Todos</option>
-                        </select>
+                        </select>                                               
                     </div>
-
+                
                     <div class="form-group">
                         <label for="dificuldade">Dificuldade:</label>
                         <select id="dificuldade" name="dificuldade">
@@ -85,9 +98,9 @@
                             <option value="1">Fácil</option>
                             <option value="2">Médio</option>
                             <option value="3">Difícil</option>
-                        </select>
+                        </select>                        
                     </div>
-
+                
                     <div class="form-group">
                         <label>Status:</label>
                         <div class="status-options">
@@ -96,12 +109,12 @@
                             <label><input type="checkbox" name="status" value="que_errei"> Que errei</label>
                         </div>
                     </div>
-
+                
                     <div class="btn-group">
                         <button type="button" class="btn btn-save" id="gerar-atividade">Gerar atividade</button>
                         <button type="reset" class="btn btn-cancel">Limpar</button>
                     </div>
-                </form>
+                </form>                
                 <div id="white-space" class="hidden">
                     <h2 class="gerar">Aguardando filtro...</h2>
                 </div>
@@ -141,11 +154,12 @@
 <script>
     document.addEventListener("DOMContentLoaded", function () {
     // Referências dos elementos
-    const disciplinaSelect = document.getElementById("disciplina");
-    const conteudoSelect = document.getElementById("conteudo");
-    const topicoSelect = document.getElementById("topico");
-    const gerarAtividadeBtn = document.getElementById("gerar-atividade");
-    const questoesContainer = document.getElementById("questoes-container");
+    var disciplinaSelect = document.getElementById("disciplina");
+    var conteudoSelect = document.getElementById("conteudo");
+    var gerarAtividadeBtn = document.getElementById("gerar-atividade");
+    var questoesContainer = document.getElementById("questoes-container");
+    var quantidadeInput = document.getElementById("quantidade");
+    var whiteSpace = document.getElementById("white-space");
 
     var accountModal = document.getElementById("account-modal");
     var accountConfirmationModal = document.getElementById("account-confirmation-modal");
@@ -158,77 +172,58 @@
     var newAccountInput = document.getElementById("new-account");
     let selectedEmail = null;
 
-    // Carregar conteúdos ao mudar disciplina
-    disciplinaSelect.addEventListener("change", function () {
-        const disciplinaId = this.value;
+    // Certifique-se de que os elementos existem
+    if (!disciplinaSelect || !conteudoSelect) {
+        console.warn("Elementos necessários ('disciplina' ou 'conteudo') não encontrados na página.");
+        return;
+    }
 
-        conteudoSelect.innerHTML = '<option value="">Todos</option>';
-        topicoSelect.innerHTML = '<option value="">Todos</option>';
+    // Evento de mudança na disciplina
+    disciplinaSelect.addEventListener("change", function () {
+        var disciplinaId = this.value;
+
+        // Limpa o conteúdo atual
+        conteudoSelect.innerHTML = '<option value="">Todas</option>';
+        conteudoSelect.disabled = true; // Desativa enquanto carrega
 
         if (disciplinaId) {
+            // Busca os conteúdos relacionados à disciplina selecionada
             fetch(`/api/conteudos/${disciplinaId}/`)
                 .then(response => response.json())
                 .then(data => {
-                    data.forEach(conteudo => {
-                        const option = document.createElement("option");
-                        option.value = conteudo.id;
-                        option.textContent = conteudo.nome;
-                        conteudoSelect.appendChild(option);
-                    });
+                    // Popula o select de conteúdos
+                    if (data.length > 0) {
+                        data.forEach(conteudo => {
+                            var option = document.createElement("option");
+                            option.value = conteudo.id;
+                            option.textContent = conteudo.nome;
+                            conteudoSelect.appendChild(option);
+                        });
+                        conteudoSelect.disabled = false; // Habilita após carregar
+                    } else {
+                        console.warn("Nenhum conteúdo encontrado para esta disciplina.");
+                    }
+                })
+                .catch(error => {
+                    console.error("Erro ao carregar conteúdos:", error);
                 });
+        } else {
+            conteudoSelect.disabled = true; // Desativa se nenhuma disciplina for selecionada
         }
     });
-
+    
     // Carregar tópicos ao mudar conteúdo
     conteudoSelect.addEventListener("change", function () {
-        const conteudoId = this.value;
+    var conteudoId = this.value;
 
-        topicoSelect.innerHTML = '<option value="">Todos</option>';
+    if (conteudoId) {
+        console.log(`Conteúdo selecionado: ${conteudoId}`);
+        // Aqui você pode registrar ou usar o conteúdo selecionado
+    } else {
+        console.log("Nenhum conteúdo selecionado.");
+    }
+});
 
-        if (conteudoId) {
-            fetch(`/api/topicos/${conteudoId}/`)
-                .then(response => response.json())
-                .then(data => {
-                    data.forEach(topico => {
-                        const option = document.createElement("option");
-                        option.value = topico.id;
-                        option.textContent = topico.nome;
-                        topicoSelect.appendChild(option);
-                    });
-                });
-        }
-    });
-
-    // Gerar atividade ao clicar no botão
-    gerarAtividadeBtn.addEventListener("click", function () {
-        const params = new URLSearchParams(new FormData(document.querySelector("form")));
-
-        fetch(`/api/questoes?${params.toString()}`)
-            .then(response => response.json())
-            .then(data => {
-                questoesContainer.innerHTML = "";
-
-                if (data.length === 0) {
-                    questoesContainer.innerHTML = "<p>Nenhuma questão encontrada.</p>";
-                    return;
-                }
-
-                data.forEach((questao, index) => {
-                    const questaoElement = document.createElement("div");
-                    questaoElement.classList.add("questao-item");
-
-                    questaoElement.innerHTML = `
-                        <h3>Questão ${index + 1}</h3>
-                        <p>${questao.texto}</p>
-                        <ul>
-                            ${questao.alternativas.map(alt => `<li>${alt.texto}</li>`).join("")}
-                        </ul>
-                    `;
-
-                    questoesContainer.appendChild(questaoElement);
-                });
-            });
-    });
 
     // Lógica de "Mudar de Conta"
     // Função para renderizar as contas no modal
@@ -238,7 +233,7 @@
             accountList.innerHTML = "<li class='empty'>Nenhuma conta adicionada.</li>";
         } else {
             accounts.forEach(account => {
-                const listItem = document.createElement("li");
+                var listItem = document.createElement("li");
                 listItem.textContent = account;
                 listItem.setAttribute("data-email", account);
 
@@ -253,7 +248,7 @@
                     });
                 } else {
                     // Botão de remoção
-                    const removeButton = document.createElement("button");
+                    var removeButton = document.createElement("button");
                     removeButton.textContent = "Remover";
                     removeButton.className = "btn-remove";
 
@@ -315,7 +310,7 @@
 
     addAccountButton.addEventListener("click", event => {
     event.preventDefault(); // Evita comportamento padrão (se necessário)
-    const newAccount = newAccountInput.value.trim();
+    var newAccount = newAccountInput.value.trim();
     if (!newAccount) {
         alert("Por favor, insira um e-mail válido.");
         return;
@@ -392,5 +387,177 @@
             accountConfirmationModal.style.display = "none";
         }
     });
+
+    if (!gerarAtividadeBtn || !quantidadeInput || !questoesContainer) {
+        console.error("Elementos necessários não foram encontrados na página!");
+        return;
+    }
+
+    console.log("Botão 'Gerar atividade' encontrado e evento sendo configurado.");
+
+    if (!gerarAtividadeBtn || !quantidadeInput || !questoesContainer) {
+        console.error("Elementos necessários não foram encontrados na página!");
+        return;
+    }
+
+    console.log("Botão 'Gerar atividade' encontrado e evento sendo configurado.");
+
+    if (!gerarAtividadeBtn || !quantidadeInput || !questoesContainer) {
+        console.error("Elementos necessários não foram encontrados na página!");
+        return;
+    }
+
+    console.log("Botão 'Gerar atividade' encontrado e evento sendo configurado.");
+
+    // Remove eventos duplicados antes de adicionar novamente
+gerarAtividadeBtn.replaceWith(gerarAtividadeBtn.cloneNode(true));
+const newGerarAtividadeBtn = document.getElementById("gerar-atividade");
+
+// Evento para o botão "Gerar atividade"
+newGerarAtividadeBtn.addEventListener("click", function () {
+    console.log("Botão 'Gerar atividade' clicado."); // Log ao clicar no botão
+
+    const quantidade = quantidadeInput.value.trim();
+    console.log("Valor no campo 'Quantidade de questões':", quantidade); // Valor atual do campo
+
+    // Validação do campo "Quantidade de questões"
+    if (!quantidade) {
+        console.warn("Campo de quantidade está vazio!");
+        alert("É necessário indicar o número mínimo de questões!");
+        return;
+    }
+    if (!/^[1-9]\d*$/.test(quantidade)) {
+        console.warn("Campo de quantidade contém um valor inválido:", quantidade);
+        alert("O número de questões deve ser inteiro positivo!");
+        return;
+    }
+
+    console.log("Campo de quantidade validado com sucesso. Valor:", quantidade);
+
+    // Oculta o "white space"
+    if (whiteSpace) {
+        whiteSpace.style.display = "none";
+    }
+
+    // Obtém os parâmetros do formulário
+    const params = new URLSearchParams(new FormData(document.querySelector("form")));
+
+    // Faz a requisição para buscar as questões
+    fetch(`/aluno/praticar/api/questoes?${params.toString()}`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`Erro HTTP: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log("Dados recebidos da API:", data);
+
+            questoesContainer.innerHTML = "";
+
+            // Verifica se há questões retornadas
+            if (!data.questoes || data.questoes.length === 0) {
+                console.warn("Nenhuma questão encontrada.");
+                questoesContainer.innerHTML = "<p>Nenhuma questão encontrada.</p>";
+                return;
+            }
+
+            // Renderiza as questões
+            data.questoes.forEach((questao, index) => {
+                const questaoElement = document.createElement("div");
+                questaoElement.classList.add("questao-item");
+
+                // Informações adicionais da questão
+                const detalhesHTML = `
+                    <div class="questao-info">
+                        ${questao.ano ? `<p><strong>Ano:</strong> ${questao.ano}</p>` : ""}
+                        ${questao.banca ? `<p><strong>Banca:</strong> ${questao.banca}</p>` : ""}
+                        ${questao.disciplina ? `<p><strong>Disciplina:</strong> ${questao.disciplina}</p>` : ""}
+                        ${questao.conteudo ? `<p><strong>Conteúdo:</strong> ${questao.conteudo}</p>` : ""}
+                        ${questao.topico ? `<p><strong>Tópico:</strong> ${questao.topico}</p>` : ""}
+                    </div>`;
+
+                // Resolução com botão de visibilidade
+                const resolucaoHTML = questao.resolucao
+                ? `
+                    <div class="resolucao">
+                        <h3 style="display: flex; justify-content: space-between; align-items: center; margin-top: 20px;">
+                            Resolução:
+                            <button class="toggle-visibility" data-target="resolucao-section-${index}">
+                                <img src="{% static 'assets/eye-off.svg' %}" alt="Olho fechado" class="eye-closed">
+                                <img src="{% static 'assets/eye-show.svg' %}" alt="Olho aberto" class="eye-open">
+                            </button>
+                        </h3>
+                        <div id="resolucao-section-${index}" style="display: none; margin-top: 10px;">
+                            <div class="resolucao-content">
+                                ${questao.resolucao}
+                            </div>
+                        </div>
+                    </div>
+                `
+                : "<p class='sem-resolucao'>Nenhuma resolução disponível.</p>";
+
+
+                // Questão
+                questaoElement.innerHTML = `
+                    ${detalhesHTML}
+                    <h3>Questão ${index + 1}</h3>
+                    <p>${questao.descricao}</p>
+                    <ul style="margin-top: 10px;">
+                        ${questao.alternativas.map((alt, i) => `
+                            <li style="margin-bottom: 10px;">
+                                <input type="radio" id="alt-${alt.id}" name="alternativa-${questao.id}" value="${alt.id}">
+                                <label for="alt-${alt.id}">${alt.descricao}</label>
+                            </li>
+                        `).join("")}
+                    </ul>
+                    ${resolucaoHTML}
+                `;
+
+                questoesContainer.appendChild(questaoElement);
+            });
+
+            // Adiciona a funcionalidade de visibilidade nos botões de resolução
+            document.querySelectorAll(".toggle-visibility").forEach(button => {
+                button.addEventListener("click", function () {
+                    const targetId = button.getAttribute("data-target");
+                    const targetElement = document.getElementById(targetId);
+                    const eyeOpen = button.querySelector(".eye-open");
+                    const eyeClosed = button.querySelector(".eye-closed");
+
+                    if (targetElement.style.display === "none") {
+                        targetElement.style.display = "block";
+                        eyeOpen.style.display = "block";
+                        eyeClosed.style.display = "none";
+                    } else {
+                        targetElement.style.display = "none";
+                        eyeOpen.style.display = "none";
+                        eyeClosed.style.display = "block";
+                    }
+                });
+            });
+
+            // Renderiza o LaTeX com MathJax
+            if (window.MathJax) {
+                MathJax.typeset();
+            }
+
+            // Adiciona botão "Finalizar atividade"
+            questoesContainer.innerHTML += `<button id="finalizar-atividade" class="btn">Finalizar atividade</button>`;
+        })
+        .catch(error => console.error("Erro ao buscar questões:", error));
 });
+
+// Função para verificar se o formulário está válido
+function verificarFormulario() {
+    const quantidadeValida = quantidadeInput.value >= 1 && quantidadeInput.value <= 50;
+    gerarAtividadeBtn.disabled = !quantidadeValida;
+}
+
+// Adiciona eventos de input no campo de quantidade
+quantidadeInput.addEventListener("input", verificarFormulario);
+
+// Inicializa o estado do botão
+verificarFormulario();
+    });
 </script>

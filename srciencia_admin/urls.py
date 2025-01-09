@@ -7,6 +7,7 @@ from django.conf.urls import include
 from django.contrib.auth import views as auth_views
 from srciencia_core.views.adminView import get_topicos, get_conteudos
 from srciencia_core.views.Visualizar_alunosView import *
+from srciencia_core.views.praticarView import *
 from django.conf import settings
 from django.conf.urls.static import static
 
