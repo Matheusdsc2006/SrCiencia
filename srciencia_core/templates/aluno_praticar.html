@@ -202,6 +202,16 @@
             </div>
         </div>
     </div>    
+
+    <div id="confirm-clear-modal" class="modal">
+        <div class="modal-content">
+            <span id="close-clear-modal" class="close-icon">&times;</span>
+            <h2>Confirmar Limpeza</h2>
+            <p>Tem certeza de que deseja limpar? Todo o progresso será perdido.</p>
+            <button id="confirm-clear-btn" class="btn-confirm-sim">Sim</button>
+        </div>
+    </div>
+    
     
 <script>
     document.addEventListener("DOMContentLoaded", function () {
@@ -218,6 +228,10 @@
     var finalizarModal = document.getElementById("finalizar-atividade-modal");
     var closeFinalizarModal = document.getElementById("close-finalizar-modal");
     var confirmFinalizarBtn = document.getElementById("confirm-finalizar-btn");
+    var clearButton = document.querySelector(".btn-cancel");
+    var clearModal = document.getElementById("confirm-clear-modal"); 
+    var closeClearModal = document.getElementById("close-clear-modal"); 
+    var confirmClearButton = document.getElementById("confirm-clear-btn"); 
     var questoesData = null;
 
     var accountModal = document.getElementById("account-modal");
@@ -233,44 +247,38 @@
 
     questoesContainer.style.display = "none";
 
-    function validarQuantidade() {
-        var quantidade = quantidadeInput.value.trim();
-        if (!quantidade || isNaN(quantidade) || quantidade <= 0 || quantidade > 50) {
-            alert("Por favor, insira um número válido de questões (1 a 50).");
-            return false;
-        }
-        return true;
-    }
-
+    // Função para ativar a visibilidade dos botões após renderização
     function ativarBotoesVisibilidade() {
-        document.querySelectorAll(".toggle-visibility").forEach(button => {
-            button.addEventListener("click", function () {
-                var targetId = button.dataset.target; // ID do conteúdo da resolução
-                var target = document.getElementById(targetId); // Elemento da resolução
-                var eyeShow = button.querySelector(".eye-show"); // Ícone de olho aberto
-                var eyeOff = button.querySelector(".eye-off"); // Ícone de olho fechado
+    // Usar delegação de eventos para garantir funcionalidade dinâmica
+    document.addEventListener("click", function (event) {
+        if (event.target.closest(".toggle-visibility")) {
+            var button = event.target.closest(".toggle-visibility");
+            var targetId = button.dataset.target; // ID do conteúdo da resolução
+            var target = document.getElementById(targetId); // Elemento da resolução
+            var eyeshow = button.querySelector(".eye-show"); // Ícone de olho aberto
+            var eyeoff = button.querySelector(".eye-off"); // Ícone de olho fechado
 
-                if (!target || !eyeShow || !eyeOff) {
-                    console.warn("Elementos necessários para visibilidade não encontrados:", button);
-                    return;
-                }
+            if (!target || !eyeshow || !eyeoff) {
+                console.warn("Elementos necessários para visibilidade não encontrados:", button);
+                return;
+            }
 
-                // Alterna entre mostrar e esconder o conteúdo da resolução
-                if (target.style.display === "none" || target.style.display === "") {
-                    target.style.display = "block"; // Mostra a resolução
-                    eyeShow.style.display = "inline"; // Mostra o ícone de olho aberto
-                    eyeOff.style.display = "none"; // Esconde o ícone de olho fechado
-                } else {
-                    target.style.display = "none"; // Esconde a resolução
-                    eyeShow.style.display = "none"; // Esconde o ícone de olho aberto
-                    eyeOff.style.display = "inline"; // Mostra o ícone de olho fechado
-                }
-            });
-        });
-    }
+            // Alterna entre mostrar e esconder o conteúdo da resolução
+            if (target.style.display === "none" || target.style.display === "") {
+                target.style.display = "block"; // Mostra a resolução
+                eyeshow.style.display = "inline"; // Mostra o ícone de olho aberto
+                eyeoff.style.display = "none"; // Esconde o ícone de olho fechado
+            } else {
+                target.style.display = "none"; // Esconde a resolução
+                eyeshow.style.display = "none"; // Esconde o ícone de olho aberto
+                eyeoff.style.display = "inline"; // Mostra o ícone de olho fechado
+            }
+        }
+    });
+}
 
-    // Função para renderizar questões
-    function renderizarQuestoes(questoes) {
+    // Garantir que os eventos sejam associados após a renderização
+function renderizarQuestoes(questoes) {
     if (!questoes || questoes.length === 0) {
         questoesContainer.style.display = "none";
         questoesContainer.innerHTML = "<p>Nenhuma questão encontrada.</p>";
@@ -286,7 +294,7 @@
     questoesContainer.innerHTML = ""; // Limpa o container
 
     questoes.forEach((questao, index) => {
-        const questaoElement = document.createElement("div");
+        var questaoElement = document.createElement("div");
         questaoElement.classList.add("questao-item");
         questaoElement.innerHTML = `
             <h3>Questão ${index + 1}</h3>
@@ -302,7 +310,10 @@
             <div class="resolucao">
                 <h3 style="display: flex; justify-content: space-between; align-items: center;">
                     Resolução:
-                    <button class="toggle-visibility" data-target="resolucao-section-${index}">Mostrar</button>
+                    <button class="toggle-visibility" data-target="resolucao-section-${index}">
+                        <img class="eye-show" src="{% static 'assets/eye-show.svg' %}" alt="Mostrar" style="display: none;">
+                        <img class="eye-off" src="{% static 'assets/eye-off.svg' %}" alt="Esconder" style="display: inline;">
+                    </button>
                 </h3>
                 <div id="resolucao-section-${index}" class="resolucao-content hidden" style="display: none;">
                     <div>${questao.resolucao || "Nenhuma resolução disponível."}</div>
@@ -311,33 +322,35 @@
         questoesContainer.appendChild(questaoElement);
     });
 
-    ativarBotoesVisibilidade();
+    // Reprocessa o MathJax para renderizar as fórmulas matemáticas
+    if (window.MathJax) {
+        MathJax.typeset();
+    }
 }
 
-
-carregarQuestoesSalvas();
-
+// Inicializa a ativação de visibilidade dinâmica
+ativarBotoesVisibilidade();
 
     var quantidade = quantidadeInput.value.trim();
 
     function carregarAlternativas() {
-    const respostasSalvas = JSON.parse(localStorage.getItem("respostasSelecionadas")) || {};
+    var respostasSalvas = JSON.parse(localStorage.getItem("respostasSelecionadas")) || {};
     Object.entries(respostasSalvas).forEach(([questaoId, alternativaId]) => {
-        const input = document.querySelector(`input[name="alternativa-${questaoId}"][value="${alternativaId}"]`);
+        var input = document.querySelector(`input[name="alternativa-${questaoId}"][value="${alternativaId}"]`);
         if (input) input.checked = true;
     });
 }
 
-    function carregarRespostasSalvas() {
-    var respostasSalvas = JSON.parse(localStorage.getItem("respostasSelecionadas")) || {};
-    Object.entries(respostasSalvas).forEach(([questaoId, alternativaId]) => {
-        var input = document.querySelector(`input[name="alternativa-${questaoId}"][value="${alternativaId}"]`);
-        if (input) input.checked = true; // Marca a alternativa salva
-    });
-}
+function carregarRespostasSalvas() {
+        var respostasSalvas = JSON.parse(localStorage.getItem("respostasSelecionadas")) || {};
+        Object.entries(respostasSalvas).forEach(([questaoId, alternativaId]) => {
+            var input = document.querySelector(`input[name="alternativa-${questaoId}"][value="${alternativaId}"]`);
+            if (input) input.checked = true;
+        });
+    }
 
 function carregarQuestoesSalvas() {
-    const questoesSalvas = JSON.parse(localStorage.getItem("questoesAtuais"));
+    var questoesSalvas = JSON.parse(localStorage.getItem("questoesAtuais"));
     if (questoesSalvas && questoesSalvas.questoes && questoesSalvas.questoes.length > 0) {
         console.log("Carregando questões salvas do localStorage:", questoesSalvas);
         renderizarQuestoes(questoesSalvas.questoes);
@@ -352,23 +365,36 @@ function carregarQuestoesSalvas() {
 }
 
 
-
-    // Carregar questões do localStorage (se necessário)
-    var questoesSalvas = JSON.parse(localStorage.getItem("questoesAtuais"));
-    if (questoesSalvas && questoesSalvas.questoes) {
-        renderizarQuestoes(questoesSalvas.questoes);
+function inicializarPagina() {
+        var questoesSalvas = JSON.parse(localStorage.getItem("questoesAtuais"));
+        if (questoesSalvas && questoesSalvas.questoes && questoesSalvas.questoes.length > 0) {
+            alert("Seu progresso foi restaurado!"); // Exibe o alerta
+            renderizarQuestoes(questoesSalvas.questoes); // Renderiza as questões salvas
+            carregarRespostasSalvas(); // Restaura as respostas salvas
+            whiteSpace.style.display = "none"; // Oculta o white space
+        } else {
+            whiteSpace.style.display = "flex"; // Mostra o espaço branco se não houver progresso salvo
+        }
     }
 
+    function validarQuantidade() {
+        var quantidade = quantidadeInput.value.trim();
+        if (!quantidade || isNaN(quantidade) || quantidade <= 0 || quantidade > 50) {
+            alert("Por favor, insira um número válido de questões (1 a 50).");
+            return false;
+        }
+        return true;
+    }
 
 // Declarar salvarAlternativas antes de adicionar eventos
 function salvarAlternativas() {
-    const respostasSelecionadas = {};
-    document.querySelectorAll("input[type='radio']:checked").forEach((input) => {
-        const questaoId = input.name.split("-")[1];
-        respostasSelecionadas[questaoId] = input.value;
-    });
-    localStorage.setItem("respostasSelecionadas", JSON.stringify(respostasSelecionadas));
-}
+        var respostasSelecionadas = {};
+        document.querySelectorAll("input[type='radio']:checked").forEach((input) => {
+            var questaoId = input.name.split("-")[1];
+            respostasSelecionadas[questaoId] = input.value;
+        });
+        localStorage.setItem("respostasSelecionadas", JSON.stringify(respostasSelecionadas));
+    }
 
     
 
@@ -660,56 +686,42 @@ function salvarAlternativas() {
 
     // Evento de clique no botão "Gerar Atividade"
     gerarAtividadeBtn.addEventListener("click", function () {
-    console.log("Botão 'Gerar Atividade' clicado.");
+        var quantidade = quantidadeInput.value.trim();
+        if (!quantidade || isNaN(quantidade) || quantidade <= 0 || quantidade > 50) {
+            alert("Por favor, insira um número válido de questões (1 a 50).");
+            return;
+        }
 
-    // Validação da quantidade
-    if (!validarQuantidade()) {
-        console.error("Quantidade inválida.");
-        return;
-    }
+        // Parâmetros para requisição de questões
+        var filtroForm = document.querySelector("#filtro-questoes-form");
+        var params = new URLSearchParams(new FormData(filtroForm));
 
-    // Obter o formulário de filtro
-    const filtroForm = document.querySelector("#filtro-questoes-form");
-    if (!filtroForm) {
-        console.error("O formulário '#filtro-questoes-form' não foi encontrado.");
-        return;
-    }
+        // Requisição para buscar as questões
+        fetch(`/aluno/praticar/api/questoes?${params.toString()}`)
+            .then(response => {
+                if (!response.ok) throw new Error(`Erro HTTP: ${response.status}`);
+                return response.json();
+            })
+            .then(data => {
+                var questoesFiltradas = data.questoes.slice(0, quantidade);
+                renderizarQuestoes(questoesFiltradas);
 
-    // Verifique se há questões salvas no localStorage
-const questoesSalvas = JSON.parse(localStorage.getItem("questoesAtuais"));
-    if (questoesSalvas && questoesSalvas.questoes) {
-        console.log("Carregando questões salvas do localStorage:", questoesSalvas);
-        renderizarQuestoes(questoesSalvas.questoes);
-        return; // Interrompe a requisição se já há questões salvas
-    }
+                // Salva as questões no localStorage
+                localStorage.setItem("questoesAtuais", JSON.stringify({ questoes: questoesFiltradas }));
+                whiteSpace.style.display = "none"; // Oculta o espaço branco
+            })
+            .catch(error => console.error("Erro ao buscar questões:", error));
+    });
 
-    // Criar parâmetros da requisição
-    const params = new URLSearchParams(new FormData(filtroForm));
-    console.log("Parâmetros enviados:", params.toString());
+    // Adicionar evento para salvar respostas ao marcar alternativas
+    document.addEventListener("change", (event) => {
+        if (event.target.matches("input[type='radio']")) {
+            salvarAlternativas();
+        }
+    });
 
-    // Requisição para buscar as questões
-    fetch(`/aluno/praticar/api/questoes?${params.toString()}`)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error(`Erro HTTP: ${response.status}`);
-            }
-            return response.json();
-        })
-        .then(data => {
-            console.log("Dados recebidos da API:", data);
-
-            // Verificar se há questões e aplicar o filtro de quantidade
-            const quantidade = parseInt(quantidadeInput.value.trim(), 10);
-            const questoesFiltradas = data.questoes.slice(0, quantidade);
-
-            renderizarQuestoes(questoesFiltradas);
-
-            // Salvar no localStorage
-            localStorage.setItem("questoesAtuais", JSON.stringify({ questoes: questoesFiltradas }));
-        })
-        .catch(error => console.error("Erro ao buscar questões:", error));
-});
-
+    // Chama a inicialização ao carregar a página
+    inicializarPagina();
 
     // Função para verificar se o formulário está válido
     function verificarFormulario() {
@@ -723,13 +735,11 @@ const questoesSalvas = JSON.parse(localStorage.getItem("questoesAtuais"));
     verificarFormulario();
 
 
-    // Adicionar evento de alteração aos inputs de alternativas
     document.addEventListener("change", (event) => {
-    if (event.target.matches("input[type='radio']")) {
-        salvarAlternativas();
-    }
-});
-
+        if (event.target.matches("input[type='radio']")) {
+            salvarAlternativas();
+        }
+    });
 
     // Abrir modal ao clicar em "Finalizar atividade"
     if (finalizarAtividadeBtn) {
@@ -762,6 +772,33 @@ const questoesSalvas = JSON.parse(localStorage.getItem("questoesAtuais"));
         if (event.target === finalizarModal) {
             finalizarModal.style.display = "none";
         }
+    });
+
+    // Abrir o modal ao clicar no botão "Limpar"
+    clearButton.addEventListener("click", function (event) {
+        event.preventDefault(); // Evita o comportamento padrão do botão
+        clearModal.style.display = "block";
+    });
+
+    // Fechar o modal ao clicar no "X" ou fora do modal
+    closeClearModal.addEventListener("click", function () {
+        clearModal.style.display = "none";
+    });
+
+    window.addEventListener("click", function (event) {
+        if (event.target === clearModal) {
+            clearModal.style.display = "none";
+        }
+    });
+
+    // Confirmar limpeza
+    confirmClearButton.addEventListener("click", function () {
+        // Limpar o localStorage
+        localStorage.removeItem("questoesAtuais");
+        localStorage.removeItem("respostasSelecionadas");
+
+        // Recarregar a página para restaurar o estado inicial
+        location.reload();
     });
     });
 </script>
