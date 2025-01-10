@@ -191,6 +191,18 @@
             </div>
         </div>
     </div>
+
+    <div id="finalizar-atividade-modal" class="modal">
+        <div class="modal-content">
+            <span id="close-finalizar-modal" class="close-icon">&times;</span>
+            <h2>Deseja realmente finalizar a atividade?</h2>
+            <p>As respostas serão salvas e você não poderá alterá-las depois.</p>
+            <div class="modal-actions">
+                <button id="confirm-finalizar-btn" class="btn-confirm-sim">Sim</button>
+            </div>
+        </div>
+    </div>    
+    
 <script>
     document.addEventListener("DOMContentLoaded", function () {
     // Referências dos elementos
@@ -202,6 +214,11 @@
     var whiteSpace = document.getElementById("white-space");
     var toggleButtons = document.querySelectorAll(".toggle-visibility");
     var formData = new FormData(document.querySelector("#filtro-questoes-form"));
+    var finalizarAtividadeBtn = document.getElementById("finalizar-atividade");
+    var finalizarModal = document.getElementById("finalizar-atividade-modal");
+    var closeFinalizarModal = document.getElementById("close-finalizar-modal");
+    var confirmFinalizarBtn = document.getElementById("confirm-finalizar-btn");
+    var questoesData = null;
 
     var accountModal = document.getElementById("account-modal");
     var accountConfirmationModal = document.getElementById("account-confirmation-modal");
@@ -214,9 +231,17 @@
     var newAccountInput = document.getElementById("new-account");
     let selectedEmail = null;
 
-    questoesContainer.innerHTML = "";
-    
-    // Função para ativar a visibilidade das resoluções
+    questoesContainer.style.display = "none";
+
+    function validarQuantidade() {
+        var quantidade = quantidadeInput.value.trim();
+        if (!quantidade || isNaN(quantidade) || quantidade <= 0 || quantidade > 50) {
+            alert("Por favor, insira um número válido de questões (1 a 50).");
+            return false;
+        }
+        return true;
+    }
+
     function ativarBotoesVisibilidade() {
         document.querySelectorAll(".toggle-visibility").forEach(button => {
             button.addEventListener("click", function () {
@@ -244,81 +269,157 @@
         });
     }
 
+    // Função para renderizar questões
+    function renderizarQuestoes(questoes) {
+    if (!questoes || questoes.length === 0) {
+        questoesContainer.style.display = "none";
+        questoesContainer.innerHTML = "<p>Nenhuma questão encontrada.</p>";
+        return;
+    }
+
+    // Esconde o white space apenas se as questões forem geradas
+    if (whiteSpace) {
+        whiteSpace.style.display = "none";
+    }
+
+    questoesContainer.style.display = "block";
+    questoesContainer.innerHTML = ""; // Limpa o container
+
+    questoes.forEach((questao, index) => {
+        const questaoElement = document.createElement("div");
+        questaoElement.classList.add("questao-item");
+        questaoElement.innerHTML = `
+            <h3>Questão ${index + 1}</h3>
+            <p>${questao.descricao}</p>
+            <ul>
+                ${questao.alternativas.map(alt => `
+                    <li>
+                        <input type="radio" id="alt-${alt.id}" name="alternativa-${questao.id}" value="${alt.id}">
+                        <label for="alt-${alt.id}">${alt.descricao}</label>
+                    </li>
+                `).join("")}
+            </ul>
+            <div class="resolucao">
+                <h3 style="display: flex; justify-content: space-between; align-items: center;">
+                    Resolução:
+                    <button class="toggle-visibility" data-target="resolucao-section-${index}">Mostrar</button>
+                </h3>
+                <div id="resolucao-section-${index}" class="resolucao-content hidden" style="display: none;">
+                    <div>${questao.resolucao || "Nenhuma resolução disponível."}</div>
+                </div>
+            </div>`;
+        questoesContainer.appendChild(questaoElement);
+    });
+
+    ativarBotoesVisibilidade();
+}
+
+
+carregarQuestoesSalvas();
+
+
+    var quantidade = quantidadeInput.value.trim();
+
+    function carregarAlternativas() {
+    const respostasSalvas = JSON.parse(localStorage.getItem("respostasSelecionadas")) || {};
+    Object.entries(respostasSalvas).forEach(([questaoId, alternativaId]) => {
+        const input = document.querySelector(`input[name="alternativa-${questaoId}"][value="${alternativaId}"]`);
+        if (input) input.checked = true;
+    });
+}
+
+    function carregarRespostasSalvas() {
+    var respostasSalvas = JSON.parse(localStorage.getItem("respostasSelecionadas")) || {};
+    Object.entries(respostasSalvas).forEach(([questaoId, alternativaId]) => {
+        var input = document.querySelector(`input[name="alternativa-${questaoId}"][value="${alternativaId}"]`);
+        if (input) input.checked = true; // Marca a alternativa salva
+    });
+}
+
+function carregarQuestoesSalvas() {
+    const questoesSalvas = JSON.parse(localStorage.getItem("questoesAtuais"));
+    if (questoesSalvas && questoesSalvas.questoes && questoesSalvas.questoes.length > 0) {
+        console.log("Carregando questões salvas do localStorage:", questoesSalvas);
+        renderizarQuestoes(questoesSalvas.questoes);
+        carregarRespostasSalvas();
+    } else {
+        // Mostra o white space se nenhuma questão estiver salva
+        if (whiteSpace) {
+            whiteSpace.style.display = "block";
+        }
+        console.log("Nenhuma questão salva encontrada no localStorage.");
+    }
+}
+
+
+
+    // Carregar questões do localStorage (se necessário)
+    var questoesSalvas = JSON.parse(localStorage.getItem("questoesAtuais"));
+    if (questoesSalvas && questoesSalvas.questoes) {
+        renderizarQuestoes(questoesSalvas.questoes);
+    }
+
+
+// Declarar salvarAlternativas antes de adicionar eventos
+function salvarAlternativas() {
+    const respostasSelecionadas = {};
+    document.querySelectorAll("input[type='radio']:checked").forEach((input) => {
+        const questaoId = input.name.split("-")[1];
+        respostasSelecionadas[questaoId] = input.value;
+    });
+    localStorage.setItem("respostasSelecionadas", JSON.stringify(respostasSelecionadas));
+}
+
+    
+
     // Faz a requisição para o backend
-    var params = new URLSearchParams();
+    var params = new URLSearchParams(new FormData(document.querySelector("#filtro-questoes-form")));
     formData.forEach((value, key) => {
         if (value) params.append(key, value); // Adiciona apenas parâmetros válidos
     });
 
+    function buscarQuestoes(params) {
     fetch(`/aluno/praticar/api/questoes?${params.toString()}`)
-
         .then(response => {
-            if (!response.ok) throw new Error("Erro ao carregar as questões");
+            if (!response.ok) {
+                throw new Error(`Erro HTTP: ${response.status}`);
+            }
             return response.json();
         })
         .then(data => {
-        questoesContainer.innerHTML = ""; 
-        if (!data.questoes || !Array.isArray(data.questoes) || !data.questoes.length) {
-            questoesContainer.innerHTML = "<p>Nenhuma questão encontrada.</p>";
-            return;
-        }
+            console.log("Dados recebidos da API:", data);
+            console.log("Questões retornadas:", data.questoes);
 
 
-            // Renderizar questões
-            data.questoes.forEach((questao, index) => {
-                var questaoElement = document.createElement("div");
-                questaoElement.className = "questao-item";
-                questaoElement.innerHTML = `
-                    <h3>Questão ${index + 1}</h3>
-                    <p>${questao.descricao}</p>
-                    <ul>
-                        ${questao.alternativas
-                            .map(
-                                alt => `
-                                <li>
-                                    <input type="radio" id="alt-${alt.id}" name="alternativa-${questao.id}" value="${alt.id}">
-                                    <label for="alt-${alt.id}">${alt.descricao}</label>
-                                </li>
-                            `
-                            )
-                            .join("")}
-                    </ul>
-                    <div class="resolucao">
-                        <h4>
-                            Resolução:
-                            <button class="toggle-visibility" data-target="resolucao-${index}">
-                                <img src="{% static 'assets/eye-off.svg' %}" alt="Fechar" class="eye-off">
-                                <img src="{% static 'assets/eye-show.svg' %}" alt="Abrir" class="eye-show" style="display: none;">
-                            </button>
-                        </h4>
-                        <div id="resolucao-${index}" class="resolucao-content" style="display: none;">
-                            ${questao.resolucao || "Nenhuma resolução disponível."}
-                        </div>
-                    </div>
-                `;
-                questoesContainer.appendChild(questaoElement);
-            });
+            // Salvar no localStorage
+            localStorage.setItem("questoesAtuais", JSON.stringify(data));
 
-            // Reativar funcionalidade de botão "visualizar resolução"
-            document.querySelectorAll(".toggle-visibility").forEach(button => {
-                button.addEventListener("click", () => {
-                    var target = document.getElementById(button.dataset.target);
-                    var eyeshow = button.querySelector(".eye-show");
-                    var eyeoff = button.querySelector(".eye-off");
-
-                    if (target.style.display === "none") {
-                        target.style.display = "block";
-                        eyeshow.style.display = "block";
-                        eyeoff.style.display = "none";
-                    } else {
-                        target.style.display = "none";
-                        eyeshow.style.display = "none";
-                        eyeoff.style.display = "block";
-                    }
-                });
-            });
+            // Renderizar as questões
+            renderizarQuestoes(data.questoes);
         })
-        .catch(error => console.error("Erro:", error));
+        .catch(error => console.error("Erro ao buscar questões:", error));
+}
+
+        // Reativar funcionalidade de botão "visualizar resolução"
+        document.querySelectorAll(".toggle-visibility").forEach(button => {
+        button.addEventListener("click", () => {
+            var target = document.getElementById(button.dataset.target);
+            var eyeshow = button.querySelector(".eye-show");
+            var eyeoff = button.querySelector(".eye-off");
+
+            if (target.style.display === "none") {
+                target.style.display = "block";
+                eyeshow.style.display = "block";
+                eyeoff.style.display = "none";
+            } else {
+                target.style.display = "none";
+                eyeshow.style.display = "none";
+                eyeoff.style.display = "block";
+            }
+        });
+    });
+
+
 
     toggleButtons.forEach((button) => {
         button.addEventListener("click", function () {
@@ -332,12 +433,6 @@
             }
         });
     });
-
-    // Certifique-se de que os elementos existem
-    if (!disciplinaSelect || !conteudoSelect) {
-        console.warn("Elementos necessários ('disciplina' ou 'conteudo') não encontrados na página.");
-        return;
-    }
 
     // Evento de mudança na disciplina
     disciplinaSelect.addEventListener("change", function () {
@@ -549,131 +644,76 @@
         }
     });
 
-    if (!gerarAtividadeBtn || !quantidadeInput || !questoesContainer) {
-        console.error("Elementos necessários não foram encontrados na página!");
-        return;
-    }
-
-    console.log("Botão 'Gerar atividade' encontrado e evento sendo configurado.");
-
-    if (!gerarAtividadeBtn || !quantidadeInput || !questoesContainer) {
-        console.error("Elementos necessários não foram encontrados na página!");
-        return;
-    }
-
-    console.log("Botão 'Gerar atividade' encontrado e evento sendo configurado.");
-
-    if (!gerarAtividadeBtn || !quantidadeInput || !questoesContainer) {
-        console.error("Elementos necessários não foram encontrados na página!");
-        return;
-    }
-
     console.log("Botão 'Gerar atividade' encontrado e evento sendo configurado.");
 
     // Inicialmente, esconde o container de questões
     questoesContainer.style.display = "none";
+    console.log("Container de questões:", questoesContainer);
+
+
+    // Obter o formulário de filtro
+    var filtroForm = document.querySelector("#filtro-questoes-form");
+    if (!filtroForm) {
+        console.error("O formulário '#filtro-questoes-form' não foi encontrado.");
+        return;
+    }
 
     // Evento de clique no botão "Gerar Atividade"
     gerarAtividadeBtn.addEventListener("click", function () {
-        console.log("Botão 'Gerar atividade' clicado.");
+    console.log("Botão 'Gerar Atividade' clicado.");
 
-        var quantidade = quantidadeInput.value.trim();
+    // Validação da quantidade
+    if (!validarQuantidade()) {
+        console.error("Quantidade inválida.");
+        return;
+    }
 
-        // Validação do campo "Quantidade de questões"
-        if (!quantidade || isNaN(quantidade) || quantidade <= 0 || quantidade > 50) {
-            alert("Por favor, insira um número válido de questões (1 a 50).");
-            return;
-        }
+    // Obter o formulário de filtro
+    const filtroForm = document.querySelector("#filtro-questoes-form");
+    if (!filtroForm) {
+        console.error("O formulário '#filtro-questoes-form' não foi encontrado.");
+        return;
+    }
 
-        // Oculta a mensagem inicial
-        if (whiteSpace) {
-            whiteSpace.style.display = "none";
-        }
+    // Verifique se há questões salvas no localStorage
+const questoesSalvas = JSON.parse(localStorage.getItem("questoesAtuais"));
+    if (questoesSalvas && questoesSalvas.questoes) {
+        console.log("Carregando questões salvas do localStorage:", questoesSalvas);
+        renderizarQuestoes(questoesSalvas.questoes);
+        return; // Interrompe a requisição se já há questões salvas
+    }
 
-        // Faz a requisição para buscar as questões
-        var params = new URLSearchParams(new FormData(document.querySelector("#filtro-questoes-form")));
-        // Faz a requisição para buscar as questões
-fetch(`/aluno/praticar/api/questoes?${params.toString()}`)
-    .then(response => {
-        if (!response.ok) {
-            throw new Error(`Erro HTTP: ${response.status}`);
-        }
-        return response.json();
-    })
-    .then(data => {
-        console.log("Dados recebidos da API:", data);
-        questoesContainer.innerHTML = "";
-        questoesContainer.style.display = "block"; // Mostra a área de questões
+    // Criar parâmetros da requisição
+    const params = new URLSearchParams(new FormData(filtroForm));
+    console.log("Parâmetros enviados:", params.toString());
 
-        // Verifica se há questões retornadas
-        if (!data.questoes || data.questoes.length === 0) {
-            console.warn("Nenhuma questão encontrada.");
-            questoesContainer.innerHTML = "<p>Nenhuma questão encontrada.</p>";
-            return;
-        }
+    // Requisição para buscar as questões
+    fetch(`/aluno/praticar/api/questoes?${params.toString()}`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`Erro HTTP: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log("Dados recebidos da API:", data);
 
-        // Renderizar questões
-        data.questoes.forEach((questao, index) => {
-            var questaoElement = document.createElement("div");
-            questaoElement.classList.add("questao-item");
+            // Verificar se há questões e aplicar o filtro de quantidade
+            const quantidade = parseInt(quantidadeInput.value.trim(), 10);
+            const questoesFiltradas = data.questoes.slice(0, quantidade);
 
-            // Resolução com botão de visibilidade
-            var resolucaoHTML = `
-                <div class="resolucao">
-                    <h3 style="display: flex; justify-content: space-between; align-items: center;">
-                        Resolução:
-                        <button class="toggle-visibility" data-target="resolucao-section-${index}">
-                            <img src="{% static 'assets/eye-off.svg' %}" alt="Olho fechado" class="eye-off">
-                            <img src="{% static 'assets/eye-show.svg' %}" alt="Olho aberto" class="eye-show" style="display: none;">
-                        </button>
-                    </h3>
-                    <div id="resolucao-section-${index}" class="resolucao-content hidden" style="display: none;">
-                        <div>
-                            ${questao.resolucao || "Nenhuma resolução disponível."}
-                        </div>
-                    </div>
-                </div>`;
+            renderizarQuestoes(questoesFiltradas);
 
-            // Conteúdo da questão
-            questaoElement.innerHTML = `
-                <h3>Questão ${index + 1}</h3>
-                <p>${questao.descricao}</p>
-                <ul>
-                    ${questao.alternativas.map(alt => `
-                        <li>
-                            <input type="radio" id="alt-${alt.id}" name="alternativa-${questao.id}" value="${alt.id}">
-                            <label for="alt-${alt.id}">${alt.descricao}</label>
-                        </li>`).join("")}
-                </ul>
-                ${resolucaoHTML}`;
-
-            questoesContainer.appendChild(questaoElement);
-        });
-
-        // Adiciona botão "Finalizar atividade"
-        var finalizarAtividadeBtn = document.createElement("button");
-        finalizarAtividadeBtn.id = "finalizar-atividade";
-        finalizarAtividadeBtn.className = "btn-confirm-sim";
-        finalizarAtividadeBtn.style.fontWeight = "500";
-        finalizarAtividadeBtn.style.marginTop = "10px";
-        finalizarAtividadeBtn.textContent = "Finalizar atividade";
-        questoesContainer.appendChild(finalizarAtividadeBtn);
-
-        // Ativar os botões de visibilidade
-        ativarBotoesVisibilidade();
-
-        // Renderiza o LaTeX com MathJax
-        if (window.MathJax && window.MathJax.typeset) {
-            window.MathJax.typeset();
-        }
-    })
-    .catch(error => console.error("Erro ao buscar questões:", error));
+            // Salvar no localStorage
+            localStorage.setItem("questoesAtuais", JSON.stringify({ questoes: questoesFiltradas }));
+        })
+        .catch(error => console.error("Erro ao buscar questões:", error));
+});
 
 
     // Função para verificar se o formulário está válido
     function verificarFormulario() {
         var quantidadeValida = quantidadeInput.value >= 1 && quantidadeInput.value <= 50;
-        newGerarAtividadeBtn.disabled = !quantidadeValida;
     }
 
     // Adiciona eventos de input no campo de quantidade
@@ -681,6 +721,47 @@ fetch(`/aluno/praticar/api/questoes?${params.toString()}`)
 
     // Inicializa o estado do botão
     verificarFormulario();
-    });
+
+
+    // Adicionar evento de alteração aos inputs de alternativas
+    document.addEventListener("change", (event) => {
+    if (event.target.matches("input[type='radio']")) {
+        salvarAlternativas();
+    }
 });
+
+
+    // Abrir modal ao clicar em "Finalizar atividade"
+    if (finalizarAtividadeBtn) {
+        finalizarAtividadeBtn.addEventListener("click", () => {
+            finalizarModal.style.display = "block";
+        });
+    }
+
+    // Fechar modal ao clicar no "X"
+    closeFinalizarModal?.addEventListener("click", () => {
+        finalizarModal.style.display = "none";
+    });
+
+    // Confirmar finalização e exibir pop-up de sucesso
+    confirmFinalizarBtn.addEventListener("click", () => {
+        finalizarModal.style.display = "none";
+        alert("Atividade finalizada com sucesso!");
+
+        // Limpar o localStorage
+        localStorage.removeItem("questoesAtuais");
+        localStorage.removeItem("respostasSelecionadas");
+
+        // Atualize a interface, se necessário
+        questoesContainer.innerHTML = "<p>Atividade finalizada. Gere uma nova para continuar.</p>";
+    });
+
+
+    // Fechar modal ao clicar fora do conteúdo
+    window.addEventListener("click", (event) => {
+        if (event.target === finalizarModal) {
+            finalizarModal.style.display = "none";
+        }
+    });
+    });
 </script>

@@ -503,6 +503,7 @@ body {
     padding: 10px;
     background-color: var(--light-gray);
     border-radius: 10px;
+    display: none;
 }
 
 /* Detalhes adicionais da questão */
