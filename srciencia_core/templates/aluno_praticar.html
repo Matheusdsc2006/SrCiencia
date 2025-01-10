@@ -32,13 +32,41 @@
                 </div>
                 <nav>
                     <ul>
-                        <li><a href="{% url 'pagina_inicial' %}"><img src="{% static 'assets/home.svg' %}" alt="">Página inicial</a></li>
-                        <li><a href="#"><img src="{% static 'assets/profile.svg' %}" alt="">Meu perfil</a></li>
-                        <li><a href="{% url 'aluno_praticar' %}" class="active"><img src="{% static 'assets/practice.svg' %}" alt="">Praticar</a></li>
-                        <li><a href="{% url 'turmas' %}"><img src="{% static 'assets/classes.svg' %}" alt="">Turmas</a></li>
-                        <li><a href="#"><img src="{% static 'assets/forum.svg' %}" alt="">Fórum</a></li>
-                        <li><a href="#"><img src="{% static 'assets/help.svg' %}" alt="">Ajuda</a></li>
-                        <li><a href="{% url 'login' %}" class="logout"><img src="{% static 'assets/logout.svg' %}" alt="">Sair</a></li>
+                        <li>
+                            <a href="{% url 'pagina_inicial' %}">
+                                <img src="{% static 'assets/home.svg' %}" alt="">Página inicial
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#">
+                                <img src="{% static 'assets/profile.svg' %}" alt="">Meu perfil
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{% url 'aluno_praticar' %}" class="active">
+                                <img src="{% static 'assets/practice.svg' %}" alt="">Praticar
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{% url 'turmas' %}">
+                                <img src="{% static 'assets/classes.svg' %}" alt="">Turmas
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#">
+                                <img src="{% static 'assets/forum.svg' %}" alt="">Fórum
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#">
+                                <img src="{% static 'assets/help.svg' %}" alt="">Ajuda
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{% url 'login' %}" class="logout">
+                                <img src="{% static 'assets/logout.svg' %}" alt="">Sair
+                            </a>
+                        </li>
                     </ul>
                 </nav>
             </aside>
@@ -61,19 +89,21 @@
                         <button id="change-account-btn" class="change-account">Mudar de conta</button>
                     </div>
                 </div>
-
+    
                 <!-- Conteúdo da Página de Praticar -->
                 <div class="header-container">
                     <h2 class="quest">Praticar</h2>
                 </div>
-
+    
                 <!-- Filtros de Busca -->
                 <form id="filtro-questoes-form" class="form-container">
                     <div class="form-group">
-                        <label for="quantidade">Quantidade de questões: <span style="color: red;">*</span></label>
+                        <label for="quantidade">
+                            Quantidade de questões: <span style="color: red;">*</span>
+                        </label>
                         <input type="number" id="quantidade" name="quantidade" placeholder="Máx. 50" min="1" max="50" required>
                     </div>
-                
+    
                     <div class="form-group">
                         <label for="disciplina">Disciplina:</label>
                         <select id="disciplina" name="disciplina">
@@ -81,16 +111,16 @@
                             {% for disciplina in disciplinas %}
                             <option value="{{ disciplina.id }}">{{ disciplina.nome }}</option>
                             {% endfor %}
-                        </select>                                               
+                        </select>
                     </div>
-                
+    
                     <div class="form-group">
                         <label for="conteudo">Conteúdo:</label>
                         <select id="conteudo" name="conteudo" disabled>
                             <option value="">Todos</option>
-                        </select>                                               
+                        </select>
                     </div>
-                
+    
                     <div class="form-group">
                         <label for="dificuldade">Dificuldade:</label>
                         <select id="dificuldade" name="dificuldade">
@@ -98,28 +128,38 @@
                             <option value="1">Fácil</option>
                             <option value="2">Médio</option>
                             <option value="3">Difícil</option>
-                        </select>                        
+                        </select>
                     </div>
-                
+    
                     <div class="form-group">
                         <label>Status:</label>
                         <div class="status-options">
-                            <label><input type="checkbox" name="status" value="nao_resolvidas"> Não resolvidas</label>
-                            <label><input type="checkbox" name="status" value="com_resolucao"> Com resolução</label>
-                            <label><input type="checkbox" name="status" value="que_errei"> Que errei</label>
+                            <label>
+                                <input type="checkbox" name="status" value="nao_resolvidas"> Não resolvidas
+                            </label>
+                            <label>
+                                <input type="checkbox" name="status" value="com_resolucao"> Com resolução
+                            </label>
+                            <label>
+                                <input type="checkbox" name="status" value="que_errei"> Que errei
+                            </label>
                         </div>
                     </div>
-                
+    
                     <div class="btn-group">
                         <button type="button" class="btn btn-save" id="gerar-atividade">Gerar atividade</button>
                         <button type="reset" class="btn btn-cancel">Limpar</button>
                     </div>
-                </form>                
+                </form>
+    
+                <!-- Área de feedback inicial -->
                 <div id="white-space" class="hidden">
                     <h2 class="gerar">Aguardando filtro...</h2>
                 </div>
+    
+                <!-- Conteúdo dinâmico das questões -->
                 <section id="questoes-container">
-                    <!-- Conteúdo gerado dinamicamente -->
+                    <!-- Questões serão geradas aqui -->
                 </section>
             </main>
         </div>
@@ -160,6 +200,8 @@
     var questoesContainer = document.getElementById("questoes-container");
     var quantidadeInput = document.getElementById("quantidade");
     var whiteSpace = document.getElementById("white-space");
+    var toggleButtons = document.querySelectorAll(".toggle-visibility");
+    var formData = new FormData(document.querySelector("#filtro-questoes-form"));
 
     var accountModal = document.getElementById("account-modal");
     var accountConfirmationModal = document.getElementById("account-confirmation-modal");
@@ -171,6 +213,125 @@
     var accountList = document.querySelector(".account-list");
     var newAccountInput = document.getElementById("new-account");
     let selectedEmail = null;
+
+    questoesContainer.innerHTML = "";
+    
+    // Função para ativar a visibilidade das resoluções
+    function ativarBotoesVisibilidade() {
+        document.querySelectorAll(".toggle-visibility").forEach(button => {
+            button.addEventListener("click", function () {
+                var targetId = button.dataset.target; // ID do conteúdo da resolução
+                var target = document.getElementById(targetId); // Elemento da resolução
+                var eyeShow = button.querySelector(".eye-show"); // Ícone de olho aberto
+                var eyeOff = button.querySelector(".eye-off"); // Ícone de olho fechado
+
+                if (!target || !eyeShow || !eyeOff) {
+                    console.warn("Elementos necessários para visibilidade não encontrados:", button);
+                    return;
+                }
+
+                // Alterna entre mostrar e esconder o conteúdo da resolução
+                if (target.style.display === "none" || target.style.display === "") {
+                    target.style.display = "block"; // Mostra a resolução
+                    eyeShow.style.display = "inline"; // Mostra o ícone de olho aberto
+                    eyeOff.style.display = "none"; // Esconde o ícone de olho fechado
+                } else {
+                    target.style.display = "none"; // Esconde a resolução
+                    eyeShow.style.display = "none"; // Esconde o ícone de olho aberto
+                    eyeOff.style.display = "inline"; // Mostra o ícone de olho fechado
+                }
+            });
+        });
+    }
+
+    // Faz a requisição para o backend
+    var params = new URLSearchParams();
+    formData.forEach((value, key) => {
+        if (value) params.append(key, value); // Adiciona apenas parâmetros válidos
+    });
+
+    fetch(`/aluno/praticar/api/questoes?${params.toString()}`)
+
+        .then(response => {
+            if (!response.ok) throw new Error("Erro ao carregar as questões");
+            return response.json();
+        })
+        .then(data => {
+        questoesContainer.innerHTML = ""; 
+        if (!data.questoes || !Array.isArray(data.questoes) || !data.questoes.length) {
+            questoesContainer.innerHTML = "<p>Nenhuma questão encontrada.</p>";
+            return;
+        }
+
+
+            // Renderizar questões
+            data.questoes.forEach((questao, index) => {
+                var questaoElement = document.createElement("div");
+                questaoElement.className = "questao-item";
+                questaoElement.innerHTML = `
+                    <h3>Questão ${index + 1}</h3>
+                    <p>${questao.descricao}</p>
+                    <ul>
+                        ${questao.alternativas
+                            .map(
+                                alt => `
+                                <li>
+                                    <input type="radio" id="alt-${alt.id}" name="alternativa-${questao.id}" value="${alt.id}">
+                                    <label for="alt-${alt.id}">${alt.descricao}</label>
+                                </li>
+                            `
+                            )
+                            .join("")}
+                    </ul>
+                    <div class="resolucao">
+                        <h4>
+                            Resolução:
+                            <button class="toggle-visibility" data-target="resolucao-${index}">
+                                <img src="{% static 'assets/eye-off.svg' %}" alt="Fechar" class="eye-off">
+                                <img src="{% static 'assets/eye-show.svg' %}" alt="Abrir" class="eye-show" style="display: none;">
+                            </button>
+                        </h4>
+                        <div id="resolucao-${index}" class="resolucao-content" style="display: none;">
+                            ${questao.resolucao || "Nenhuma resolução disponível."}
+                        </div>
+                    </div>
+                `;
+                questoesContainer.appendChild(questaoElement);
+            });
+
+            // Reativar funcionalidade de botão "visualizar resolução"
+            document.querySelectorAll(".toggle-visibility").forEach(button => {
+                button.addEventListener("click", () => {
+                    var target = document.getElementById(button.dataset.target);
+                    var eyeshow = button.querySelector(".eye-show");
+                    var eyeoff = button.querySelector(".eye-off");
+
+                    if (target.style.display === "none") {
+                        target.style.display = "block";
+                        eyeshow.style.display = "block";
+                        eyeoff.style.display = "none";
+                    } else {
+                        target.style.display = "none";
+                        eyeshow.style.display = "none";
+                        eyeoff.style.display = "block";
+                    }
+                });
+            });
+        })
+        .catch(error => console.error("Erro:", error));
+
+    toggleButtons.forEach((button) => {
+        button.addEventListener("click", function () {
+            var resolucao = button.closest(".questao-item").querySelector(".resolucao");
+            if (resolucao.style.display === "none" || !resolucao.style.display) {
+                resolucao.style.display = "block";
+                button.classList.add("active");
+            } else {
+                resolucao.style.display = "none";
+                button.classList.remove("active");
+            }
+        });
+    });
 
     // Certifique-se de que os elementos existem
     if (!disciplinaSelect || !conteudoSelect) {
@@ -409,155 +570,117 @@
 
     console.log("Botão 'Gerar atividade' encontrado e evento sendo configurado.");
 
-    // Remove eventos duplicados antes de adicionar novamente
-gerarAtividadeBtn.replaceWith(gerarAtividadeBtn.cloneNode(true));
-const newGerarAtividadeBtn = document.getElementById("gerar-atividade");
+    // Inicialmente, esconde o container de questões
+    questoesContainer.style.display = "none";
 
-// Evento para o botão "Gerar atividade"
-newGerarAtividadeBtn.addEventListener("click", function () {
-    console.log("Botão 'Gerar atividade' clicado."); // Log ao clicar no botão
+    // Evento de clique no botão "Gerar Atividade"
+    gerarAtividadeBtn.addEventListener("click", function () {
+        console.log("Botão 'Gerar atividade' clicado.");
 
-    const quantidade = quantidadeInput.value.trim();
-    console.log("Valor no campo 'Quantidade de questões':", quantidade); // Valor atual do campo
+        var quantidade = quantidadeInput.value.trim();
 
-    // Validação do campo "Quantidade de questões"
-    if (!quantidade) {
-        console.warn("Campo de quantidade está vazio!");
-        alert("É necessário indicar o número mínimo de questões!");
-        return;
-    }
-    if (!/^[1-9]\d*$/.test(quantidade)) {
-        console.warn("Campo de quantidade contém um valor inválido:", quantidade);
-        alert("O número de questões deve ser inteiro positivo!");
-        return;
-    }
+        // Validação do campo "Quantidade de questões"
+        if (!quantidade || isNaN(quantidade) || quantidade <= 0 || quantidade > 50) {
+            alert("Por favor, insira um número válido de questões (1 a 50).");
+            return;
+        }
 
-    console.log("Campo de quantidade validado com sucesso. Valor:", quantidade);
+        // Oculta a mensagem inicial
+        if (whiteSpace) {
+            whiteSpace.style.display = "none";
+        }
 
-    // Oculta o "white space"
-    if (whiteSpace) {
-        whiteSpace.style.display = "none";
-    }
+        // Faz a requisição para buscar as questões
+        var params = new URLSearchParams(new FormData(document.querySelector("#filtro-questoes-form")));
+        // Faz a requisição para buscar as questões
+fetch(`/aluno/praticar/api/questoes?${params.toString()}`)
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`Erro HTTP: ${response.status}`);
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log("Dados recebidos da API:", data);
+        questoesContainer.innerHTML = "";
+        questoesContainer.style.display = "block"; // Mostra a área de questões
 
-    // Obtém os parâmetros do formulário
-    const params = new URLSearchParams(new FormData(document.querySelector("form")));
+        // Verifica se há questões retornadas
+        if (!data.questoes || data.questoes.length === 0) {
+            console.warn("Nenhuma questão encontrada.");
+            questoesContainer.innerHTML = "<p>Nenhuma questão encontrada.</p>";
+            return;
+        }
 
-    // Faz a requisição para buscar as questões
-    fetch(`/aluno/praticar/api/questoes?${params.toString()}`)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error(`Erro HTTP: ${response.status}`);
-            }
-            return response.json();
-        })
-        .then(data => {
-            console.log("Dados recebidos da API:", data);
+        // Renderizar questões
+        data.questoes.forEach((questao, index) => {
+            var questaoElement = document.createElement("div");
+            questaoElement.classList.add("questao-item");
 
-            questoesContainer.innerHTML = "";
-
-            // Verifica se há questões retornadas
-            if (!data.questoes || data.questoes.length === 0) {
-                console.warn("Nenhuma questão encontrada.");
-                questoesContainer.innerHTML = "<p>Nenhuma questão encontrada.</p>";
-                return;
-            }
-
-            // Renderiza as questões
-            data.questoes.forEach((questao, index) => {
-                const questaoElement = document.createElement("div");
-                questaoElement.classList.add("questao-item");
-
-                // Informações adicionais da questão
-                const detalhesHTML = `
-                    <div class="questao-info">
-                        ${questao.ano ? `<p><strong>Ano:</strong> ${questao.ano}</p>` : ""}
-                        ${questao.banca ? `<p><strong>Banca:</strong> ${questao.banca}</p>` : ""}
-                        ${questao.disciplina ? `<p><strong>Disciplina:</strong> ${questao.disciplina}</p>` : ""}
-                        ${questao.conteudo ? `<p><strong>Conteúdo:</strong> ${questao.conteudo}</p>` : ""}
-                        ${questao.topico ? `<p><strong>Tópico:</strong> ${questao.topico}</p>` : ""}
-                    </div>`;
-
-                // Resolução com botão de visibilidade
-                const resolucaoHTML = questao.resolucao
-                ? `
-                    <div class="resolucao">
-                        <h3 style="display: flex; justify-content: space-between; align-items: center; margin-top: 20px;">
-                            Resolução:
-                            <button class="toggle-visibility" data-target="resolucao-section-${index}">
-                                <img src="{% static 'assets/eye-off.svg' %}" alt="Olho fechado" class="eye-closed">
-                                <img src="{% static 'assets/eye-show.svg' %}" alt="Olho aberto" class="eye-open">
-                            </button>
-                        </h3>
-                        <div id="resolucao-section-${index}" style="display: none; margin-top: 10px;">
-                            <div class="resolucao-content">
-                                ${questao.resolucao}
-                            </div>
+            // Resolução com botão de visibilidade
+            var resolucaoHTML = `
+                <div class="resolucao">
+                    <h3 style="display: flex; justify-content: space-between; align-items: center;">
+                        Resolução:
+                        <button class="toggle-visibility" data-target="resolucao-section-${index}">
+                            <img src="{% static 'assets/eye-off.svg' %}" alt="Olho fechado" class="eye-off">
+                            <img src="{% static 'assets/eye-show.svg' %}" alt="Olho aberto" class="eye-show" style="display: none;">
+                        </button>
+                    </h3>
+                    <div id="resolucao-section-${index}" class="resolucao-content hidden" style="display: none;">
+                        <div>
+                            ${questao.resolucao || "Nenhuma resolução disponível."}
                         </div>
                     </div>
-                `
-                : "<p class='sem-resolucao'>Nenhuma resolução disponível.</p>";
+                </div>`;
+
+            // Conteúdo da questão
+            questaoElement.innerHTML = `
+                <h3>Questão ${index + 1}</h3>
+                <p>${questao.descricao}</p>
+                <ul>
+                    ${questao.alternativas.map(alt => `
+                        <li>
+                            <input type="radio" id="alt-${alt.id}" name="alternativa-${questao.id}" value="${alt.id}">
+                            <label for="alt-${alt.id}">${alt.descricao}</label>
+                        </li>`).join("")}
+                </ul>
+                ${resolucaoHTML}`;
+
+            questoesContainer.appendChild(questaoElement);
+        });
+
+        // Adiciona botão "Finalizar atividade"
+        var finalizarAtividadeBtn = document.createElement("button");
+        finalizarAtividadeBtn.id = "finalizar-atividade";
+        finalizarAtividadeBtn.className = "btn-confirm-sim";
+        finalizarAtividadeBtn.style.fontWeight = "500";
+        finalizarAtividadeBtn.style.marginTop = "10px";
+        finalizarAtividadeBtn.textContent = "Finalizar atividade";
+        questoesContainer.appendChild(finalizarAtividadeBtn);
+
+        // Ativar os botões de visibilidade
+        ativarBotoesVisibilidade();
+
+        // Renderiza o LaTeX com MathJax
+        if (window.MathJax && window.MathJax.typeset) {
+            window.MathJax.typeset();
+        }
+    })
+    .catch(error => console.error("Erro ao buscar questões:", error));
 
 
-                // Questão
-                questaoElement.innerHTML = `
-                    ${detalhesHTML}
-                    <h3>Questão ${index + 1}</h3>
-                    <p>${questao.descricao}</p>
-                    <ul style="margin-top: 10px;">
-                        ${questao.alternativas.map((alt, i) => `
-                            <li style="margin-bottom: 10px;">
-                                <input type="radio" id="alt-${alt.id}" name="alternativa-${questao.id}" value="${alt.id}">
-                                <label for="alt-${alt.id}">${alt.descricao}</label>
-                            </li>
-                        `).join("")}
-                    </ul>
-                    ${resolucaoHTML}
-                `;
+    // Função para verificar se o formulário está válido
+    function verificarFormulario() {
+        var quantidadeValida = quantidadeInput.value >= 1 && quantidadeInput.value <= 50;
+        newGerarAtividadeBtn.disabled = !quantidadeValida;
+    }
 
-                questoesContainer.appendChild(questaoElement);
-            });
+    // Adiciona eventos de input no campo de quantidade
+    quantidadeInput.addEventListener("input", verificarFormulario);
 
-            // Adiciona a funcionalidade de visibilidade nos botões de resolução
-            document.querySelectorAll(".toggle-visibility").forEach(button => {
-                button.addEventListener("click", function () {
-                    const targetId = button.getAttribute("data-target");
-                    const targetElement = document.getElementById(targetId);
-                    const eyeOpen = button.querySelector(".eye-open");
-                    const eyeClosed = button.querySelector(".eye-closed");
-
-                    if (targetElement.style.display === "none") {
-                        targetElement.style.display = "block";
-                        eyeOpen.style.display = "block";
-                        eyeClosed.style.display = "none";
-                    } else {
-                        targetElement.style.display = "none";
-                        eyeOpen.style.display = "none";
-                        eyeClosed.style.display = "block";
-                    }
-                });
-            });
-
-            // Renderiza o LaTeX com MathJax
-            if (window.MathJax) {
-                MathJax.typeset();
-            }
-
-            // Adiciona botão "Finalizar atividade"
-            questoesContainer.innerHTML += `<button id="finalizar-atividade" class="btn">Finalizar atividade</button>`;
-        })
-        .catch(error => console.error("Erro ao buscar questões:", error));
-});
-
-// Função para verificar se o formulário está válido
-function verificarFormulario() {
-    const quantidadeValida = quantidadeInput.value >= 1 && quantidadeInput.value <= 50;
-    gerarAtividadeBtn.disabled = !quantidadeValida;
-}
-
-// Adiciona eventos de input no campo de quantidade
-quantidadeInput.addEventListener("input", verificarFormulario);
-
-// Inicializa o estado do botão
-verificarFormulario();
+    // Inicializa o estado do botão
+    verificarFormulario();
     });
+});
 </script>

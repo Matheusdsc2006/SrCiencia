@@ -21,49 +21,58 @@ def aluno_praticar(request):
 
 @login_required
 def buscar_questoes(request):
-    """
-    Busca as questões com base nos filtros aplicados pelo aluno.
-    """
     if request.method == 'GET':
-        # Obtém os parâmetros enviados na requisição
-        disciplina_id = request.GET.get('disciplina')
-        conteudo_id = request.GET.get('conteudo')
-        topico_id = request.GET.get('topico')
-        dificuldade = request.GET.get('dificuldade')  # 1, 2, 3 para Fácil, Médio, Difícil
-        quantidade = int(request.GET.get('quantidade', 10))  # Padrão: 10 questões
+        try:
+            # Obtendo filtros
+            disciplina_id = request.GET.get('disciplina')
+            conteudo_id = request.GET.get('conteudo')
+            dificuldade = request.GET.get('dificuldade')
+            quantidade = request.GET.get('quantidade', '10')  # Padrão: 10 questões
+            
+            # Validação de quantidade
+            if not quantidade.isdigit() or int(quantidade) <= 0:
+                raise ValueError("O parâmetro 'quantidade' deve ser um número inteiro positivo.")
+            quantidade = int(quantidade)
+            
+            # Base inicial de questões
+            questoes = Questao.objects.select_related(
+                'banca', 'disciplina', 'conteudo', 'topico'
+            ).all()
 
-        # Filtra as questões
-        questoes = Questao.objects.all()
+            # Aplicando filtros
+            if disciplina_id:
+                questoes = questoes.filter(disciplina_id=disciplina_id)
+            if conteudo_id:
+                questoes = questoes.filter(conteudo_id=conteudo_id)
+            if dificuldade:
+                questoes = questoes.filter(dificuldade=dificuldade)
 
-        if disciplina_id:
-            questoes = questoes.filter(disciplina_id=disciplina_id)
-        if conteudo_id:
-            questoes = questoes.filter(conteudo_id=conteudo_id)
-        if topico_id:
-            questoes = questoes.filter(topico_id=topico_id)
-        if dificuldade:
-            questoes = questoes.filter(dificuldade=dificuldade)
+            # Limitar quantidade de questões
+            questoes = questoes[:quantidade]
 
-        # Limita a quantidade
-        questoes = questoes[:quantidade]
+            # Serializar resultados
+            data = [
+                {
+                    'id': questao.id,
+                    'descricao': questao.descricao,
+                    'alternativas': list(questao.alternativas.values('id', 'descricao', 'correta')),
+                    'resolucao': questao.resolucao,
+                    'ano': questao.ano,
+                    'banca': questao.banca.nome if questao.banca else None,
+                    'disciplina': questao.disciplina.nome if questao.disciplina else None,
+                    'conteudo': questao.conteudo.nome if questao.conteudo else None,
+                    'topico': questao.topico.nome if questao.topico else None,
+                }
+                for questao in questoes
+            ]
+            return JsonResponse({'questoes': data})
 
-        # Serializa as questões
-        data = [
-            {
-                'id': questao.id,
-                'descricao': questao.descricao,
-                'alternativas': list(questao.alternativas.values('id', 'descricao', 'correta')),
-                'dificuldade': questao.get_dificuldade_display(),
-                'taxa_acertos': questao.taxa_acertos,
-            }
-            for questao in questoes
-        ]
-        return JsonResponse({'questoes': data})
+        except ValueError as e:
+            return JsonResponse({'error': str(e)}, status=400)
+        except Exception as e:
+            return JsonResponse({'error': 'Erro inesperado: ' + str(e)}, status=500)
 
     return JsonResponse({'error': 'Método não permitido'}, status=405)
-
-
-
 
 @csrf_exempt
 @login_required
