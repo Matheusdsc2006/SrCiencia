@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token }}">
-    <title>SR. Ciência - Turmas</title>
+    <title>SR. Ciência - Praticar</title>
     <script>
         window.MathJax = {
             tex: {
@@ -254,12 +254,72 @@
     var newAccountInput = document.getElementById("new-account");
     let selectedEmail = null;
 
+    function reportarQuestao(questaoId) {
+    const descricao = prompt("Descreva o problema encontrado:");
+    if (!descricao) return;
+
+    fetch("/aluno/praticar/reportar_questao/", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": document.querySelector("[name='csrfmiddlewaretoken']").value,
+        },
+        body: JSON.stringify({ questao_id: questaoId, descricao }),
+    })
+    .then((response) => response.json())
+    .then((data) => alert(data.message || "Relatório enviado com sucesso!"))
+    .catch((error) => console.error("Erro ao reportar problema:", error));
+}
+
+function salvarRespostas() {
+    const respostas = [];
+    document.querySelectorAll("input[type='radio']:checked").forEach((input) => {
+        const questaoId = input.name.split("-")[1];
+        const alternativaId = input.value;
+
+        respostas.push({ questao_id: questaoId, alternativa_id: alternativaId });
+    });
+
+    fetch("/aluno/praticar/registrar_resposta/", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": document.querySelector("[name='csrfmiddlewaretoken']").value,
+        },
+        body: JSON.stringify(respostas),
+    })
+    .then((response) => response.json())
+    .then((data) => alert(data.message || "Respostas salvas com sucesso!"))
+    .catch((error) => console.error("Erro ao salvar respostas:", error));
+}
+
+
+    function shuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+        return array;
+    }
+    
+    document.getElementById("gerar-atividade").addEventListener("click", () => {
+    var buscaInput = document.getElementById("busca-questoes").value.trim();
+
+    // Permitir apenas letras e espaços
+    if (buscaInput && !/^[a-zA-Z ]+$/.test(buscaInput)) {
+        alert("Por favor, insira apenas letras na busca.");
+        return;
+    }
+
+    buscarQuestoes();
+});
+
     // Configurar eventos para o botão de finalizar atividade
     function configurarEventosBotaoFinalizar(finalizarBtn) {
-        const finalizarModal = document.getElementById("confirm-finalize-modal");
-        const closeFinalizeModal = document.getElementById("close-finalize-modal");
-        const confirmFinalizeBtn = document.getElementById("confirm-finalize-btn");
-        const questoesContainer = document.getElementById("questoes-container");
+        var finalizarModal = document.getElementById("confirm-finalize-modal");
+        var closeFinalizeModal = document.getElementById("close-finalize-modal");
+        var confirmFinalizeBtn = document.getElementById("confirm-finalize-btn");
+        var questoesContainer = document.getElementById("questoes-container");
 
         // Evento para abrir o modal de confirmação
         finalizarBtn.addEventListener("click", function () {
@@ -302,11 +362,11 @@
     }
 
     function adicionarBotaoFinalizarAtividade() {
-        const questoesContainer = document.getElementById("questoes-container");
+        var questoesContainer = document.getElementById("questoes-container");
 
         // Verificar se o botão já existe para evitar duplicação
         if (!document.getElementById("finalizar-atividade")) {
-            const finalizarBtn = document.createElement("button");
+            var finalizarBtn = document.createElement("button");
             finalizarBtn.id = "finalizar-atividade";
             finalizarBtn.className = "btn btn-save";
             finalizarBtn.textContent = "Finalizar Atividade";
@@ -405,8 +465,8 @@ function ativarFinalizarAtividade() {
 document.addEventListener("click", function (event) {
         // Delegação para o botão "confirm-finalize-btn"
         if (event.target && event.target.id === "confirm-finalize-btn") {
-            const finalizarModal = document.getElementById("finalizar-atividade-modal");
-            const questoesContainer = document.getElementById("questoes-container");
+            var finalizarModal = document.getElementById("finalizar-atividade-modal");
+            var questoesContainer = document.getElementById("questoes-container");
 
             if (finalizarModal) finalizarModal.style.display = "none";
 
@@ -520,9 +580,9 @@ function carregarQuestoesSalvas() {
 
 
 function inicializarPagina() {
-        const questoesSalvas = JSON.parse(localStorage.getItem("questoesAtuais"));
-        const questoesContainer = document.getElementById("questoes-container");
-        const whiteSpace = document.getElementById("white-space");
+        var questoesSalvas = JSON.parse(localStorage.getItem("questoesAtuais"));
+        var questoesContainer = document.getElementById("questoes-container");
+        var whiteSpace = document.getElementById("white-space");
 
         if (questoesSalvas && questoesSalvas.questoes && questoesSalvas.questoes.length > 0) {
             alert("Seu progresso foi restaurado!"); // Exibe o alerta
@@ -566,6 +626,8 @@ function salvarAlternativas() {
 
     function buscarQuestoes() {
     var params = new URLSearchParams(new FormData(document.querySelector("#filtro-questoes-form")));
+    params.append("status", "nao_resolvidas"); 
+
 
     // Adicionar filtros de status
     var statusFilters = [];
@@ -592,23 +654,23 @@ function salvarAlternativas() {
         .then(data => {
             console.log("Dados recebidos da API:", data);
 
+            // Exibir mensagem se houver mais questões do que o limite
+            if (data.message) {
+                alert(data.message);
+            }
+
             // Se nenhuma questão for encontrada
             if (data.questoes.length === 0) {
                 questoesContainer.style.display = "block";
-                questoesContainer.innerHTML = `<p style="color: red; text-align: center; font-size: 1.2rem;">Não há questões para o filtro selecionado.</p>`;
+                questoesContainer.innerHTML = `<p style="color: white; text-align: center; font-size: 1.2rem;">Não há questões para o filtro selecionado.</p>`;
                 return;
             }
 
-            // Salvar no localStorage
-            localStorage.setItem("questoesAtuais", JSON.stringify(data));
-
-            // Renderizar as questões
+            // Renderizar as questões embaralhadas
             renderizarQuestoes(data.questoes);
         })
         .catch(error => console.error("Erro ao buscar questões:", error));
 }
-
-
 
         // Reativar funcionalidade de botão "visualizar resolução"
         document.querySelectorAll(".toggle-visibility").forEach(button => {

@@ -1,0 +1,4729 @@
+[
+{
+  "model": "admin.logentry",
+  "pk": 1,
+  "fields": {
+    "action_time": "2024-10-28T17:37:56.644Z",
+    "user": 6,
+    "content_type": 6,
+    "object_id": "3",
+    "object_repr": "Lucas Francisco de Albuquerque Barbosa - (1)",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Perfil\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 2,
+  "fields": {
+    "action_time": "2024-10-28T17:38:04.323Z",
+    "user": 6,
+    "content_type": 6,
+    "object_id": "2",
+    "object_repr": "LUCAS FRANCISCO DE ALBUQUERQUE BARBOSA - (2)",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 3,
+  "fields": {
+    "action_time": "2024-10-28T17:39:18.486Z",
+    "user": 6,
+    "content_type": 6,
+    "object_id": "6",
+    "object_repr": "Lucas Albuquerque - (1)",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"First name\", \"Last name\", \"Nome\", \"Perfil\", \"Situacao\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 4,
+  "fields": {
+    "action_time": "2024-10-28T17:39:24.739Z",
+    "user": 6,
+    "content_type": 6,
+    "object_id": "3",
+    "object_repr": "Lucas Francisco de Albuquerque Barbosa - (1)",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Staff status\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 5,
+  "fields": {
+    "action_time": "2024-10-28T17:39:35.236Z",
+    "user": 6,
+    "content_type": 6,
+    "object_id": "3",
+    "object_repr": "Lucas Francisco de Albuquerque Barbosa - (1)",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Password\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 6,
+  "fields": {
+    "action_time": "2024-10-28T17:39:42.050Z",
+    "user": 6,
+    "content_type": 6,
+    "object_id": "3",
+    "object_repr": "Lucas Francisco de Albuquerque Barbosa - (1)",
+    "action_flag": 2,
+    "change_message": "[]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 7,
+  "fields": {
+    "action_time": "2024-10-28T17:39:50.523Z",
+    "user": 6,
+    "content_type": 6,
+    "object_id": "6",
+    "object_repr": "Lucas Albuquerque - (1)",
+    "action_flag": 2,
+    "change_message": "[]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 8,
+  "fields": {
+    "action_time": "2024-10-28T17:39:54.953Z",
+    "user": 6,
+    "content_type": 6,
+    "object_id": "3",
+    "object_repr": "Lucas Francisco de Albuquerque Barbosa - (1)",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Password\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 9,
+  "fields": {
+    "action_time": "2024-10-28T17:47:19.049Z",
+    "user": 6,
+    "content_type": 11,
+    "object_id": "1",
+    "object_repr": "Física",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 10,
+  "fields": {
+    "action_time": "2024-10-28T17:50:21.169Z",
+    "user": 6,
+    "content_type": 10,
+    "object_id": "1",
+    "object_repr": "Cinemática",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 11,
+  "fields": {
+    "action_time": "2024-10-28T17:50:29.634Z",
+    "user": 6,
+    "content_type": 10,
+    "object_id": "2",
+    "object_repr": "Dinâmica",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 12,
+  "fields": {
+    "action_time": "2024-10-28T17:50:40.507Z",
+    "user": 6,
+    "content_type": 10,
+    "object_id": "3",
+    "object_repr": "Estática",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 13,
+  "fields": {
+    "action_time": "2024-10-28T17:51:27.006Z",
+    "user": 6,
+    "content_type": 10,
+    "object_id": "3",
+    "object_repr": "Estática e Hidrostática",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Nome\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 14,
+  "fields": {
+    "action_time": "2024-10-28T17:51:38.832Z",
+    "user": 6,
+    "content_type": 10,
+    "object_id": "4",
+    "object_repr": "Gravitação Universal",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 15,
+  "fields": {
+    "action_time": "2024-10-28T17:51:45.820Z",
+    "user": 6,
+    "content_type": 10,
+    "object_id": "5",
+    "object_repr": "Termometria",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 16,
+  "fields": {
+    "action_time": "2024-10-28T17:51:52.400Z",
+    "user": 6,
+    "content_type": 10,
+    "object_id": "6",
+    "object_repr": "Calorimetria",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 17,
+  "fields": {
+    "action_time": "2024-10-28T17:51:59.448Z",
+    "user": 6,
+    "content_type": 10,
+    "object_id": "7",
+    "object_repr": "Termodinâmica",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 18,
+  "fields": {
+    "action_time": "2024-10-28T17:52:12.830Z",
+    "user": 6,
+    "content_type": 10,
+    "object_id": "8",
+    "object_repr": "Estudo dos Gases",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 19,
+  "fields": {
+    "action_time": "2024-10-28T17:52:19.123Z",
+    "user": 6,
+    "content_type": 10,
+    "object_id": "9",
+    "object_repr": "Dilatação",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 20,
+  "fields": {
+    "action_time": "2024-10-28T17:52:28.098Z",
+    "user": 6,
+    "content_type": 10,
+    "object_id": "10",
+    "object_repr": "Entropia",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 21,
+  "fields": {
+    "action_time": "2024-10-28T17:52:41.957Z",
+    "user": 6,
+    "content_type": 12,
+    "object_id": "1",
+    "object_repr": "Velocidade",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 22,
+  "fields": {
+    "action_time": "2024-10-28T17:52:54.248Z",
+    "user": 6,
+    "content_type": 12,
+    "object_id": "2",
+    "object_repr": "Movimento Uniforme",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 23,
+  "fields": {
+    "action_time": "2024-10-28T17:53:05.203Z",
+    "user": 6,
+    "content_type": 12,
+    "object_id": "3",
+    "object_repr": "Movimento Uniformemente Variado",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 24,
+  "fields": {
+    "action_time": "2024-10-28T17:53:14.207Z",
+    "user": 6,
+    "content_type": 12,
+    "object_id": "4",
+    "object_repr": "Movimento Vertical",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 25,
+  "fields": {
+    "action_time": "2024-10-28T17:53:19.349Z",
+    "user": 6,
+    "content_type": 12,
+    "object_id": "5",
+    "object_repr": "Vetores",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 26,
+  "fields": {
+    "action_time": "2024-10-28T17:53:29.518Z",
+    "user": 6,
+    "content_type": 12,
+    "object_id": "6",
+    "object_repr": "Movimento Oblíquo",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 27,
+  "fields": {
+    "action_time": "2024-10-28T17:53:38.092Z",
+    "user": 6,
+    "content_type": 12,
+    "object_id": "7",
+    "object_repr": "Movimento Circular",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 28,
+  "fields": {
+    "action_time": "2024-10-28T17:53:52.993Z",
+    "user": 6,
+    "content_type": 12,
+    "object_id": "8",
+    "object_repr": "Leis de Newton",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 29,
+  "fields": {
+    "action_time": "2024-10-28T17:54:02.178Z",
+    "user": 6,
+    "content_type": 12,
+    "object_id": "9",
+    "object_repr": "Força Peso",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 30,
+  "fields": {
+    "action_time": "2024-10-28T17:54:09.663Z",
+    "user": 6,
+    "content_type": 12,
+    "object_id": "10",
+    "object_repr": "Força de Atrito",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 31,
+  "fields": {
+    "action_time": "2024-10-28T17:54:15.688Z",
+    "user": 6,
+    "content_type": 12,
+    "object_id": "11",
+    "object_repr": "Força Elástica",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 32,
+  "fields": {
+    "action_time": "2024-10-28T17:54:22.632Z",
+    "user": 6,
+    "content_type": 12,
+    "object_id": "12",
+    "object_repr": "Força Centrípeta",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 33,
+  "fields": {
+    "action_time": "2024-10-28T17:54:29.837Z",
+    "user": 6,
+    "content_type": 12,
+    "object_id": "13",
+    "object_repr": "Plano Inclinado",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 34,
+  "fields": {
+    "action_time": "2024-10-28T17:54:33.692Z",
+    "user": 6,
+    "content_type": 12,
+    "object_id": "14",
+    "object_repr": "Sistemas",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 35,
+  "fields": {
+    "action_time": "2024-10-28T17:54:39.194Z",
+    "user": 6,
+    "content_type": 12,
+    "object_id": "15",
+    "object_repr": "Trabalho",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 36,
+  "fields": {
+    "action_time": "2024-10-28T17:54:44.066Z",
+    "user": 6,
+    "content_type": 12,
+    "object_id": "16",
+    "object_repr": "Potência",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 37,
+  "fields": {
+    "action_time": "2024-10-28T17:54:54.215Z",
+    "user": 6,
+    "content_type": 12,
+    "object_id": "17",
+    "object_repr": "Energia Mecânica",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 38,
+  "fields": {
+    "action_time": "2024-10-28T17:54:58.843Z",
+    "user": 6,
+    "content_type": 12,
+    "object_id": "18",
+    "object_repr": "Impulso",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 39,
+  "fields": {
+    "action_time": "2024-10-28T17:55:05.479Z",
+    "user": 6,
+    "content_type": 12,
+    "object_id": "19",
+    "object_repr": "Quantidade de Movimento",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 40,
+  "fields": {
+    "action_time": "2024-10-28T17:55:23.424Z",
+    "user": 6,
+    "content_type": 12,
+    "object_id": "20",
+    "object_repr": "Princípios Básicos",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 41,
+  "fields": {
+    "action_time": "2024-10-28T17:55:30.834Z",
+    "user": 6,
+    "content_type": 12,
+    "object_id": "21",
+    "object_repr": "Estática do Ponto",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 42,
+  "fields": {
+    "action_time": "2024-10-28T17:55:39.897Z",
+    "user": 6,
+    "content_type": 12,
+    "object_id": "22",
+    "object_repr": "Estática do Corpo Rígido",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 43,
+  "fields": {
+    "action_time": "2024-10-28T17:55:44.325Z",
+    "user": 6,
+    "content_type": 12,
+    "object_id": "23",
+    "object_repr": "Pressão",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 44,
+  "fields": {
+    "action_time": "2024-10-28T17:55:51.808Z",
+    "user": 6,
+    "content_type": 12,
+    "object_id": "24",
+    "object_repr": "Teorema de Stevin",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 45,
+  "fields": {
+    "action_time": "2024-10-28T17:56:03.253Z",
+    "user": 6,
+    "content_type": 12,
+    "object_id": "25",
+    "object_repr": "Teorema de Pascal",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 46,
+  "fields": {
+    "action_time": "2024-10-28T17:56:11.692Z",
+    "user": 6,
+    "content_type": 12,
+    "object_id": "26",
+    "object_repr": "Princípio do Empuxo",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 47,
+  "fields": {
+    "action_time": "2024-10-28T17:56:23.685Z",
+    "user": 6,
+    "content_type": 12,
+    "object_id": "27",
+    "object_repr": "Força Gravitacional",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 48,
+  "fields": {
+    "action_time": "2024-10-28T17:56:31.015Z",
+    "user": 6,
+    "content_type": 12,
+    "object_id": "28",
+    "object_repr": "Leis de Kepler",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 49,
+  "fields": {
+    "action_time": "2024-10-28T17:56:39.425Z",
+    "user": 6,
+    "content_type": 12,
+    "object_id": "29",
+    "object_repr": "Unidades Astronômicas",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 50,
+  "fields": {
+    "action_time": "2024-10-28T17:56:47.755Z",
+    "user": 6,
+    "content_type": 12,
+    "object_id": "30",
+    "object_repr": "Temperatura",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 51,
+  "fields": {
+    "action_time": "2024-10-28T17:56:57.157Z",
+    "user": 6,
+    "content_type": 12,
+    "object_id": "31",
+    "object_repr": "Escalas Termométricas",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 52,
+  "fields": {
+    "action_time": "2024-10-28T17:57:02.616Z",
+    "user": 6,
+    "content_type": 12,
+    "object_id": "32",
+    "object_repr": "Conversões",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 53,
+  "fields": {
+    "action_time": "2024-10-28T17:57:07.985Z",
+    "user": 6,
+    "content_type": 12,
+    "object_id": "33",
+    "object_repr": "Calor",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 54,
+  "fields": {
+    "action_time": "2024-10-28T17:57:15.806Z",
+    "user": 6,
+    "content_type": 12,
+    "object_id": "34",
+    "object_repr": "Trocas de Calor",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 55,
+  "fields": {
+    "action_time": "2024-10-28T17:57:27.770Z",
+    "user": 6,
+    "content_type": 12,
+    "object_id": "35",
+    "object_repr": "Capacidade Térmica",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 56,
+  "fields": {
+    "action_time": "2024-10-28T17:57:42.977Z",
+    "user": 6,
+    "content_type": 12,
+    "object_id": "36",
+    "object_repr": "Propagação do Calor",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 57,
+  "fields": {
+    "action_time": "2024-10-28T17:57:51.689Z",
+    "user": 6,
+    "content_type": 12,
+    "object_id": "37",
+    "object_repr": "Energia Interna",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 58,
+  "fields": {
+    "action_time": "2024-10-28T17:57:58.219Z",
+    "user": 6,
+    "content_type": 12,
+    "object_id": "38",
+    "object_repr": "Trabalho",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 59,
+  "fields": {
+    "action_time": "2024-10-28T17:58:08.939Z",
+    "user": 6,
+    "content_type": 12,
+    "object_id": "39",
+    "object_repr": "1ª Lei da Termodinâmica",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 60,
+  "fields": {
+    "action_time": "2024-10-28T17:58:25.239Z",
+    "user": 6,
+    "content_type": 12,
+    "object_id": "40",
+    "object_repr": "2ª Lei da Termodinãmica",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 61,
+  "fields": {
+    "action_time": "2024-10-28T17:58:32.455Z",
+    "user": 6,
+    "content_type": 12,
+    "object_id": "41",
+    "object_repr": "Ciclo de Carnot",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 62,
+  "fields": {
+    "action_time": "2024-10-28T17:58:37.310Z",
+    "user": 6,
+    "content_type": 12,
+    "object_id": "42",
+    "object_repr": "Gases",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 63,
+  "fields": {
+    "action_time": "2024-10-28T17:58:54.460Z",
+    "user": 6,
+    "content_type": 12,
+    "object_id": "43",
+    "object_repr": "Transformação Isotérmica",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 64,
+  "fields": {
+    "action_time": "2024-10-28T17:59:06.130Z",
+    "user": 6,
+    "content_type": 12,
+    "object_id": "44",
+    "object_repr": "Transformação Isobárica",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 65,
+  "fields": {
+    "action_time": "2024-10-28T17:59:12.010Z",
+    "user": 6,
+    "content_type": 12,
+    "object_id": "45",
+    "object_repr": "Transformação Isométrica",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 66,
+  "fields": {
+    "action_time": "2024-10-28T17:59:26.135Z",
+    "user": 6,
+    "content_type": 12,
+    "object_id": "46",
+    "object_repr": "Equação de Clapeyron",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 67,
+  "fields": {
+    "action_time": "2024-10-28T17:59:37.651Z",
+    "user": 6,
+    "content_type": 12,
+    "object_id": "47",
+    "object_repr": "Lei Geral dos Gases",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 68,
+  "fields": {
+    "action_time": "2024-10-28T17:59:54.004Z",
+    "user": 6,
+    "content_type": 12,
+    "object_id": "48",
+    "object_repr": "Linear",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 69,
+  "fields": {
+    "action_time": "2024-10-28T17:59:59.150Z",
+    "user": 6,
+    "content_type": 12,
+    "object_id": "49",
+    "object_repr": "Superficial",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 70,
+  "fields": {
+    "action_time": "2024-10-28T18:00:13.725Z",
+    "user": 6,
+    "content_type": 12,
+    "object_id": "50",
+    "object_repr": "Volumétrica",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 71,
+  "fields": {
+    "action_time": "2024-10-28T18:02:49.778Z",
+    "user": 6,
+    "content_type": 9,
+    "object_id": "1",
+    "object_repr": "ENEM",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 72,
+  "fields": {
+    "action_time": "2024-10-28T18:03:11.492Z",
+    "user": 6,
+    "content_type": 9,
+    "object_id": "2",
+    "object_repr": "FUVEST",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 73,
+  "fields": {
+    "action_time": "2024-10-28T23:46:15.153Z",
+    "user": 12,
+    "content_type": 10,
+    "object_id": "11",
+    "object_repr": "Mecânica",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 74,
+  "fields": {
+    "action_time": "2024-10-28T23:47:07.769Z",
+    "user": 12,
+    "content_type": 10,
+    "object_id": "11",
+    "object_repr": "Mecânica",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 75,
+  "fields": {
+    "action_time": "2024-10-28T23:47:25.011Z",
+    "user": 12,
+    "content_type": 10,
+    "object_id": "12",
+    "object_repr": "Hidrodinâmica",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 76,
+  "fields": {
+    "action_time": "2024-10-28T23:49:02.316Z",
+    "user": 12,
+    "content_type": 10,
+    "object_id": "13",
+    "object_repr": "Estática",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 77,
+  "fields": {
+    "action_time": "2024-10-28T23:49:11.007Z",
+    "user": 12,
+    "content_type": 10,
+    "object_id": "14",
+    "object_repr": "Hidroestática",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 78,
+  "fields": {
+    "action_time": "2024-10-28T23:49:32.544Z",
+    "user": 12,
+    "content_type": 12,
+    "object_id": "26",
+    "object_repr": "Princípio do Empuxo",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Conteudo\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 79,
+  "fields": {
+    "action_time": "2024-10-28T23:49:52.195Z",
+    "user": 12,
+    "content_type": 12,
+    "object_id": "22",
+    "object_repr": "Estática do Corpo Rígido",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Conteudo\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 80,
+  "fields": {
+    "action_time": "2024-10-28T23:50:23.431Z",
+    "user": 12,
+    "content_type": 12,
+    "object_id": "21",
+    "object_repr": "Estática do Ponto",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Conteudo\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 81,
+  "fields": {
+    "action_time": "2024-10-28T23:50:50.726Z",
+    "user": 12,
+    "content_type": 12,
+    "object_id": "23",
+    "object_repr": "Pressão",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Conteudo\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 82,
+  "fields": {
+    "action_time": "2024-10-28T23:51:22.241Z",
+    "user": 12,
+    "content_type": 12,
+    "object_id": "25",
+    "object_repr": "Teorema de Pascal",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Conteudo\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 83,
+  "fields": {
+    "action_time": "2024-10-28T23:51:27.976Z",
+    "user": 12,
+    "content_type": 12,
+    "object_id": "24",
+    "object_repr": "Teorema de Stevin",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Conteudo\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 84,
+  "fields": {
+    "action_time": "2024-10-28T23:51:36.054Z",
+    "user": 12,
+    "content_type": 12,
+    "object_id": "20",
+    "object_repr": "Princípios Básicos",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Conteudo\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 85,
+  "fields": {
+    "action_time": "2024-10-28T23:52:01.920Z",
+    "user": 12,
+    "content_type": 10,
+    "object_id": "3",
+    "object_repr": "Estática e Hidrostática",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 86,
+  "fields": {
+    "action_time": "2024-10-28T23:54:28.007Z",
+    "user": 12,
+    "content_type": 10,
+    "object_id": "15",
+    "object_repr": "Óptica",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 87,
+  "fields": {
+    "action_time": "2024-10-28T23:55:01.980Z",
+    "user": 12,
+    "content_type": 10,
+    "object_id": "16",
+    "object_repr": "Eletroestática",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 88,
+  "fields": {
+    "action_time": "2024-10-28T23:55:13.921Z",
+    "user": 12,
+    "content_type": 10,
+    "object_id": "17",
+    "object_repr": "Eletrodinâmica",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 89,
+  "fields": {
+    "action_time": "2024-10-28T23:55:26.574Z",
+    "user": 12,
+    "content_type": 10,
+    "object_id": "18",
+    "object_repr": "Magnetismo",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 90,
+  "fields": {
+    "action_time": "2024-10-28T23:55:34.426Z",
+    "user": 12,
+    "content_type": 10,
+    "object_id": "19",
+    "object_repr": "Eletromagnetismo",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 91,
+  "fields": {
+    "action_time": "2024-10-28T23:56:24.261Z",
+    "user": 12,
+    "content_type": 10,
+    "object_id": "20",
+    "object_repr": "Física Moderna",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 92,
+  "fields": {
+    "action_time": "2024-10-28T23:56:46.374Z",
+    "user": 12,
+    "content_type": 10,
+    "object_id": "21",
+    "object_repr": "Ondulatória",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 93,
+  "fields": {
+    "action_time": "2024-10-28T23:57:18.247Z",
+    "user": 12,
+    "content_type": 10,
+    "object_id": "22",
+    "object_repr": "Acústica",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 94,
+  "fields": {
+    "action_time": "2024-10-28T23:58:58.973Z",
+    "user": 12,
+    "content_type": 12,
+    "object_id": "30",
+    "object_repr": "Temperatura",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Conteudo\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 95,
+  "fields": {
+    "action_time": "2024-10-28T23:59:08.818Z",
+    "user": 12,
+    "content_type": 12,
+    "object_id": "32",
+    "object_repr": "Conversões",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Conteudo\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 96,
+  "fields": {
+    "action_time": "2024-10-28T23:59:28.708Z",
+    "user": 12,
+    "content_type": 12,
+    "object_id": "31",
+    "object_repr": "Escalas Termométricas",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Conteudo\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 97,
+  "fields": {
+    "action_time": "2024-10-28T23:59:38.223Z",
+    "user": 12,
+    "content_type": 10,
+    "object_id": "5",
+    "object_repr": "Termometria",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 98,
+  "fields": {
+    "action_time": "2024-10-29T00:00:30.382Z",
+    "user": 12,
+    "content_type": 10,
+    "object_id": "10",
+    "object_repr": "Entropia",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 99,
+  "fields": {
+    "action_time": "2024-10-29T00:03:25.312Z",
+    "user": 12,
+    "content_type": 12,
+    "object_id": "1",
+    "object_repr": "Ponto Material e Corpo Extenso",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Nome\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 100,
+  "fields": {
+    "action_time": "2024-10-29T00:03:44.351Z",
+    "user": 12,
+    "content_type": 12,
+    "object_id": "51",
+    "object_repr": "Deslocamento e Distância Percorrida",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 101,
+  "fields": {
+    "action_time": "2024-10-29T00:03:59.712Z",
+    "user": 12,
+    "content_type": 12,
+    "object_id": "52",
+    "object_repr": "Referencial e Posição",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 102,
+  "fields": {
+    "action_time": "2024-10-29T00:04:28.786Z",
+    "user": 12,
+    "content_type": 12,
+    "object_id": "53",
+    "object_repr": "Velocidade Angular e Linear",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 103,
+  "fields": {
+    "action_time": "2024-10-29T00:04:50.751Z",
+    "user": 12,
+    "content_type": 12,
+    "object_id": "7",
+    "object_repr": "Movimento Circular Uniforme",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Nome\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 104,
+  "fields": {
+    "action_time": "2024-10-29T00:05:08.081Z",
+    "user": 12,
+    "content_type": 12,
+    "object_id": "6",
+    "object_repr": "Movimento Circular Uniformemente Variado",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Nome\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 105,
+  "fields": {
+    "action_time": "2024-10-29T00:05:29.826Z",
+    "user": 12,
+    "content_type": 12,
+    "object_id": "54",
+    "object_repr": "Período e Frequência",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 106,
+  "fields": {
+    "action_time": "2024-10-29T00:05:50.291Z",
+    "user": 12,
+    "content_type": 12,
+    "object_id": "54",
+    "object_repr": "Período e Frequência",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 107,
+  "fields": {
+    "action_time": "2024-10-29T00:06:12.784Z",
+    "user": 12,
+    "content_type": 12,
+    "object_id": "55",
+    "object_repr": "Movimento Parabólico",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 108,
+  "fields": {
+    "action_time": "2024-10-29T00:06:29.782Z",
+    "user": 12,
+    "content_type": 12,
+    "object_id": "56",
+    "object_repr": "Queda Livre",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 109,
+  "fields": {
+    "action_time": "2024-10-29T00:06:42.074Z",
+    "user": 12,
+    "content_type": 12,
+    "object_id": "4",
+    "object_repr": "Lançamento Vertical",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Nome\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 110,
+  "fields": {
+    "action_time": "2024-10-29T00:07:36.210Z",
+    "user": 12,
+    "content_type": 12,
+    "object_id": "57",
+    "object_repr": "Leis de Newton",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 111,
+  "fields": {
+    "action_time": "2024-10-29T00:08:27.838Z",
+    "user": 12,
+    "content_type": 12,
+    "object_id": "58",
+    "object_repr": "Força Normal",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 112,
+  "fields": {
+    "action_time": "2024-10-29T00:08:42.689Z",
+    "user": 12,
+    "content_type": 12,
+    "object_id": "59",
+    "object_repr": "Força de Tensão",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 113,
+  "fields": {
+    "action_time": "2024-10-29T00:09:21.173Z",
+    "user": 12,
+    "content_type": 12,
+    "object_id": "60",
+    "object_repr": "Força Resultante",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 114,
+  "fields": {
+    "action_time": "2024-10-29T00:09:50.438Z",
+    "user": 12,
+    "content_type": 12,
+    "object_id": "61",
+    "object_repr": "Trabalho e Energia",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 115,
+  "fields": {
+    "action_time": "2024-10-29T00:10:14.468Z",
+    "user": 12,
+    "content_type": 12,
+    "object_id": "17",
+    "object_repr": "Energia Mecânica",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 116,
+  "fields": {
+    "action_time": "2024-10-29T00:10:14.474Z",
+    "user": 12,
+    "content_type": 12,
+    "object_id": "15",
+    "object_repr": "Trabalho",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 117,
+  "fields": {
+    "action_time": "2024-10-29T00:10:37.401Z",
+    "user": 12,
+    "content_type": 12,
+    "object_id": "61",
+    "object_repr": "Trabalho",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Nome\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 118,
+  "fields": {
+    "action_time": "2024-10-29T00:10:49.747Z",
+    "user": 12,
+    "content_type": 12,
+    "object_id": "62",
+    "object_repr": "Energia Cinética",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 119,
+  "fields": {
+    "action_time": "2024-10-29T00:10:59.365Z",
+    "user": 12,
+    "content_type": 12,
+    "object_id": "63",
+    "object_repr": "Energia Potencial",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 120,
+  "fields": {
+    "action_time": "2024-10-29T00:11:51.841Z",
+    "user": 12,
+    "content_type": 12,
+    "object_id": "64",
+    "object_repr": "Conservação de Energia",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 121,
+  "fields": {
+    "action_time": "2024-10-29T00:12:36.905Z",
+    "user": 12,
+    "content_type": 12,
+    "object_id": "65",
+    "object_repr": "Colisões",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 122,
+  "fields": {
+    "action_time": "2024-10-29T00:13:21.769Z",
+    "user": 12,
+    "content_type": 12,
+    "object_id": "66",
+    "object_repr": "Torque",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 123,
+  "fields": {
+    "action_time": "2024-10-29T00:14:58.101Z",
+    "user": 12,
+    "content_type": 12,
+    "object_id": "20",
+    "object_repr": "Condições de Equilíbrio",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Nome\", \"Conteudo\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 124,
+  "fields": {
+    "action_time": "2024-10-29T00:15:28.811Z",
+    "user": 12,
+    "content_type": 12,
+    "object_id": "66",
+    "object_repr": "Torque",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Conteudo\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 125,
+  "fields": {
+    "action_time": "2024-10-29T00:16:10.256Z",
+    "user": 12,
+    "content_type": 12,
+    "object_id": "67",
+    "object_repr": "Alavancas",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 126,
+  "fields": {
+    "action_time": "2024-10-29T00:16:34.995Z",
+    "user": 12,
+    "content_type": 12,
+    "object_id": "68",
+    "object_repr": "Polias e Roldanas",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 127,
+  "fields": {
+    "action_time": "2024-10-29T00:18:10.873Z",
+    "user": 12,
+    "content_type": 12,
+    "object_id": "69",
+    "object_repr": "Densidade e Massa Específica",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 128,
+  "fields": {
+    "action_time": "2024-10-29T00:18:38.323Z",
+    "user": 12,
+    "content_type": 12,
+    "object_id": "26",
+    "object_repr": "Empuxo",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Nome\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 129,
+  "fields": {
+    "action_time": "2024-10-29T00:19:11.629Z",
+    "user": 12,
+    "content_type": 12,
+    "object_id": "26",
+    "object_repr": "Teorema de Arquimedes",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Nome\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 130,
+  "fields": {
+    "action_time": "2024-10-29T00:19:53.047Z",
+    "user": 12,
+    "content_type": 12,
+    "object_id": "70",
+    "object_repr": "Tensão Superficial",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 131,
+  "fields": {
+    "action_time": "2024-10-29T00:20:50.800Z",
+    "user": 12,
+    "content_type": 12,
+    "object_id": "23",
+    "object_repr": "Pressão Atmosférica e Hidrostática",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Nome\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 132,
+  "fields": {
+    "action_time": "2024-10-29T00:21:16.069Z",
+    "user": 12,
+    "content_type": 12,
+    "object_id": "71",
+    "object_repr": "Pressão",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 133,
+  "fields": {
+    "action_time": "2024-10-29T00:25:08.790Z",
+    "user": 12,
+    "content_type": 12,
+    "object_id": "72",
+    "object_repr": "Leis da Termodinâmica",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 134,
+  "fields": {
+    "action_time": "2024-10-29T00:25:58.305Z",
+    "user": 12,
+    "content_type": 12,
+    "object_id": "72",
+    "object_repr": "Leis da Termodinâmica",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 135,
+  "fields": {
+    "action_time": "2024-10-29T00:27:40.344Z",
+    "user": 12,
+    "content_type": 12,
+    "object_id": "73",
+    "object_repr": "Óptica geométrica",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 136,
+  "fields": {
+    "action_time": "2024-10-29T00:27:44.466Z",
+    "user": 12,
+    "content_type": 12,
+    "object_id": "73",
+    "object_repr": "Óptica Geométrica",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Nome\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 137,
+  "fields": {
+    "action_time": "2024-10-29T00:27:57.273Z",
+    "user": 12,
+    "content_type": 12,
+    "object_id": "74",
+    "object_repr": "Óptica Física",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 138,
+  "fields": {
+    "action_time": "2024-10-29T00:28:15.382Z",
+    "user": 12,
+    "content_type": 12,
+    "object_id": "75",
+    "object_repr": "Óptica Ondulatória",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 139,
+  "fields": {
+    "action_time": "2024-10-29T00:28:42.772Z",
+    "user": 12,
+    "content_type": 12,
+    "object_id": "76",
+    "object_repr": "Instrumentos Ópticos",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 140,
+  "fields": {
+    "action_time": "2024-10-29T00:29:10.649Z",
+    "user": 12,
+    "content_type": 12,
+    "object_id": "77",
+    "object_repr": "Fibras Ópticas e Comunicações",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 141,
+  "fields": {
+    "action_time": "2024-10-29T00:29:39.366Z",
+    "user": 12,
+    "content_type": 12,
+    "object_id": "78",
+    "object_repr": "Fenômenos Ópticos Atmosféricos",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 142,
+  "fields": {
+    "action_time": "2024-10-29T00:30:33.869Z",
+    "user": 12,
+    "content_type": 10,
+    "object_id": "23",
+    "object_repr": "Cargas Elétricas",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 143,
+  "fields": {
+    "action_time": "2024-10-29T00:30:57.120Z",
+    "user": 12,
+    "content_type": 10,
+    "object_id": "23",
+    "object_repr": "Cargas Elétricas",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 144,
+  "fields": {
+    "action_time": "2024-10-29T00:31:08.724Z",
+    "user": 12,
+    "content_type": 12,
+    "object_id": "79",
+    "object_repr": "Cargas Elétricas",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 145,
+  "fields": {
+    "action_time": "2024-10-29T00:31:18.399Z",
+    "user": 12,
+    "content_type": 12,
+    "object_id": "80",
+    "object_repr": "Lei de Coulomb",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 146,
+  "fields": {
+    "action_time": "2024-10-29T00:31:34.690Z",
+    "user": 12,
+    "content_type": 12,
+    "object_id": "81",
+    "object_repr": "Campo Elétrico",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 147,
+  "fields": {
+    "action_time": "2024-10-29T00:32:03.890Z",
+    "user": 12,
+    "content_type": 12,
+    "object_id": "82",
+    "object_repr": "Potencial elétrico",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 148,
+  "fields": {
+    "action_time": "2024-10-29T00:32:17.026Z",
+    "user": 12,
+    "content_type": 12,
+    "object_id": "83",
+    "object_repr": "Diferença de Potencial",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 149,
+  "fields": {
+    "action_time": "2024-10-29T00:32:37.271Z",
+    "user": 12,
+    "content_type": 12,
+    "object_id": "84",
+    "object_repr": "Capacitância e Capacitores",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 150,
+  "fields": {
+    "action_time": "2024-10-29T00:32:56.808Z",
+    "user": 12,
+    "content_type": 12,
+    "object_id": "85",
+    "object_repr": "Lei de Gauss",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 151,
+  "fields": {
+    "action_time": "2024-10-29T00:33:43.292Z",
+    "user": 12,
+    "content_type": 12,
+    "object_id": "86",
+    "object_repr": "Dielétricos e Polarização",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 152,
+  "fields": {
+    "action_time": "2024-10-29T00:34:21.996Z",
+    "user": 12,
+    "content_type": 12,
+    "object_id": "87",
+    "object_repr": "Corrente Elétrica",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 153,
+  "fields": {
+    "action_time": "2024-10-29T00:34:45.887Z",
+    "user": 12,
+    "content_type": 12,
+    "object_id": "88",
+    "object_repr": "Resistores e Resistência Elétrica",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 154,
+  "fields": {
+    "action_time": "2024-10-29T00:35:03.766Z",
+    "user": 12,
+    "content_type": 12,
+    "object_id": "89",
+    "object_repr": "Potência Elétrica",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 155,
+  "fields": {
+    "action_time": "2024-10-29T00:35:20.262Z",
+    "user": 12,
+    "content_type": 12,
+    "object_id": "90",
+    "object_repr": "Circuitos Elétricos",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 156,
+  "fields": {
+    "action_time": "2024-10-29T00:36:42.645Z",
+    "user": 12,
+    "content_type": 12,
+    "object_id": "91",
+    "object_repr": "Força Magnética",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 157,
+  "fields": {
+    "action_time": "2024-10-29T00:36:56.589Z",
+    "user": 12,
+    "content_type": 12,
+    "object_id": "92",
+    "object_repr": "Campo Magnético",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 158,
+  "fields": {
+    "action_time": "2024-10-29T00:37:20.398Z",
+    "user": 12,
+    "content_type": 12,
+    "object_id": "93",
+    "object_repr": "Lei de Biot-Savart",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 159,
+  "fields": {
+    "action_time": "2024-10-29T00:37:38.797Z",
+    "user": 12,
+    "content_type": 12,
+    "object_id": "94",
+    "object_repr": "Lei de Ampère",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 160,
+  "fields": {
+    "action_time": "2024-10-29T00:37:57.661Z",
+    "user": 12,
+    "content_type": 12,
+    "object_id": "95",
+    "object_repr": "Fluxo Magnético",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 161,
+  "fields": {
+    "action_time": "2024-10-29T00:39:02.110Z",
+    "user": 12,
+    "content_type": 12,
+    "object_id": "96",
+    "object_repr": "Indução Eletromagnética",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 162,
+  "fields": {
+    "action_time": "2024-10-29T00:40:08.353Z",
+    "user": 12,
+    "content_type": 12,
+    "object_id": "97",
+    "object_repr": "Equações de Maxwell",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 163,
+  "fields": {
+    "action_time": "2024-10-29T00:40:33.332Z",
+    "user": 12,
+    "content_type": 12,
+    "object_id": "98",
+    "object_repr": "Ondas Eletromagnéticas",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 164,
+  "fields": {
+    "action_time": "2024-10-29T00:40:54.461Z",
+    "user": 12,
+    "content_type": 12,
+    "object_id": "99",
+    "object_repr": "Aplicações do Eletromagnetismo",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 165,
+  "fields": {
+    "action_time": "2024-10-29T00:41:51.768Z",
+    "user": 12,
+    "content_type": 12,
+    "object_id": "100",
+    "object_repr": "Relatividade",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 166,
+  "fields": {
+    "action_time": "2024-10-29T00:42:05.197Z",
+    "user": 12,
+    "content_type": 12,
+    "object_id": "101",
+    "object_repr": "Mecânica Quântica",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 167,
+  "fields": {
+    "action_time": "2024-10-29T00:42:20.377Z",
+    "user": 12,
+    "content_type": 12,
+    "object_id": "102",
+    "object_repr": "Estrutura Atômica",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 168,
+  "fields": {
+    "action_time": "2024-10-29T00:42:36.531Z",
+    "user": 12,
+    "content_type": 12,
+    "object_id": "103",
+    "object_repr": "Cosmologia",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 169,
+  "fields": {
+    "action_time": "2024-10-29T00:43:00.919Z",
+    "user": 12,
+    "content_type": 12,
+    "object_id": "104",
+    "object_repr": "Gravitação Quântica",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 170,
+  "fields": {
+    "action_time": "2024-10-29T00:44:13.442Z",
+    "user": 12,
+    "content_type": 12,
+    "object_id": "105",
+    "object_repr": "Definição e Propriedades das Ondas",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 171,
+  "fields": {
+    "action_time": "2024-10-29T00:44:49.517Z",
+    "user": 12,
+    "content_type": 12,
+    "object_id": "106",
+    "object_repr": "Interferência e Superposição",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 172,
+  "fields": {
+    "action_time": "2024-10-29T00:45:29.700Z",
+    "user": 12,
+    "content_type": 12,
+    "object_id": "107",
+    "object_repr": "Refração",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 173,
+  "fields": {
+    "action_time": "2024-10-29T00:45:38.350Z",
+    "user": 12,
+    "content_type": 12,
+    "object_id": "108",
+    "object_repr": "Reflexão",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 174,
+  "fields": {
+    "action_time": "2024-10-29T00:45:48.073Z",
+    "user": 12,
+    "content_type": 12,
+    "object_id": "109",
+    "object_repr": "Difração",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 175,
+  "fields": {
+    "action_time": "2024-10-29T00:45:56.070Z",
+    "user": 12,
+    "content_type": 12,
+    "object_id": "110",
+    "object_repr": "Ressonância",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 176,
+  "fields": {
+    "action_time": "2024-10-29T00:46:14.211Z",
+    "user": 12,
+    "content_type": 12,
+    "object_id": "111",
+    "object_repr": "Ondas Sonoras",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 177,
+  "fields": {
+    "action_time": "2024-10-29T00:47:32.913Z",
+    "user": 12,
+    "content_type": 12,
+    "object_id": "111",
+    "object_repr": "Propriedades do Som",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Nome\", \"Conteudo\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 178,
+  "fields": {
+    "action_time": "2024-10-29T00:47:57.147Z",
+    "user": 12,
+    "content_type": 12,
+    "object_id": "112",
+    "object_repr": "Absorção",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 179,
+  "fields": {
+    "action_time": "2024-10-29T00:48:14.473Z",
+    "user": 12,
+    "content_type": 12,
+    "object_id": "113",
+    "object_repr": "Efeito Doppler",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 180,
+  "fields": {
+    "action_time": "2024-10-29T00:48:35.570Z",
+    "user": 12,
+    "content_type": 12,
+    "object_id": "114",
+    "object_repr": "Ultrassom e Infrassom",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 181,
+  "fields": {
+    "action_time": "2024-10-29T00:48:58.425Z",
+    "user": 12,
+    "content_type": 12,
+    "object_id": "115",
+    "object_repr": "Acústica Musical",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 182,
+  "fields": {
+    "action_time": "2024-10-29T00:49:08.862Z",
+    "user": 12,
+    "content_type": 12,
+    "object_id": "116",
+    "object_repr": "Acústica Ambiental",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 1,
+  "fields": {
+    "name": "Can add log entry",
+    "content_type": 1,
+    "codename": "add_logentry"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 2,
+  "fields": {
+    "name": "Can change log entry",
+    "content_type": 1,
+    "codename": "change_logentry"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 3,
+  "fields": {
+    "name": "Can delete log entry",
+    "content_type": 1,
+    "codename": "delete_logentry"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 4,
+  "fields": {
+    "name": "Can view log entry",
+    "content_type": 1,
+    "codename": "view_logentry"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 5,
+  "fields": {
+    "name": "Can add permission",
+    "content_type": 2,
+    "codename": "add_permission"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 6,
+  "fields": {
+    "name": "Can change permission",
+    "content_type": 2,
+    "codename": "change_permission"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 7,
+  "fields": {
+    "name": "Can delete permission",
+    "content_type": 2,
+    "codename": "delete_permission"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 8,
+  "fields": {
+    "name": "Can view permission",
+    "content_type": 2,
+    "codename": "view_permission"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 9,
+  "fields": {
+    "name": "Can add group",
+    "content_type": 3,
+    "codename": "add_group"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 10,
+  "fields": {
+    "name": "Can change group",
+    "content_type": 3,
+    "codename": "change_group"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 11,
+  "fields": {
+    "name": "Can delete group",
+    "content_type": 3,
+    "codename": "delete_group"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 12,
+  "fields": {
+    "name": "Can view group",
+    "content_type": 3,
+    "codename": "view_group"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 13,
+  "fields": {
+    "name": "Can add content type",
+    "content_type": 4,
+    "codename": "add_contenttype"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 14,
+  "fields": {
+    "name": "Can change content type",
+    "content_type": 4,
+    "codename": "change_contenttype"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 15,
+  "fields": {
+    "name": "Can delete content type",
+    "content_type": 4,
+    "codename": "delete_contenttype"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 16,
+  "fields": {
+    "name": "Can view content type",
+    "content_type": 4,
+    "codename": "view_contenttype"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 17,
+  "fields": {
+    "name": "Can add session",
+    "content_type": 5,
+    "codename": "add_session"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 18,
+  "fields": {
+    "name": "Can change session",
+    "content_type": 5,
+    "codename": "change_session"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 19,
+  "fields": {
+    "name": "Can delete session",
+    "content_type": 5,
+    "codename": "delete_session"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 20,
+  "fields": {
+    "name": "Can view session",
+    "content_type": 5,
+    "codename": "view_session"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 21,
+  "fields": {
+    "name": "Can add user",
+    "content_type": 6,
+    "codename": "add_usuario"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 22,
+  "fields": {
+    "name": "Can change user",
+    "content_type": 6,
+    "codename": "change_usuario"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 23,
+  "fields": {
+    "name": "Can delete user",
+    "content_type": 6,
+    "codename": "delete_usuario"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 24,
+  "fields": {
+    "name": "Can view user",
+    "content_type": 6,
+    "codename": "view_usuario"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 25,
+  "fields": {
+    "name": "Can add questao",
+    "content_type": 7,
+    "codename": "add_questao"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 26,
+  "fields": {
+    "name": "Can change questao",
+    "content_type": 7,
+    "codename": "change_questao"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 27,
+  "fields": {
+    "name": "Can delete questao",
+    "content_type": 7,
+    "codename": "delete_questao"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 28,
+  "fields": {
+    "name": "Can view questao",
+    "content_type": 7,
+    "codename": "view_questao"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 29,
+  "fields": {
+    "name": "Can add alternativa",
+    "content_type": 8,
+    "codename": "add_alternativa"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 30,
+  "fields": {
+    "name": "Can change alternativa",
+    "content_type": 8,
+    "codename": "change_alternativa"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 31,
+  "fields": {
+    "name": "Can delete alternativa",
+    "content_type": 8,
+    "codename": "delete_alternativa"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 32,
+  "fields": {
+    "name": "Can view alternativa",
+    "content_type": 8,
+    "codename": "view_alternativa"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 33,
+  "fields": {
+    "name": "Can add banca",
+    "content_type": 9,
+    "codename": "add_banca"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 34,
+  "fields": {
+    "name": "Can change banca",
+    "content_type": 9,
+    "codename": "change_banca"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 35,
+  "fields": {
+    "name": "Can delete banca",
+    "content_type": 9,
+    "codename": "delete_banca"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 36,
+  "fields": {
+    "name": "Can view banca",
+    "content_type": 9,
+    "codename": "view_banca"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 37,
+  "fields": {
+    "name": "Can add conteudo",
+    "content_type": 10,
+    "codename": "add_conteudo"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 38,
+  "fields": {
+    "name": "Can change conteudo",
+    "content_type": 10,
+    "codename": "change_conteudo"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 39,
+  "fields": {
+    "name": "Can delete conteudo",
+    "content_type": 10,
+    "codename": "delete_conteudo"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 40,
+  "fields": {
+    "name": "Can view conteudo",
+    "content_type": 10,
+    "codename": "view_conteudo"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 41,
+  "fields": {
+    "name": "Can add disciplina",
+    "content_type": 11,
+    "codename": "add_disciplina"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 42,
+  "fields": {
+    "name": "Can change disciplina",
+    "content_type": 11,
+    "codename": "change_disciplina"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 43,
+  "fields": {
+    "name": "Can delete disciplina",
+    "content_type": 11,
+    "codename": "delete_disciplina"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 44,
+  "fields": {
+    "name": "Can view disciplina",
+    "content_type": 11,
+    "codename": "view_disciplina"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 45,
+  "fields": {
+    "name": "Can add topico",
+    "content_type": 12,
+    "codename": "add_topico"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 46,
+  "fields": {
+    "name": "Can change topico",
+    "content_type": 12,
+    "codename": "change_topico"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 47,
+  "fields": {
+    "name": "Can delete topico",
+    "content_type": 12,
+    "codename": "delete_topico"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 48,
+  "fields": {
+    "name": "Can view topico",
+    "content_type": 12,
+    "codename": "view_topico"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 49,
+  "fields": {
+    "name": "Can add turma",
+    "content_type": 13,
+    "codename": "add_turma"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 50,
+  "fields": {
+    "name": "Can change turma",
+    "content_type": 13,
+    "codename": "change_turma"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 51,
+  "fields": {
+    "name": "Can delete turma",
+    "content_type": 13,
+    "codename": "delete_turma"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 52,
+  "fields": {
+    "name": "Can view turma",
+    "content_type": 13,
+    "codename": "view_turma"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 53,
+  "fields": {
+    "name": "Can add turma aluno",
+    "content_type": 14,
+    "codename": "add_turmaaluno"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 54,
+  "fields": {
+    "name": "Can change turma aluno",
+    "content_type": 14,
+    "codename": "change_turmaaluno"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 55,
+  "fields": {
+    "name": "Can delete turma aluno",
+    "content_type": 14,
+    "codename": "delete_turmaaluno"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 56,
+  "fields": {
+    "name": "Can view turma aluno",
+    "content_type": 14,
+    "codename": "view_turmaaluno"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 57,
+  "fields": {
+    "name": "Can add arquivo",
+    "content_type": 15,
+    "codename": "add_arquivo"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 58,
+  "fields": {
+    "name": "Can change arquivo",
+    "content_type": 15,
+    "codename": "change_arquivo"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 59,
+  "fields": {
+    "name": "Can delete arquivo",
+    "content_type": 15,
+    "codename": "delete_arquivo"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 60,
+  "fields": {
+    "name": "Can view arquivo",
+    "content_type": 15,
+    "codename": "view_arquivo"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 61,
+  "fields": {
+    "name": "Can add resposta aluno",
+    "content_type": 16,
+    "codename": "add_respostaaluno"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 62,
+  "fields": {
+    "name": "Can change resposta aluno",
+    "content_type": 16,
+    "codename": "change_respostaaluno"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 63,
+  "fields": {
+    "name": "Can delete resposta aluno",
+    "content_type": 16,
+    "codename": "delete_respostaaluno"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 64,
+  "fields": {
+    "name": "Can view resposta aluno",
+    "content_type": 16,
+    "codename": "view_respostaaluno"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 65,
+  "fields": {
+    "name": "Can add relatorio questao",
+    "content_type": 17,
+    "codename": "add_relatorioquestao"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 66,
+  "fields": {
+    "name": "Can change relatorio questao",
+    "content_type": 17,
+    "codename": "change_relatorioquestao"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 67,
+  "fields": {
+    "name": "Can delete relatorio questao",
+    "content_type": 17,
+    "codename": "delete_relatorioquestao"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 68,
+  "fields": {
+    "name": "Can view relatorio questao",
+    "content_type": 17,
+    "codename": "view_relatorioquestao"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 1,
+  "fields": {
+    "app_label": "admin",
+    "model": "logentry"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 2,
+  "fields": {
+    "app_label": "auth",
+    "model": "permission"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 3,
+  "fields": {
+    "app_label": "auth",
+    "model": "group"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 4,
+  "fields": {
+    "app_label": "contenttypes",
+    "model": "contenttype"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 5,
+  "fields": {
+    "app_label": "sessions",
+    "model": "session"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 6,
+  "fields": {
+    "app_label": "srciencia_auth",
+    "model": "usuario"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 7,
+  "fields": {
+    "app_label": "srciencia_core",
+    "model": "questao"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 8,
+  "fields": {
+    "app_label": "srciencia_core",
+    "model": "alternativa"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 9,
+  "fields": {
+    "app_label": "srciencia_core",
+    "model": "banca"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 10,
+  "fields": {
+    "app_label": "srciencia_core",
+    "model": "conteudo"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 11,
+  "fields": {
+    "app_label": "srciencia_core",
+    "model": "disciplina"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 12,
+  "fields": {
+    "app_label": "srciencia_core",
+    "model": "topico"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 13,
+  "fields": {
+    "app_label": "srciencia_core",
+    "model": "turma"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 14,
+  "fields": {
+    "app_label": "srciencia_core",
+    "model": "turmaaluno"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 15,
+  "fields": {
+    "app_label": "srciencia_core",
+    "model": "arquivo"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 16,
+  "fields": {
+    "app_label": "srciencia_core",
+    "model": "respostaaluno"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 17,
+  "fields": {
+    "app_label": "srciencia_core",
+    "model": "relatorioquestao"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "72o7obffqo3fajlh1g9xc8jgz614u38r",
+  "fields": {
+    "session_data": ".eJyFjsGKwkAQRP9lzhJ6NG0STyJ4XPa0J5HQ09MxwWQG0pPT4r87ioJ72mu9qkf9mpaW1LeLytwO3uyMBbP6DB3xVcKD6MyDBB7oSYsX0OI40TB-zz-5HWiSr-hlPLxWf1Q9aZ896BgEwNcNd1L7brOtvJSuQlyzcwi2xAagtEDS-K2t3VqoAizrBruNt12Wcgwp30gLjVk4UeplUR-VQorKURMh7i-PXwXH6T1Qszv9Xz7f7q2aXxc:1tWTj8:BzggwQWpd0vM7XgSeZOQgS8bkqH97r-1kfQOiOHe4LA",
+    "expire_date": "2025-01-25T05:08:02.258Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "aiurkrifjbnet5qtzuawsmkpyez2mqfb",
+  "fields": {
+    "session_data": "e30:1t5YrJ:7fjUdQy1PUQ2-uDOYt9i94wTNvK_yXUSuLUQrfNJz7Q",
+    "expire_date": "2024-11-11T23:09:13.115Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "h1e81dbktmtbmus63zien2oneorzj608",
+  "fields": {
+    "session_data": ".eJxVjDsOwjAQBe_iGkV2Nv5RIlEiKupo17soFomRYlIh7k5AKaB982aeqsflMfRLlbnPrPbKgNr9joTpJuVD6pyylJTxS5sN1OY4YR7P82V9F5zkdGcZD5v1lxqwDmsHjO7AXm1gYg4pBAZKsQVvyWpHnWBkCdoTcOyicwCtN-jQGRuAtFOvN77_O4c:1tGQHw:VjukDVlEG9NSotlrQ_2g6g76gjvNiSe5mp9eJZ4g1A4",
+    "expire_date": "2024-12-11T22:13:36.127Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "i5gsrzgylx67vwp2dkx8v1sg56c6j425",
+  "fields": {
+    "session_data": "e30:1t5Yt2:9fYmq3feVylZOg08gk8j3EO5yKiYsoqfbm9RUIcLaWU",
+    "expire_date": "2024-11-11T23:11:00.804Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "lezs0811ocwsvxlvhv9uhmk6uon1ptnj",
+  "fields": {
+    "session_data": ".eJxVjLEOwjAMBf8lM6paRzYNIxIjYmKOXMdRItogNXRC_DsFdYD17r17Gs_LI_ml6uxzMAcDZvfLBpablo-os2Qtkvlrm03U5jRxHi_zdV0XnvR8Dzoet9dfKnFNawddlNg52pMgArbAQEiulx6gpRi57wIysirEoJYsIHGrK7M0OB7M6w2QATwS:1sw8mP:zkbatXDN9Vw7JAP6J0pz1_JXHfGNLzUqMkmkPG8D_tc",
+    "expire_date": "2024-10-16T23:29:13.383Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "lqb9sorfc98n2xasocvrq67vopis26ni",
+  "fields": {
+    "session_data": "e30:1t4Nu9:Ms_0GR_UFUfDXLVcow0lN_ybZCvq_WpOHYehbB4p23M",
+    "expire_date": "2024-11-08T17:15:17.631Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "oyitin0ybghutge683awpnhehbt5qi0g",
+  "fields": {
+    "session_data": ".eJxVjbsOwjAQBP_FNYpyjp-USJSIijo6n8-KReJIMakQ_w5BKaDd2dl9ih7Xx9CvlZc-R3EURhx-s4B057KBulDmQhm_tNlBbc4T5vG63D7tghNf5sjjabf-pgasw3ZgVURJ0EqdPMTWJwbvNHtSXWBlCUEbBwmlBpQmsHEtmiST9YRWd-L1Bp0OO-U:1t5Tj6:9QjQMWl6Syqj96RPmQRMUT3jLrPCAmUih5qjg6Di-o0",
+    "expire_date": "2024-11-11T17:40:24.154Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "qp0p7c89yhg8w5xot1smok3t69du4hd7",
+  "fields": {
+    "session_data": ".eJxVjL0OwiAURt-F2TSF9iI4mjgaJ2dyfyAltpgUOxnf3Wo66Pqd75ynCrg8hrDUOIcs6qC0UbvfkZBvsXxInTnHwhm_tNlAbU4T5vEyX9d3wSme7xLH42b9pQasw9rhxOARjO6SkEkaQJw4AB8Jk7i2NR27RM5Rbyx5LS3sjQXfC3dsqVevN-BGPHc:1t5ZLp:LXzNjGaYAdd4pNaI3l02IRJsKbeLD3JWgvDObzPkZb8",
+    "expire_date": "2024-11-11T23:40:45.938Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "zbn4kahyu6ixkhznncl1iyyj5ugakwph",
+  "fields": {
+    "session_data": ".eJxVjj0PwiAURf8Ls2mAfiBOxsTRODk3r4-HJVIw0E7G_y41HXS4yz3vndwX62GZx37JlHpn2IEJxXa_5QD4oLCSnNBRQAdfWm0gV-cJnL-mW7kOMNElGvKn7etPNUIei0fXgzR2L6Xhe8UFNYPWdYNSlghNVgF2qpWSt9AJww0flCYNtm4AsZGiSDGGucyYF_BF-EzRUs4xJbBA_nhfB1UYJ_b-AMqPS1A:1tSmW8:aX6IhPboA7dRG9J77M2TelWECT9NAWQWV7hgQJWCLrg",
+    "expire_date": "2025-01-15T00:23:20.943Z"
+  }
+},
+{
+  "model": "srciencia_auth.usuario",
+  "pk": 3,
+  "fields": {
+    "password": "pbkdf2_sha256$600000$RSJOsuix5ma23opwkh9gxl$dadv8hIxUm8K1or5Vbwm3dWO9CjajId2juR7nQRUuHE=",
+    "last_login": "2024-10-28T17:40:08.885Z",
+    "is_superuser": false,
+    "username": "lucas-albuq",
+    "first_name": "",
+    "last_name": "",
+    "is_staff": true,
+    "is_active": true,
+    "date_joined": "2024-10-25T17:15:17Z",
+    "nome": "Lucas Francisco de Albuquerque Barbosa",
+    "perfil": 1,
+    "email": "luuinhasalbuquerque@gmail.com",
+    "foto": null,
+    "data_cadastro": "2024-10-25T17:15:17.615Z",
+    "data_alteracao": "2024-10-28T17:39:54.947Z",
+    "situacao": "Regular",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "srciencia_auth.usuario",
+  "pk": 4,
+  "fields": {
+    "password": "pbkdf2_sha256$600000$OdlgEpt0ot2PjDTtMGWrHG$59/y6Nlam898CgEsZxzq9+TJzzxLHy5pZmBKvvwuWqQ=",
+    "last_login": "2024-10-25T20:41:52.326Z",
+    "is_superuser": false,
+    "username": "sr-ciencia",
+    "first_name": "",
+    "last_name": "",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2024-10-25T20:36:14.097Z",
+    "nome": "Senhor Ciência",
+    "perfil": 2,
+    "email": "srciencia.ifrn@gmail.com",
+    "foto": null,
+    "data_cadastro": "2024-10-25T20:36:14.618Z",
+    "data_alteracao": "2024-10-25T20:36:14.618Z",
+    "situacao": "Regular",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "srciencia_auth.usuario",
+  "pk": 5,
+  "fields": {
+    "password": "pbkdf2_sha256$600000$J1MasfHB3Ay50ZLz7MmBGa$fiA5WLTErzW/wa3DbffPNlBZPVTP4JtggcK8lTplO/0=",
+    "last_login": "2024-10-25T20:42:48.042Z",
+    "is_superuser": false,
+    "username": "aaa",
+    "first_name": "",
+    "last_name": "",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2024-10-25T20:42:35.420Z",
+    "nome": "AAA",
+    "perfil": 2,
+    "email": "aa@teste.com",
+    "foto": null,
+    "data_cadastro": "2024-10-25T20:42:36.057Z",
+    "data_alteracao": "2024-10-25T20:42:36.057Z",
+    "situacao": "Regular",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "srciencia_auth.usuario",
+  "pk": 6,
+  "fields": {
+    "password": "pbkdf2_sha256$600000$RSJOsuix5ma23opwkh9gxl$dadv8hIxUm8K1or5Vbwm3dWO9CjajId2juR7nQRUuHE=",
+    "last_login": "2024-10-28T17:40:24.144Z",
+    "is_superuser": true,
+    "username": "Albuquerque",
+    "first_name": "Lucas",
+    "last_name": "Albuquerque",
+    "is_staff": true,
+    "is_active": true,
+    "date_joined": "2024-10-28T17:36:46Z",
+    "nome": "Lucas Albuquerque",
+    "perfil": 1,
+    "email": "albuquerque.lucas@escolar.ifrn.edu.br",
+    "foto": null,
+    "data_cadastro": "2024-10-28T17:36:46.769Z",
+    "data_alteracao": "2024-10-28T17:39:50.515Z",
+    "situacao": "Regular",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "srciencia_auth.usuario",
+  "pk": 7,
+  "fields": {
+    "password": "pbkdf2_sha256$600000$fOjA05TrAe404W4biKslSQ$sVwWcakzSr0z082dZ9rsppS/HSYIzDUSSTVmgoOTyq8=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "Matheus_Costa",
+    "first_name": "",
+    "last_name": "",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2024-10-28T23:09:12.731Z",
+    "nome": "Matheus dos Santos Costa",
+    "perfil": 2,
+    "email": "matheus.santos1@escolar.ifrn.edu.br",
+    "foto": null,
+    "data_cadastro": "2024-10-28T23:09:13.099Z",
+    "data_alteracao": "2024-10-28T23:09:13.099Z",
+    "situacao": "Regular",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "srciencia_auth.usuario",
+  "pk": 8,
+  "fields": {
+    "password": "pbkdf2_sha256$600000$1iyRLBasBEsPBLHD7oJDXK$YZXwJRydBPC2My8mPuH72/3FEvJbGKXLPFVIYDu6Bko=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "Matheus_Costa_Santos",
+    "first_name": "",
+    "last_name": "",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2024-10-28T23:11:00.448Z",
+    "nome": "Matheus dos Santos Costa",
+    "perfil": 2,
+    "email": "teste77@gmail.com",
+    "foto": null,
+    "data_cadastro": "2024-10-28T23:11:00.792Z",
+    "data_alteracao": "2024-10-28T23:11:00.792Z",
+    "situacao": "Regular",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "srciencia_auth.usuario",
+  "pk": 9,
+  "fields": {
+    "password": "pbkdf2_sha256$600000$VLk68bh399UX4MTSEWRSGU$oc+fGRXPyyogiTuCd+3q0nxFKFy8RjBBMI5GIj5SPAM=",
+    "last_login": "2024-10-28T23:19:36.866Z",
+    "is_superuser": false,
+    "username": "Matheus_Santos_Costa",
+    "first_name": "",
+    "last_name": "",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2024-10-28T23:18:07.631Z",
+    "nome": "Matheus dos Santos Costa",
+    "perfil": 2,
+    "email": "teste11@gmail.com",
+    "foto": null,
+    "data_cadastro": "2024-10-28T23:18:07.872Z",
+    "data_alteracao": "2024-10-28T23:18:07.872Z",
+    "situacao": "Regular",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "srciencia_auth.usuario",
+  "pk": 10,
+  "fields": {
+    "password": "pbkdf2_sha256$600000$CNLITdhFD1u3xX5eS3PUQW$86oMbfTJfBDXah+7E+wQXgzjZtvo8vMptkCrVOXM7y8=",
+    "last_login": "2025-01-11T05:08:02.251Z",
+    "is_superuser": false,
+    "username": "Matheus",
+    "first_name": "",
+    "last_name": "",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2024-10-28T23:28:07.383Z",
+    "nome": "Matheus dos Santos Costa",
+    "perfil": 2,
+    "email": "matheusdosantoscosta55@gmail.com",
+    "foto": null,
+    "data_cadastro": "2024-10-28T23:28:07.634Z",
+    "data_alteracao": "2024-10-28T23:28:07.634Z",
+    "situacao": "Regular",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "srciencia_auth.usuario",
+  "pk": 11,
+  "fields": {
+    "password": "pbkdf2_sha256$600000$iIKQvgcfWjTpFeFDEHJtfX$VVPaHlxYJMLp28e9Qo/VJNrnrigyIp8WlwEoXxi948w=",
+    "last_login": "2024-10-28T23:35:01.976Z",
+    "is_superuser": false,
+    "username": "Matheus_admin",
+    "first_name": "",
+    "last_name": "",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2024-10-28T23:34:39.884Z",
+    "nome": "Matheus dos Santos Costa",
+    "perfil": 2,
+    "email": "admin@gmail.com",
+    "foto": null,
+    "data_cadastro": "2024-10-28T23:34:40.118Z",
+    "data_alteracao": "2024-10-28T23:34:40.118Z",
+    "situacao": "Regular",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "srciencia_auth.usuario",
+  "pk": 12,
+  "fields": {
+    "password": "pbkdf2_sha256$600000$N6W5uBt8LEmE8W9XfeJP7A$AYE6PNDy3wLfG72I/2Ok9xvfV2sAVj1/5shIkkyer7A=",
+    "last_login": "2025-01-10T22:51:24.468Z",
+    "is_superuser": true,
+    "username": "admin_matheus",
+    "first_name": "",
+    "last_name": "",
+    "is_staff": true,
+    "is_active": true,
+    "date_joined": "2024-10-28T23:39:03.372Z",
+    "nome": "",
+    "perfil": 2,
+    "email": "admin_matheus@gmail.com",
+    "foto": null,
+    "data_cadastro": "2024-10-28T23:39:03.595Z",
+    "data_alteracao": "2024-10-28T23:39:03.595Z",
+    "situacao": "",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "srciencia_auth.usuario",
+  "pk": 13,
+  "fields": {
+    "password": "pbkdf2_sha256$870000$rK8IwcJQhnJxkE06iWNYep$jH69MMg2P+YDm/fOFyU3S6b3gBUjm/RqkolgXosQRyg=",
+    "last_login": "2024-11-27T22:13:36.109Z",
+    "is_superuser": false,
+    "username": "Teste_senha",
+    "first_name": "",
+    "last_name": "",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2024-11-27T22:13:15.803Z",
+    "nome": "Teste_senha",
+    "perfil": 2,
+    "email": "testesenha@gmail.com",
+    "foto": null,
+    "data_cadastro": "2024-11-27T22:13:16.165Z",
+    "data_alteracao": "2024-11-27T22:13:16.165Z",
+    "situacao": "Regular",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "srciencia_auth.usuario",
+  "pk": 14,
+  "fields": {
+    "password": "pbkdf2_sha256$600000$9782rLcZoLvEdHu9Vw8wnn$HwJvVs789bHIwR7BDorl424JA0otKZ5NTOFHF8fQmX0=",
+    "last_login": "2024-12-31T16:36:57.179Z",
+    "is_superuser": true,
+    "username": "matheus_admin",
+    "first_name": "",
+    "last_name": "",
+    "is_staff": true,
+    "is_active": true,
+    "date_joined": "2024-12-30T16:56:31.415Z",
+    "nome": "",
+    "perfil": 2,
+    "email": "matheus@gmail.com",
+    "foto": null,
+    "data_cadastro": "2024-12-30T16:56:31.795Z",
+    "data_alteracao": "2024-12-30T16:56:31.795Z",
+    "situacao": "",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "srciencia_auth.usuario",
+  "pk": 15,
+  "fields": {
+    "password": "pbkdf2_sha256$600000$SGUyl3cffkg7J6kk6F75Th$qQdlbPJBdiseHqeqEZDPkNoSCixAWKHILXIDkHo9ofQ=",
+    "last_login": "2025-01-08T04:18:21.517Z",
+    "is_superuser": false,
+    "username": "Matheus_professor",
+    "first_name": "Matheus",
+    "last_name": "dos Santos Costa",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2024-12-31T21:56:21.591Z",
+    "nome": "Matheus dos Santos Costa",
+    "perfil": 3,
+    "email": "matheusifrn17@gmail.com",
+    "foto": null,
+    "data_cadastro": "2024-12-31T21:56:21.827Z",
+    "data_alteracao": "2024-12-31T21:56:21.827Z",
+    "situacao": "Regular",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "srciencia_auth.usuario",
+  "pk": 16,
+  "fields": {
+    "password": "pbkdf2_sha256$600000$NDU7KYu6Bg6lWS5qifr7Rf$4KqRsop1quZrxVRlg4K0khCdIBEE53+Gu9+lAL1xvgU=",
+    "last_login": "2025-01-09T20:54:52.555Z",
+    "is_superuser": false,
+    "username": "professor_teste",
+    "first_name": "Professor",
+    "last_name": "Roberto",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2024-12-31T22:06:27.454Z",
+    "nome": "Professor Roberto",
+    "perfil": 3,
+    "email": "professorroberto@gmail.com",
+    "foto": null,
+    "data_cadastro": "2024-12-31T22:06:27.691Z",
+    "data_alteracao": "2024-12-31T22:06:27.691Z",
+    "situacao": "Regular",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "srciencia_auth.usuario",
+  "pk": 17,
+  "fields": {
+    "password": "pbkdf2_sha256$600000$bQHSfCDvZYFV2eevc5DTP8$op0zJ0aiP8hyYvDeV66ZqjTf5+K/VNRHg1t5bfVlahI=",
+    "last_login": "2025-01-04T00:01:27.856Z",
+    "is_superuser": false,
+    "username": "Rafael",
+    "first_name": "Professor",
+    "last_name": "Rafael",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2024-12-31T22:09:32.833Z",
+    "nome": "Professor Rafael",
+    "perfil": 3,
+    "email": "professorrafael@gmail.com",
+    "foto": null,
+    "data_cadastro": "2024-12-31T22:09:33.068Z",
+    "data_alteracao": "2024-12-31T22:09:33.068Z",
+    "situacao": "Regular",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "srciencia_auth.usuario",
+  "pk": 18,
+  "fields": {
+    "password": "pbkdf2_sha256$600000$G5wgbnUxDrHzD4c1xKXO0E$bBEx4rohuXHXmK7twRIZ+t4P7uHPNPuROSHgYJz0o/c=",
+    "last_login": "2025-01-04T00:02:13.218Z",
+    "is_superuser": false,
+    "username": "Luquinhas",
+    "first_name": "Lucas",
+    "last_name": "Vinícius dos Santos Costa",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2025-01-03T19:32:25.291Z",
+    "nome": "Lucas Vinícius dos Santos Costa",
+    "perfil": 2,
+    "email": "tlucascosta99@gmail.com",
+    "foto": null,
+    "data_cadastro": "2025-01-03T19:32:25.680Z",
+    "data_alteracao": "2025-01-03T19:32:25.680Z",
+    "situacao": "Regular",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "srciencia_core.banca",
+  "pk": 1,
+  "fields": {
+    "nome": "ENEM"
+  }
+},
+{
+  "model": "srciencia_core.banca",
+  "pk": 2,
+  "fields": {
+    "nome": "FUVEST"
+  }
+},
+{
+  "model": "srciencia_core.banca",
+  "pk": 3,
+  "fields": {
+    "nome": "UNESP"
+  }
+},
+{
+  "model": "srciencia_core.banca",
+  "pk": 5,
+  "fields": {
+    "nome": "UFRN"
+  }
+},
+{
+  "model": "srciencia_core.disciplina",
+  "pk": 1,
+  "fields": {
+    "nome": "Física"
+  }
+},
+{
+  "model": "srciencia_core.disciplina",
+  "pk": 2,
+  "fields": {
+    "nome": "Química"
+  }
+},
+{
+  "model": "srciencia_core.disciplina",
+  "pk": 3,
+  "fields": {
+    "nome": "Biologia"
+  }
+},
+{
+  "model": "srciencia_core.conteudo",
+  "pk": 1,
+  "fields": {
+    "nome": "Cinemática",
+    "disciplina": 1
+  }
+},
+{
+  "model": "srciencia_core.conteudo",
+  "pk": 2,
+  "fields": {
+    "nome": "Dinâmica",
+    "disciplina": 1
+  }
+},
+{
+  "model": "srciencia_core.conteudo",
+  "pk": 4,
+  "fields": {
+    "nome": "Gravitação Universal",
+    "disciplina": 1
+  }
+},
+{
+  "model": "srciencia_core.conteudo",
+  "pk": 6,
+  "fields": {
+    "nome": "Calorimetria",
+    "disciplina": 1
+  }
+},
+{
+  "model": "srciencia_core.conteudo",
+  "pk": 7,
+  "fields": {
+    "nome": "Termodinâmica",
+    "disciplina": 1
+  }
+},
+{
+  "model": "srciencia_core.conteudo",
+  "pk": 8,
+  "fields": {
+    "nome": "Estudo dos Gases",
+    "disciplina": 1
+  }
+},
+{
+  "model": "srciencia_core.conteudo",
+  "pk": 9,
+  "fields": {
+    "nome": "Dilatação",
+    "disciplina": 1
+  }
+},
+{
+  "model": "srciencia_core.conteudo",
+  "pk": 12,
+  "fields": {
+    "nome": "Hidrodinâmica",
+    "disciplina": 1
+  }
+},
+{
+  "model": "srciencia_core.conteudo",
+  "pk": 13,
+  "fields": {
+    "nome": "Estática",
+    "disciplina": 1
+  }
+},
+{
+  "model": "srciencia_core.conteudo",
+  "pk": 14,
+  "fields": {
+    "nome": "Hidroestática",
+    "disciplina": 1
+  }
+},
+{
+  "model": "srciencia_core.conteudo",
+  "pk": 15,
+  "fields": {
+    "nome": "Óptica",
+    "disciplina": 1
+  }
+},
+{
+  "model": "srciencia_core.conteudo",
+  "pk": 16,
+  "fields": {
+    "nome": "Eletroestática",
+    "disciplina": 1
+  }
+},
+{
+  "model": "srciencia_core.conteudo",
+  "pk": 17,
+  "fields": {
+    "nome": "Eletrodinâmica",
+    "disciplina": 1
+  }
+},
+{
+  "model": "srciencia_core.conteudo",
+  "pk": 18,
+  "fields": {
+    "nome": "Magnetismo",
+    "disciplina": 1
+  }
+},
+{
+  "model": "srciencia_core.conteudo",
+  "pk": 19,
+  "fields": {
+    "nome": "Eletromagnetismo",
+    "disciplina": 1
+  }
+},
+{
+  "model": "srciencia_core.conteudo",
+  "pk": 20,
+  "fields": {
+    "nome": "Física Moderna",
+    "disciplina": 1
+  }
+},
+{
+  "model": "srciencia_core.conteudo",
+  "pk": 21,
+  "fields": {
+    "nome": "Ondulatória",
+    "disciplina": 1
+  }
+},
+{
+  "model": "srciencia_core.conteudo",
+  "pk": 22,
+  "fields": {
+    "nome": "Acústica",
+    "disciplina": 1
+  }
+},
+{
+  "model": "srciencia_core.conteudo",
+  "pk": 27,
+  "fields": {
+    "nome": "Citoplasma",
+    "disciplina": 3
+  }
+},
+{
+  "model": "srciencia_core.conteudo",
+  "pk": 28,
+  "fields": {
+    "nome": "testeeee",
+    "disciplina": 2
+  }
+},
+{
+  "model": "srciencia_core.conteudo",
+  "pk": 29,
+  "fields": {
+    "nome": "alooo",
+    "disciplina": 3
+  }
+},
+{
+  "model": "srciencia_core.topico",
+  "pk": 1,
+  "fields": {
+    "nome": "Ponto Material e Corpo Extenso",
+    "conteudo": 1
+  }
+},
+{
+  "model": "srciencia_core.topico",
+  "pk": 3,
+  "fields": {
+    "nome": "Movimento Uniformemente Variado",
+    "conteudo": 1
+  }
+},
+{
+  "model": "srciencia_core.topico",
+  "pk": 4,
+  "fields": {
+    "nome": "Lançamento Vertical",
+    "conteudo": 1
+  }
+},
+{
+  "model": "srciencia_core.topico",
+  "pk": 5,
+  "fields": {
+    "nome": "Vetores",
+    "conteudo": 1
+  }
+},
+{
+  "model": "srciencia_core.topico",
+  "pk": 6,
+  "fields": {
+    "nome": "Movimento Circular Uniformemente Variado",
+    "conteudo": 1
+  }
+},
+{
+  "model": "srciencia_core.topico",
+  "pk": 7,
+  "fields": {
+    "nome": "Movimento Circular Uniforme",
+    "conteudo": 1
+  }
+},
+{
+  "model": "srciencia_core.topico",
+  "pk": 8,
+  "fields": {
+    "nome": "Leis de Newton",
+    "conteudo": 2
+  }
+},
+{
+  "model": "srciencia_core.topico",
+  "pk": 9,
+  "fields": {
+    "nome": "Força Peso",
+    "conteudo": 2
+  }
+},
+{
+  "model": "srciencia_core.topico",
+  "pk": 10,
+  "fields": {
+    "nome": "Força de Atrito",
+    "conteudo": 2
+  }
+},
+{
+  "model": "srciencia_core.topico",
+  "pk": 11,
+  "fields": {
+    "nome": "Força Elástica",
+    "conteudo": 2
+  }
+},
+{
+  "model": "srciencia_core.topico",
+  "pk": 12,
+  "fields": {
+    "nome": "Força Centrípeta",
+    "conteudo": 2
+  }
+},
+{
+  "model": "srciencia_core.topico",
+  "pk": 13,
+  "fields": {
+    "nome": "Plano Inclinado",
+    "conteudo": 2
+  }
+},
+{
+  "model": "srciencia_core.topico",
+  "pk": 14,
+  "fields": {
+    "nome": "Sistemas",
+    "conteudo": 2
+  }
+},
+{
+  "model": "srciencia_core.topico",
+  "pk": 16,
+  "fields": {
+    "nome": "Potência",
+    "conteudo": 2
+  }
+},
+{
+  "model": "srciencia_core.topico",
+  "pk": 18,
+  "fields": {
+    "nome": "Impulso",
+    "conteudo": 2
+  }
+},
+{
+  "model": "srciencia_core.topico",
+  "pk": 19,
+  "fields": {
+    "nome": "Quantidade de Movimento",
+    "conteudo": 2
+  }
+},
+{
+  "model": "srciencia_core.topico",
+  "pk": 20,
+  "fields": {
+    "nome": "Condições de Equilíbrio",
+    "conteudo": 13
+  }
+},
+{
+  "model": "srciencia_core.topico",
+  "pk": 21,
+  "fields": {
+    "nome": "Estática do Ponto",
+    "conteudo": 13
+  }
+},
+{
+  "model": "srciencia_core.topico",
+  "pk": 22,
+  "fields": {
+    "nome": "Estática do Corpo Rígido",
+    "conteudo": 13
+  }
+},
+{
+  "model": "srciencia_core.topico",
+  "pk": 23,
+  "fields": {
+    "nome": "Pressão Atmosférica e Hidrostática",
+    "conteudo": 14
+  }
+},
+{
+  "model": "srciencia_core.topico",
+  "pk": 24,
+  "fields": {
+    "nome": "Teorema de Stevin",
+    "conteudo": 14
+  }
+},
+{
+  "model": "srciencia_core.topico",
+  "pk": 25,
+  "fields": {
+    "nome": "Teorema de Pascal",
+    "conteudo": 14
+  }
+},
+{
+  "model": "srciencia_core.topico",
+  "pk": 26,
+  "fields": {
+    "nome": "Teorema de Arquimedes",
+    "conteudo": 14
+  }
+},
+{
+  "model": "srciencia_core.topico",
+  "pk": 27,
+  "fields": {
+    "nome": "Força Gravitacional",
+    "conteudo": 4
+  }
+},
+{
+  "model": "srciencia_core.topico",
+  "pk": 29,
+  "fields": {
+    "nome": "Unidades Astronômicas",
+    "conteudo": 4
+  }
+},
+{
+  "model": "srciencia_core.topico",
+  "pk": 30,
+  "fields": {
+    "nome": "Temperatura",
+    "conteudo": 7
+  }
+},
+{
+  "model": "srciencia_core.topico",
+  "pk": 31,
+  "fields": {
+    "nome": "Escalas Termométricas",
+    "conteudo": 7
+  }
+},
+{
+  "model": "srciencia_core.topico",
+  "pk": 32,
+  "fields": {
+    "nome": "Conversões",
+    "conteudo": 7
+  }
+},
+{
+  "model": "srciencia_core.topico",
+  "pk": 33,
+  "fields": {
+    "nome": "Calor",
+    "conteudo": 6
+  }
+},
+{
+  "model": "srciencia_core.topico",
+  "pk": 34,
+  "fields": {
+    "nome": "Trocas de Calor",
+    "conteudo": 6
+  }
+},
+{
+  "model": "srciencia_core.topico",
+  "pk": 35,
+  "fields": {
+    "nome": "Capacidade Térmica",
+    "conteudo": 6
+  }
+},
+{
+  "model": "srciencia_core.topico",
+  "pk": 36,
+  "fields": {
+    "nome": "Propagação do Calor",
+    "conteudo": 6
+  }
+},
+{
+  "model": "srciencia_core.topico",
+  "pk": 37,
+  "fields": {
+    "nome": "Energia Interna",
+    "conteudo": 7
+  }
+},
+{
+  "model": "srciencia_core.topico",
+  "pk": 38,
+  "fields": {
+    "nome": "Trabalho",
+    "conteudo": 7
+  }
+},
+{
+  "model": "srciencia_core.topico",
+  "pk": 39,
+  "fields": {
+    "nome": "1ª Lei da Termodinâmica",
+    "conteudo": 7
+  }
+},
+{
+  "model": "srciencia_core.topico",
+  "pk": 40,
+  "fields": {
+    "nome": "2ª Lei da Termodinãmica",
+    "conteudo": 7
+  }
+},
+{
+  "model": "srciencia_core.topico",
+  "pk": 41,
+  "fields": {
+    "nome": "Ciclo de Carnot",
+    "conteudo": 7
+  }
+},
+{
+  "model": "srciencia_core.topico",
+  "pk": 42,
+  "fields": {
+    "nome": "Gases",
+    "conteudo": 8
+  }
+},
+{
+  "model": "srciencia_core.topico",
+  "pk": 43,
+  "fields": {
+    "nome": "Transformação Isotérmica",
+    "conteudo": 8
+  }
+},
+{
+  "model": "srciencia_core.topico",
+  "pk": 44,
+  "fields": {
+    "nome": "Transformação Isobárica",
+    "conteudo": 8
+  }
+},
+{
+  "model": "srciencia_core.topico",
+  "pk": 45,
+  "fields": {
+    "nome": "Transformação Isométrica",
+    "conteudo": 8
+  }
+},
+{
+  "model": "srciencia_core.topico",
+  "pk": 46,
+  "fields": {
+    "nome": "Equação de Clapeyron",
+    "conteudo": 8
+  }
+},
+{
+  "model": "srciencia_core.topico",
+  "pk": 47,
+  "fields": {
+    "nome": "Lei Geral dos Gases",
+    "conteudo": 8
+  }
+},
+{
+  "model": "srciencia_core.topico",
+  "pk": 48,
+  "fields": {
+    "nome": "Linear",
+    "conteudo": 9
+  }
+},
+{
+  "model": "srciencia_core.topico",
+  "pk": 49,
+  "fields": {
+    "nome": "Superficial",
+    "conteudo": 9
+  }
+},
+{
+  "model": "srciencia_core.topico",
+  "pk": 50,
+  "fields": {
+    "nome": "Volumétrica",
+    "conteudo": 9
+  }
+},
+{
+  "model": "srciencia_core.topico",
+  "pk": 51,
+  "fields": {
+    "nome": "Deslocamento e Distância Percorrida",
+    "conteudo": 1
+  }
+},
+{
+  "model": "srciencia_core.topico",
+  "pk": 52,
+  "fields": {
+    "nome": "Referencial e Posição",
+    "conteudo": 1
+  }
+},
+{
+  "model": "srciencia_core.topico",
+  "pk": 53,
+  "fields": {
+    "nome": "Velocidade Angular e Linear",
+    "conteudo": 1
+  }
+},
+{
+  "model": "srciencia_core.topico",
+  "pk": 55,
+  "fields": {
+    "nome": "Movimento Parabólico",
+    "conteudo": 1
+  }
+},
+{
+  "model": "srciencia_core.topico",
+  "pk": 56,
+  "fields": {
+    "nome": "Queda Livre",
+    "conteudo": 1
+  }
+},
+{
+  "model": "srciencia_core.topico",
+  "pk": 58,
+  "fields": {
+    "nome": "Força Normal",
+    "conteudo": 2
+  }
+},
+{
+  "model": "srciencia_core.topico",
+  "pk": 59,
+  "fields": {
+    "nome": "Força de Tensão",
+    "conteudo": 2
+  }
+},
+{
+  "model": "srciencia_core.topico",
+  "pk": 60,
+  "fields": {
+    "nome": "Força Resultante",
+    "conteudo": 2
+  }
+},
+{
+  "model": "srciencia_core.topico",
+  "pk": 61,
+  "fields": {
+    "nome": "Trabalho",
+    "conteudo": 2
+  }
+},
+{
+  "model": "srciencia_core.topico",
+  "pk": 62,
+  "fields": {
+    "nome": "Energia Cinética",
+    "conteudo": 2
+  }
+},
+{
+  "model": "srciencia_core.topico",
+  "pk": 63,
+  "fields": {
+    "nome": "Energia Potencial",
+    "conteudo": 2
+  }
+},
+{
+  "model": "srciencia_core.topico",
+  "pk": 64,
+  "fields": {
+    "nome": "Conservação de Energia",
+    "conteudo": 2
+  }
+},
+{
+  "model": "srciencia_core.topico",
+  "pk": 65,
+  "fields": {
+    "nome": "Colisões",
+    "conteudo": 2
+  }
+},
+{
+  "model": "srciencia_core.topico",
+  "pk": 66,
+  "fields": {
+    "nome": "Torque",
+    "conteudo": 13
+  }
+},
+{
+  "model": "srciencia_core.topico",
+  "pk": 67,
+  "fields": {
+    "nome": "Alavancas",
+    "conteudo": 13
+  }
+},
+{
+  "model": "srciencia_core.topico",
+  "pk": 68,
+  "fields": {
+    "nome": "Polias e Roldanas",
+    "conteudo": 13
+  }
+},
+{
+  "model": "srciencia_core.topico",
+  "pk": 69,
+  "fields": {
+    "nome": "Densidade e Massa Específica",
+    "conteudo": 14
+  }
+},
+{
+  "model": "srciencia_core.topico",
+  "pk": 70,
+  "fields": {
+    "nome": "Tensão Superficial",
+    "conteudo": 14
+  }
+},
+{
+  "model": "srciencia_core.topico",
+  "pk": 71,
+  "fields": {
+    "nome": "Pressão",
+    "conteudo": 2
+  }
+},
+{
+  "model": "srciencia_core.topico",
+  "pk": 73,
+  "fields": {
+    "nome": "Óptica Geométrica",
+    "conteudo": 15
+  }
+},
+{
+  "model": "srciencia_core.topico",
+  "pk": 74,
+  "fields": {
+    "nome": "Óptica Física",
+    "conteudo": 15
+  }
+},
+{
+  "model": "srciencia_core.topico",
+  "pk": 75,
+  "fields": {
+    "nome": "Óptica Ondulatória",
+    "conteudo": 15
+  }
+},
+{
+  "model": "srciencia_core.topico",
+  "pk": 76,
+  "fields": {
+    "nome": "Instrumentos Ópticos",
+    "conteudo": 15
+  }
+},
+{
+  "model": "srciencia_core.topico",
+  "pk": 77,
+  "fields": {
+    "nome": "Fibras Ópticas e Comunicações",
+    "conteudo": 15
+  }
+},
+{
+  "model": "srciencia_core.topico",
+  "pk": 78,
+  "fields": {
+    "nome": "Fenômenos Ópticos Atmosféricos",
+    "conteudo": 15
+  }
+},
+{
+  "model": "srciencia_core.topico",
+  "pk": 79,
+  "fields": {
+    "nome": "Cargas Elétricas",
+    "conteudo": 16
+  }
+},
+{
+  "model": "srciencia_core.topico",
+  "pk": 80,
+  "fields": {
+    "nome": "Lei de Coulomb",
+    "conteudo": 16
+  }
+},
+{
+  "model": "srciencia_core.topico",
+  "pk": 81,
+  "fields": {
+    "nome": "Campo Elétrico",
+    "conteudo": 16
+  }
+},
+{
+  "model": "srciencia_core.topico",
+  "pk": 82,
+  "fields": {
+    "nome": "Potencial elétrico",
+    "conteudo": 16
+  }
+},
+{
+  "model": "srciencia_core.topico",
+  "pk": 83,
+  "fields": {
+    "nome": "Diferença de Potencial",
+    "conteudo": 16
+  }
+},
+{
+  "model": "srciencia_core.topico",
+  "pk": 84,
+  "fields": {
+    "nome": "Capacitância e Capacitores",
+    "conteudo": 16
+  }
+},
+{
+  "model": "srciencia_core.topico",
+  "pk": 85,
+  "fields": {
+    "nome": "Lei de Gauss",
+    "conteudo": 16
+  }
+},
+{
+  "model": "srciencia_core.topico",
+  "pk": 86,
+  "fields": {
+    "nome": "Dielétricos e Polarização",
+    "conteudo": 16
+  }
+},
+{
+  "model": "srciencia_core.topico",
+  "pk": 87,
+  "fields": {
+    "nome": "Corrente Elétrica",
+    "conteudo": 17
+  }
+},
+{
+  "model": "srciencia_core.topico",
+  "pk": 88,
+  "fields": {
+    "nome": "Resistores e Resistência Elétrica",
+    "conteudo": 17
+  }
+},
+{
+  "model": "srciencia_core.topico",
+  "pk": 89,
+  "fields": {
+    "nome": "Potência Elétrica",
+    "conteudo": 17
+  }
+},
+{
+  "model": "srciencia_core.topico",
+  "pk": 90,
+  "fields": {
+    "nome": "Circuitos Elétricos",
+    "conteudo": 17
+  }
+},
+{
+  "model": "srciencia_core.topico",
+  "pk": 91,
+  "fields": {
+    "nome": "Força Magnética",
+    "conteudo": 18
+  }
+},
+{
+  "model": "srciencia_core.topico",
+  "pk": 92,
+  "fields": {
+    "nome": "Campo Magnético",
+    "conteudo": 18
+  }
+},
+{
+  "model": "srciencia_core.topico",
+  "pk": 93,
+  "fields": {
+    "nome": "Lei de Biot-Savart",
+    "conteudo": 18
+  }
+},
+{
+  "model": "srciencia_core.topico",
+  "pk": 94,
+  "fields": {
+    "nome": "Lei de Ampère",
+    "conteudo": 18
+  }
+},
+{
+  "model": "srciencia_core.topico",
+  "pk": 95,
+  "fields": {
+    "nome": "Fluxo Magnético",
+    "conteudo": 18
+  }
+},
+{
+  "model": "srciencia_core.topico",
+  "pk": 96,
+  "fields": {
+    "nome": "Indução Eletromagnética",
+    "conteudo": 19
+  }
+},
+{
+  "model": "srciencia_core.topico",
+  "pk": 97,
+  "fields": {
+    "nome": "Equações de Maxwell",
+    "conteudo": 19
+  }
+},
+{
+  "model": "srciencia_core.topico",
+  "pk": 98,
+  "fields": {
+    "nome": "Ondas Eletromagnéticas",
+    "conteudo": 19
+  }
+},
+{
+  "model": "srciencia_core.topico",
+  "pk": 99,
+  "fields": {
+    "nome": "Aplicações do Eletromagnetismo",
+    "conteudo": 19
+  }
+},
+{
+  "model": "srciencia_core.topico",
+  "pk": 100,
+  "fields": {
+    "nome": "Relatividade",
+    "conteudo": 20
+  }
+},
+{
+  "model": "srciencia_core.topico",
+  "pk": 101,
+  "fields": {
+    "nome": "Mecânica Quântica",
+    "conteudo": 20
+  }
+},
+{
+  "model": "srciencia_core.topico",
+  "pk": 102,
+  "fields": {
+    "nome": "Estrutura Atômica",
+    "conteudo": 20
+  }
+},
+{
+  "model": "srciencia_core.topico",
+  "pk": 103,
+  "fields": {
+    "nome": "Cosmologia",
+    "conteudo": 20
+  }
+},
+{
+  "model": "srciencia_core.topico",
+  "pk": 104,
+  "fields": {
+    "nome": "Gravitação Quântica",
+    "conteudo": 20
+  }
+},
+{
+  "model": "srciencia_core.topico",
+  "pk": 105,
+  "fields": {
+    "nome": "Definição e Propriedades das Ondas",
+    "conteudo": 21
+  }
+},
+{
+  "model": "srciencia_core.topico",
+  "pk": 106,
+  "fields": {
+    "nome": "Interferência e Superposição",
+    "conteudo": 21
+  }
+},
+{
+  "model": "srciencia_core.topico",
+  "pk": 107,
+  "fields": {
+    "nome": "Refração",
+    "conteudo": 21
+  }
+},
+{
+  "model": "srciencia_core.topico",
+  "pk": 108,
+  "fields": {
+    "nome": "Reflexão",
+    "conteudo": 21
+  }
+},
+{
+  "model": "srciencia_core.topico",
+  "pk": 109,
+  "fields": {
+    "nome": "Difração",
+    "conteudo": 21
+  }
+},
+{
+  "model": "srciencia_core.topico",
+  "pk": 110,
+  "fields": {
+    "nome": "Ressonância",
+    "conteudo": 21
+  }
+},
+{
+  "model": "srciencia_core.topico",
+  "pk": 111,
+  "fields": {
+    "nome": "Propriedades do Som",
+    "conteudo": 22
+  }
+},
+{
+  "model": "srciencia_core.topico",
+  "pk": 112,
+  "fields": {
+    "nome": "Absorção",
+    "conteudo": 22
+  }
+},
+{
+  "model": "srciencia_core.topico",
+  "pk": 113,
+  "fields": {
+    "nome": "Efeito Doppler",
+    "conteudo": 22
+  }
+},
+{
+  "model": "srciencia_core.topico",
+  "pk": 114,
+  "fields": {
+    "nome": "Ultrassom e Infrassom",
+    "conteudo": 22
+  }
+},
+{
+  "model": "srciencia_core.topico",
+  "pk": 115,
+  "fields": {
+    "nome": "Acústica Musical",
+    "conteudo": 22
+  }
+},
+{
+  "model": "srciencia_core.topico",
+  "pk": 116,
+  "fields": {
+    "nome": "Acústica Ambiental",
+    "conteudo": 22
+  }
+},
+{
+  "model": "srciencia_core.topico",
+  "pk": 117,
+  "fields": {
+    "nome": "Leis de Kepler",
+    "conteudo": 4
+  }
+},
+{
+  "model": "srciencia_core.topico",
+  "pk": 119,
+  "fields": {
+    "nome": "Movimento Uniforme",
+    "conteudo": 1
+  }
+},
+{
+  "model": "srciencia_core.topico",
+  "pk": 140,
+  "fields": {
+    "nome": "Organelas",
+    "conteudo": 27
+  }
+},
+{
+  "model": "srciencia_core.topico",
+  "pk": 141,
+  "fields": {
+    "nome": "testo",
+    "conteudo": 28
+  }
+},
+{
+  "model": "srciencia_core.topico",
+  "pk": 143,
+  "fields": {
+    "nome": "olaaa",
+    "conteudo": 29
+  }
+},
+{
+  "model": "srciencia_core.questao",
+  "pk": 1,
+  "fields": {
+    "descricao": "<p><span style=\"color:black;\">Slackline é um esporte no qual o atleta deve se equilibrar e executar manobras estando sobre uma fita esticada. Para a&nbsp;prática do esporte, as duas extremidades da fita são fixadas de forma que ela fique a alguns centímetros do solo.&nbsp;Quando&nbsp;uma atleta de massa igual a 80 kg está exatamente no meio da fita, essa se desloca verticalmente, formando um ângulo de 10° com a horizontal,&nbsp;como&nbsp;esquematizado na figura.</span></p><p><img src=\"https://fisicaevestibular.com.br/novo/wp-content/uploads/enem-assunto/estatica/3a1dece736112c64e1a1d629e63a5207_html_e3bffb9.png\" width=\"500\" height=\"245\"></p><p><span style=\"color:hsl(0,0%,0%);\">Sabe-se&nbsp;que a&nbsp;aceleração da gravidade é igual a \\(g = 10 \\, \\text{m/s}^2\\), \\(\\cos(10^\\circ) = 0,98\\) e \\(sen(10^\\circ) = 0,17\\).</span></p><p><span style=\"color:hsl(0,0%,0%);\">Qual é a força que a fita exerce em cada uma das árvores por causa da presença da atleta?</span></p>",
+    "alteravel": false,
+    "banca": 1,
+    "disciplina": 1,
+    "conteudo": 2,
+    "topico": 8,
+    "resolucao": "<p><span style=\"color:hsl(0,0%,0%);\">Colocando as forças que agem sobre a fita no ponto onde ela está em contato com o pé do atleta, que são:</span></p><figure class=\"image image-style-align-left\"><img style=\"aspect-ratio:611/343;\" src=\"/media/image_XWtiezC.png\" width=\"611\" height=\"343\"></figure><p>&nbsp;</p><figure class=\"image\"><img style=\"aspect-ratio:254/118;\" src=\"/media/image_6byYplT.png\" width=\"254\" height=\"118\"></figure><figure class=\"image\"><img style=\"aspect-ratio:272/84;\" src=\"/media/image_POqxfYp.png\" width=\"272\" height=\"84\"></figure>",
+    "dificuldade": 2,
+    "ano": 2023,
+    "data_criacao": "2024-10-28T20:29:53.392Z",
+    "data_atualizacao": "2025-01-09T20:25:57.968Z",
+    "taxa_acertos": 50.0
+  }
+},
+{
+  "model": "srciencia_core.questao",
+  "pk": 3,
+  "fields": {
+    "descricao": "<p><span style=\"background-color:transparent;color:#000000;\">A Terra descreve uma elipse em torno do sol, cuja área é \\(A = 6,98 \\times 10^{22} \\, \\text{m}^2\\).</span></p><p><span style=\"background-color:transparent;color:#000000;\"><img src=\"https://lh7-rt.googleusercontent.com/docsz/AD_4nXcKXJntpt3_ZbugPHPNYX8sFE8HTqxnw2irGEad6o9iGgU9nammoEcroVwlRr_HRUKmgRU9hSqm3NYLa_Ac9R-RM46bnbkftXU88RMTv-C198z5dClOuE5VQuusjcSEnH-S_dUx?key=2kVudC-_Qu4mViiES5eMdahx\" width=\"506\" height=\"218\">&nbsp;</span></p><p><span style=\"background-color:transparent;color:#000000;\">A área varrida pelo raio que liga a Terra ao Sol desde zero hora do dia 1º de Abril até às 24 horas do dia 30 de Maio do mesmo ano, é, aproximadamente, de:</span></p>",
+    "alteravel": false,
+    "banca": 3,
+    "disciplina": 1,
+    "conteudo": 4,
+    "topico": 27,
+    "resolucao": 

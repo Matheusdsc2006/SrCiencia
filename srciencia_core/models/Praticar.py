@@ -66,11 +66,12 @@ def buscar_questoes(request):
 
         # Filtros de status
         if status_nao_resolvidas:
-            questoes = questoes.filter(respostas__isnull=True)
+            questoes = questoes.exclude(respostas__aluno=request.user)  # Sem resposta para o aluno atual
         if status_com_resolucao:
             questoes = questoes.exclude(resolucao__isnull=True).exclude(resolucao='')
         if status_que_errei:
             questoes = questoes.filter(respostas__aluno=request.user, respostas__correta=False)
+
 
         # Limitar quantidade de questões
         questoes = questoes[:quantidade]
