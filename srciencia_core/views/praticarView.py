@@ -28,12 +28,13 @@ def buscar_questoes(request):
             conteudo_id = request.GET.get('conteudo')
             dificuldade = request.GET.get('dificuldade')
             quantidade = request.GET.get('quantidade', '10')  # Padrão: 10 questões
-            
+            status_filtros = request.GET.getlist('status', [])  # Lista de status
+
             # Validação de quantidade
             if not quantidade.isdigit() or int(quantidade) <= 0:
                 raise ValueError("O parâmetro 'quantidade' deve ser um número inteiro positivo.")
             quantidade = int(quantidade)
-            
+
             # Base inicial de questões
             questoes = Questao.objects.select_related(
                 'banca', 'disciplina', 'conteudo', 'topico'
@@ -47,8 +48,23 @@ def buscar_questoes(request):
             if dificuldade:
                 questoes = questoes.filter(dificuldade=dificuldade)
 
+            # Filtrar questões pelo status
+            if 'nao_resolvidas' in status_filtros:
+                questoes = questoes.exclude(respostas__aluno=request.user)
+            if 'com_resolucao' in status_filtros:
+                questoes = questoes.filter(resolucao__isnull=False).exclude(resolucao="")
+            if 'que_errei' in status_filtros:
+                questoes = questoes.filter(
+                    respostas__aluno=request.user,
+                    respostas__correta=False
+                )
+
             # Limitar quantidade de questões
-            questoes = questoes[:quantidade]
+            questoes = questoes.distinct()[:quantidade]
+
+            # Verificar se há questões encontradas
+            if not questoes.exists():
+                return JsonResponse({'questoes': [], 'message': 'Nenhuma questão foi encontrada para o filtro realizado.'})
 
             # Serializar resultados
             data = [
@@ -73,6 +89,8 @@ def buscar_questoes(request):
             return JsonResponse({'error': 'Erro inesperado: ' + str(e)}, status=500)
 
     return JsonResponse({'error': 'Método não permitido'}, status=405)
+
+
 
 @csrf_exempt
 @login_required

@@ -501,7 +501,7 @@ body {
 #questoes-container {
     margin-top: 20px;
     padding: 10px;
-    background-color: var(--light-gray);
+    background-color: var(--dark-purple);
     border-radius: 10px;
     display: none;
 }
@@ -676,17 +676,18 @@ body {
     margin: 20px auto;
     padding: 10px 20px;
     font-size: 1rem;
-    font-weight: bold;
-    color: var(--white);
-    background-color: var(--primary-purple);
-    border: none;
-    border-radius: 5px;
+    color: var(--dark-purple);
+    background-color: var(--white);
+    border-radius: 10px;
     cursor: pointer;
     transition: background-color 0.3s ease;
+    font-weight: 600;
+    width: 100%;
+    margin-bottom: 0px;
 }
 
 #finalizar-atividade:hover {
-    background-color: var(--dark-purple);
+    background-color: var(--light-purple);
 }
 
 
