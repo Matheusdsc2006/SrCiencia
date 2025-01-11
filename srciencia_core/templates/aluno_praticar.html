@@ -132,8 +132,8 @@
                     </div>
     
                     <div class="form-group">
-                        <label>Status:</label>
-                        <div class="status-options">
+                        <label style="margin-bottom: 10px;">Status:</label>
+                        <div class="status-options" style="margin-bottom: 10px;">
                             <label>
                                 <input type="checkbox" name="status" value="nao_resolvidas"> Não resolvidas
                             </label>
@@ -145,6 +145,17 @@
                             </label>
                         </div>
                     </div>
+                    <div class="form-group">
+                        <label for="busca-questoes">Busca:</label>
+                        <input
+                            type="text"
+                            id="busca-questoes"
+                            name="busca_questoes"
+                            placeholder="Digite um trecho para buscar"
+                            class="search-input"
+                        >
+                    </div>
+                    
     
                     <div class="btn-group">
                         <button type="button" class="btn btn-save" id="gerar-atividade">Gerar atividade</button>
@@ -565,6 +576,12 @@ function salvarAlternativas() {
         params.append("status", statusFilters.join(","));
     }
 
+    // Adicionar o valor do campo de busca
+    var buscaQuestoes = document.getElementById("busca-questoes").value.trim();
+    if (buscaQuestoes) {
+        params.append("busca", buscaQuestoes);
+    }
+
     fetch(`/aluno/praticar/api/questoes?${params.toString()}`)
         .then(response => {
             if (!response.ok) {
@@ -578,7 +595,7 @@ function salvarAlternativas() {
             // Se nenhuma questão for encontrada
             if (data.questoes.length === 0) {
                 questoesContainer.style.display = "block";
-                questoesContainer.innerHTML = `<p style="color: white; text-align: center; font-size: 1.2rem;">${data.message || 'Nenhuma questão foi encontrada para o filtro realizado.'}</p>`;
+                questoesContainer.innerHTML = `<p style="color: red; text-align: center; font-size: 1.2rem;">Não há questões para o filtro selecionado.</p>`;
                 return;
             }
 

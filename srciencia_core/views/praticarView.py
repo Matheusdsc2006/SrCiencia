@@ -18,7 +18,6 @@ def aluno_praticar(request):
         'topicos': [],    
     })
 
-
 @login_required
 def buscar_questoes(request):
     if request.method == 'GET':
@@ -29,6 +28,7 @@ def buscar_questoes(request):
             dificuldade = request.GET.get('dificuldade')
             quantidade = request.GET.get('quantidade', '10')  # Padrão: 10 questões
             status_filtros = request.GET.getlist('status', [])  # Lista de status
+            busca = request.GET.get('busca', '').strip()  # Busca textual
 
             # Validação de quantidade
             if not quantidade.isdigit() or int(quantidade) <= 0:
@@ -58,6 +58,10 @@ def buscar_questoes(request):
                     respostas__aluno=request.user,
                     respostas__correta=False
                 )
+
+            # Filtro de busca
+            if busca:
+                questoes = questoes.filter(descricao__icontains=busca)
 
             # Limitar quantidade de questões
             questoes = questoes.distinct()[:quantidade]
@@ -89,7 +93,6 @@ def buscar_questoes(request):
             return JsonResponse({'error': 'Erro inesperado: ' + str(e)}, status=500)
 
     return JsonResponse({'error': 'Método não permitido'}, status=405)
-
 
 
 @csrf_exempt

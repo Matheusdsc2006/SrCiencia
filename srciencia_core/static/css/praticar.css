@@ -174,6 +174,35 @@ body {
     width: 20px;
 }
 
+.form-group-inline {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.status-options {
+    display: flex;
+    gap: 1rem;
+}
+
+.search-container {
+    display: flex;
+    align-items: center;
+}
+
+.search-label {
+    margin-right: 0.5rem;
+}
+
+.search-input {
+    width: 200px;
+    padding: 0.5rem;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+
 /* Botões alinhados no canto inferior esquerdo */
 .form-container .btn-group {
     display: flex;
