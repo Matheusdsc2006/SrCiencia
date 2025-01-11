@@ -650,7 +650,12 @@ body {
     font-size: 1rem;
     color: var(--dark-purple);
     line-height: 1.5;
+    display: none;
+    padding: 10px;
+    background-color: var(--white);
+    border: none;
 }
+
 
 .resolucao-content img {
     display: block;
@@ -662,7 +667,7 @@ body {
 /* Botão de visibilidade */
 .toggle-visibility {
     background: none;
-    border: none;
+    border: 1px solid var(--light-gray);
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -670,12 +675,11 @@ body {
     width: 30px;
     height: 30px;
     border-radius: 50%;
-    transition: background-color 0.3s ease;
-    border: 1px solid var(--light-gray);
+    transition: all 0.3s ease;
 }
 
 .toggle-visibility:hover {
-    background-color: #f3eaff;
+    background-color: var(--light-purple);
 }
 
 .toggle-visibility img {
@@ -687,7 +691,7 @@ body {
     display: none;
 }
 
-.toggle-visibility.active img.eye-open {
+.toggle-visibility.active .eye-open {
     display: inline;
 }
 
@@ -695,9 +699,10 @@ body {
     display: inline;
 }
 
-.toggle-visibility.active img.eye-closed {
+.toggle-visibility.active .eye-closed {
     display: none;
 }
+
 
 /* Estilo do botão "Finalizar atividade" */
 #finalizar-atividade {
@@ -719,4 +724,22 @@ body {
     background-color: var(--light-purple);
 }
 
+.correta {
+    background-color: #d4edda; 
+    border: 1px solid #c3e6cb;
+    border-radius: 5px;
+}
+
+.errada-selecionada {
+    background-color: #f8d7da; 
+    border: 1px solid #f5c6cb;
+    border-radius: 5px;
+}
+
+
+.correta-selecionada {
+    background-color: #d4edda; 
+    border: 1px solid #c3e6cb;
+    border-radius: 5px;
+}
 

@@ -26,24 +26,25 @@ def aluno_praticar(request):
         'topicos': [],    
     })
 
-import random
-from difflib import SequenceMatcher
-from django.http import JsonResponse
-from django.contrib.auth.decorators import login_required
-
 @login_required
 def buscar_questoes(request):
+    """
+    Endpoint para buscar questões com base em filtros aplicados.
+    """
     if request.method == 'GET':
         try:
-            # Obtendo filtros
+            # Obtendo parâmetros de busca e filtros
             disciplina_id = request.GET.get('disciplina')
             conteudo_id = request.GET.get('conteudo')
             dificuldade = request.GET.get('dificuldade')
             quantidade = request.GET.get('quantidade', '10')  # Padrão: 10 questões
             status_filtros = request.GET.getlist('status', [])  # Lista de status
-            busca = request.GET.get('busca', '').strip()  # Busca textual
+            busca = request.GET.get('busca', '').strip()  # Texto de busca
 
-            # Validação de quantidade
+            print(f"Filtros recebidos: disciplina={disciplina_id}, conteudo={conteudo_id}, "
+                  f"dificuldade={dificuldade}, quantidade={quantidade}, status={status_filtros}, busca={busca}")
+
+            # Validar quantidade
             if not quantidade.isdigit() or int(quantidade) <= 0:
                 raise ValueError("O parâmetro 'quantidade' deve ser um número inteiro positivo.")
             quantidade = int(quantidade)
@@ -52,75 +53,82 @@ def buscar_questoes(request):
             questoes = Questao.objects.select_related(
                 'banca', 'disciplina', 'conteudo', 'topico'
             ).all()
+            print(f"Total de questões no banco: {questoes.count()}")
 
-            # Aplicando filtros
+            # Aplicar filtros básicos
             if disciplina_id:
                 questoes = questoes.filter(disciplina_id=disciplina_id)
+                print(f"Após filtro disciplina: {questoes.count()}")
             if conteudo_id:
                 questoes = questoes.filter(conteudo_id=conteudo_id)
+                print(f"Após filtro conteúdo: {questoes.count()}")
             if dificuldade:
                 questoes = questoes.filter(dificuldade=dificuldade)
+                print(f"Após filtro dificuldade: {questoes.count()}")
 
-            # Subquery para identificar questões já respondidas pelo aluno
-            respostas_subquery = RespostaAluno.objects.filter(
-                aluno=request.user,
-                questao=OuterRef('pk')
-            ).values('id')
-
-            # Filtrar questões pelo status
+            # Filtrar por status
             if 'nao_resolvidas' in status_filtros:
-                questoes = questoes.annotate(respondida=Subquery(respostas_subquery[:1])).filter(respondida__isnull=True)
+                # Excluir questões já respondidas
+                questoes = questoes.exclude(respostas__aluno=request.user)
+                print(f"Filtro 'não resolvidas' aplicado. Total após filtro: {questoes.count()}")
+            else:
+                # Nenhuma exclusão deve ocorrer
+                print("Filtro 'não resolvidas' não aplicado. Exibindo todas as questões.")
+
+            # Garantir que apenas filtros válidos sejam aplicados
+            if 'que_errei' in status_filtros:
+                questoes = questoes.filter(
+                    respostas__aluno=request.user,
+                    respostas__correta=False
+                )
+                print(f"Filtro 'que errei' aplicado. Total após filtro: {questoes.count()}")
             if 'com_resolucao' in status_filtros:
-                questoes = questoes.filter(resolucao__isnull=False).exclude(resolucao="")
-            if 'que_errei' in status_filtros:questoes = questoes.filter(respostas__aluno=request.user,respostas__correta=False)
+                questoes = questoes.filter(
+                    Q(resolucao__isnull=False) & ~Q(resolucao="")
+                )
+                print(f"Filtro 'com resolução' aplicado. Total após filtro: {questoes.count()}")
 
-            # Filtro de busca
+
+            # Filtro de busca textual
             if busca:
-                # Filtrar questões que contenham exatamente o termo buscado
-                questoes_exatas = questoes.filter(descricao__icontains=busca)
+                # Filtrar questões contendo o texto buscado no campo 'descricao'
+                questoes = questoes.filter(descricao__icontains=busca)
+                print(f"Questões encontradas por busca direta: {questoes.count()}")
+            else:
+                print("Nenhuma busca aplicada. Exibindo todas as questões.")
 
-                if questoes_exatas.exists():
-                    questoes = questoes_exatas
-                else:
-                    # Calcular similaridade com difflib
-                    questoes_similares = []
-                    for questao in questoes:
-                        similaridade = SequenceMatcher(None, busca, questao.descricao).ratio()
-                        if similaridade > 0.3:  # Similaridade mínima de 30%
-                            questoes_similares.append((similaridade, questao))
 
-                    # Ordenar pela maior similaridade
-                    questoes_similares.sort(key=lambda x: x[0], reverse=True)
-                    questoes = [q[1] for q in questoes_similares]
 
-            # Embaralhar as questões antes de limitar a quantidade
-            questoes = list(questoes)  # Converte para lista para permitir embaralhamento
-            random.shuffle(questoes)
-
-            # Limitar quantidade de questões
+            # Embaralhar e limitar quantidade
+            questoes = list(questoes)
+            shuffle(questoes)
             questoes = questoes[:quantidade]
+            print(f"Questões finais após embaralhar e limitar: {len(questoes)}")
+            print(f"Parâmetros recebidos no backend: {request.GET}")
 
-            # Serializar resultados
+            # Serializar as questões para envio
             data = [
                 {
-                    'id': questao.id,
-                    'descricao': questao.descricao,
-                    'alternativas': list(questao.alternativas.values('id', 'descricao', 'correta')),
-                    'resolucao': questao.resolucao,
-                    'ano': questao.ano,
-                    'banca': questao.banca.nome if questao.banca else None,
-                    'disciplina': questao.disciplina.nome if questao.disciplina else None,
-                    'conteudo': questao.conteudo.nome if questao.conteudo else None,
-                    'topico': questao.topico.nome if questao.topico else None,
+                    'id': q.id,
+                    'descricao': q.descricao,
+                    'alternativas': list(q.alternativas.values('id', 'descricao', 'correta')),
+                    'resolucao': q.resolucao,
+                    'ano': q.ano,
+                    'banca': q.banca.nome if q.banca else None,
+                    'disciplina': q.disciplina.nome if q.disciplina else None,
+                    'conteudo': q.conteudo.nome if q.conteudo else None,
+                    'topico': q.topico.nome if q.topico else None,
                 }
-                for questao in questoes
+                for q in questoes
             ]
+
             return JsonResponse({'questoes': data})
 
         except ValueError as e:
             return JsonResponse({'error': str(e)}, status=400)
         except Exception as e:
-            return JsonResponse({'error': 'Erro inesperado: ' + str(e)}, status=500)
+            print(f"Erro inesperado: {str(e)}")
+            return JsonResponse({'error': f'Erro inesperado: {str(e)}'}, status=500)
 
     return JsonResponse({'error': 'Método não permitido'}, status=405)
 
@@ -192,31 +200,56 @@ def reportar_questao(request):
 
     return JsonResponse({'error': 'Método não permitido.'}, status=405)
 
+@csrf_exempt
 @login_required
 def finalizar_atividade(request):
     if request.method == 'POST':
-        respostas = request.POST.getlist('respostas', [])
+        try:
+            respostas = json.loads(request.body)
+            aluno = request.user
+            questoes_resolvidas = []
 
-        for resposta_data in respostas:
-            questao_id = resposta_data.get('questao_id')
-            alternativa_id = resposta_data.get('alternativa_id')
+            for resposta in respostas:
+                questao_id = resposta.get('questao_id')
+                alternativa_id = resposta.get('alternativa_id')
 
-            # Obter a questão e a alternativa
-            questao = get_object_or_404(Questao, id=questao_id)
-            alternativa = get_object_or_404(Alternativa, id=alternativa_id)
+                if not questao_id or not alternativa_id:
+                    continue
 
-            # Atualizar ou criar a resposta do aluno
-            RespostaAluno.objects.update_or_create(
-                aluno=request.user,
-                questao=questao,
-                defaults={
-                    'alternativa_selecionada': alternativa,
-                    'correta': alternativa.correta
-                }
-            )
+                questao = Questao.objects.get(id=questao_id)
+                alternativa = questao.alternativas.get(id=alternativa_id)
+                correta = alternativa.correta
 
-        return JsonResponse({'message': 'Atividade finalizada com sucesso!'})
-    return JsonResponse({'error': 'Método não permitido'}, status=405)
+                # Salvar ou atualizar a resposta do aluno
+                resposta_aluno, _ = RespostaAluno.objects.update_or_create(
+                    aluno=aluno,
+                    questao=questao,
+                    defaults={
+                        'alternativa_selecionada': alternativa,
+                        'correta': correta,
+                    },
+                )
+
+                # Adicionar a questão ao resumo
+                questoes_resolvidas.append({
+                    'id': questao.id,
+                    'descricao': questao.descricao,
+                    'alternativas': list(questao.alternativas.values('id', 'descricao', 'correta')),
+                    'alternativa_selecionada': alternativa.id,
+                    'resolucao': questao.resolucao or "",  # Inclui a resolução
+                })
+
+            return JsonResponse({
+                'message': 'Atividade finalizada com sucesso!',
+                'questoes_resolvidas': questoes_resolvidas,
+            })
+
+        except Exception as e:
+            return JsonResponse({'error': f'Erro inesperado: {str(e)}'}, status=500)
+
+    return JsonResponse({'error': 'Método não permitido.'}, status=405)
+
+
 
 @csrf_exempt
 @login_required
@@ -249,3 +282,5 @@ def registrar_resposta(request):
             return JsonResponse({'error': f'Erro inesperado: {str(e)}'}, status=500)
 
     return JsonResponse({'error': 'Método não permitido.'}, status=405)
+
+

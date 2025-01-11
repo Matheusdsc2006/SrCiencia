@@ -1,5 +1,5 @@
 from django.urls import path
-from srciencia_core.views.praticarView import aluno_praticar, buscar_questoes, registrar_resposta, reportar_questao
+from srciencia_core.views.praticarView import *
 
 urlpatterns = [
     # Página inicial de prática para o aluno
@@ -13,4 +13,7 @@ urlpatterns = [
 
     # Rota para reportar um problema na questão
     path('reportar_questao/', reportar_questao, name='reportar_questao'),
+
+    # Rota para finalizar a atividade
+    path('finalizar_atividade/', finalizar_atividade, name='finalizar_atividade'),
 ]

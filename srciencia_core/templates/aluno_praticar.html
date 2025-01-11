@@ -151,12 +151,11 @@
                             type="text"
                             id="busca-questoes"
                             name="busca_questoes"
-                            placeholder="Digite um trecho para buscar"
+                            placeholder="Digite o termo para buscar"
                             class="search-input"
                         >
                     </div>
                     
-    
                     <div class="btn-group">
                         <button type="button" class="btn btn-save" id="gerar-atividade">Gerar atividade</button>
                         <button type="reset" class="btn btn-cancel">Limpar</button>
@@ -254,8 +253,78 @@
     var newAccountInput = document.getElementById("new-account");
     let selectedEmail = null;
 
+
+    function exibirResumo(questoes) {
+    var questoesContainer = document.getElementById("questoes-container");
+
+    if (!questoes || questoes.length === 0) {
+        questoesContainer.innerHTML = `
+            <p style="color: white; text-align: center; font-size: 1.2rem;">
+                Nenhuma questão encontrada. Você pode ter esquecido de marcar.
+            </p>`;
+        return;
+    }
+
+    questoesContainer.innerHTML = ""; // Limpar o container
+
+    questoes.forEach((questao, index) => {
+        var resolucaoID = `resolucao-${index}`;
+        var temResolucao = questao.resolucao && questao.resolucao.trim(); // Confirma se há resolução válida
+        var resolucaoTexto = temResolucao ? questao.resolucao : "Nenhuma resolução disponível.";
+
+        var questaoElement = `
+            <div class="questao-item">
+                <h3>Questão ${index + 1}</h3>
+                <p>${questao.descricao}</p>
+                <ul>
+                    ${questao.alternativas.map((alt) => {
+                        let classe = "";
+                        if (alt.id === questao.alternativa_selecionada && alt.correta) {
+                            classe = "correta-selecionada"; // Verde para resposta correta selecionada
+                        } else if (alt.id === questao.alternativa_selecionada) {
+                            classe = "errada-selecionada"; // Vermelho para resposta errada selecionada
+                        } else if (alt.correta) {
+                            classe = "correta"; // Verde para resposta correta
+                        }
+
+                        return `
+                            <li class="${classe}">
+                                <input type="radio" id="alt-${alt.id}" name="alternativa-${questao.id}" value="${alt.id}" disabled ${alt.id === questao.alternativa_selecionada ? "checked" : ""}>
+                                <label for="alt-${alt.id}">${alt.descricao}</label>
+                            </li>`;
+                    }).join("")}
+                </ul>
+                <div class="resolucao">
+                    <h3 style="display: flex; justify-content: space-between; align-items: center;">
+                        Resolução:
+                        <button class="toggle-visibility" data-target="${resolucaoID}">
+                            <img class="eye-show" src="{% static 'assets/eye-show.svg' %}" alt="Mostrar" style="display: none;">
+                            <img class="eye-off" src="{% static 'assets/eye-off.svg' %}" alt="Esconder" style="display: inline;">
+                        </button>
+                    </h3>
+                    <div id="${resolucaoID}" class="resolucao-content" style="display: none;">
+                        ${resolucaoTexto}
+                    </div>
+                </div>
+            </div>`;
+        
+        questoesContainer.insertAdjacentHTML("beforeend", questaoElement);
+    });
+    console.log("Dados recebidos para o resumo:", questoes);
+
+    // Reativar MathJax, se necessário
+    if (window.MathJax) {
+        MathJax.typeset();
+    }
+
+    // Ativar eventos de visibilidade para os botões
+    ativarBotoesVisibilidade();
+}
+
+
+
     function reportarQuestao(questaoId) {
-    const descricao = prompt("Descreva o problema encontrado:");
+    var descricao = prompt("Descreva o problema encontrado:");
     if (!descricao) return;
 
     fetch("/aluno/praticar/reportar_questao/", {
@@ -271,11 +340,122 @@
     .catch((error) => console.error("Erro ao reportar problema:", error));
 }
 
-function salvarRespostas() {
-    const respostas = [];
+// Função para finalizar atividade após confirmação
+function finalizarAtividadeConfirmada() {
+    var respostas = [];
     document.querySelectorAll("input[type='radio']:checked").forEach((input) => {
-        const questaoId = input.name.split("-")[1];
-        const alternativaId = input.value;
+        var questaoId = input.name.split("-")[1];
+        var alternativaId = input.value;
+
+        respostas.push({ questao_id: questaoId, alternativa_id: alternativaId });
+    });
+
+    fetch("/aluno/praticar/finalizar_atividade/", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": document.querySelector("[name='csrfmiddlewaretoken']").value,
+        },
+        body: JSON.stringify(respostas),
+    })
+    .then((response) => response.json()) // Corrigido: encadeamento do .then
+    .then((data) => {
+        if (data.questoes_resolvidas) {
+            exibirResumo(data.questoes_resolvidas); // Exibe o resumo das questões resolvidas
+        }
+    })
+    .catch((error) => console.error("Erro ao finalizar a atividade:", error));
+}
+
+// Configurar eventos do botão "Finalizar Atividade"
+function configurarEventosBotaoFinalizar(finalizarBtn) {
+    var finalizarModal = document.getElementById("confirm-finalize-modal");
+    var closeFinalizeModal = document.getElementById("close-finalize-modal");
+    var confirmFinalizeBtn = document.getElementById("confirm-finalize-btn");
+
+    // Exibir modal ao clicar no botão "Finalizar Atividade"
+    finalizarBtn.addEventListener("click", function () {
+        if (finalizarModal) {
+            finalizarModal.style.display = "block"; // Exibe o modal
+        }
+    });
+
+    // Fechar o modal ao clicar no "X"
+    closeFinalizeModal?.addEventListener("click", function () {
+        if (finalizarModal) {
+            finalizarModal.style.display = "none"; // Fecha o modal
+        }
+    });
+
+    // Fechar o modal ao clicar fora do conteúdo
+    window.addEventListener("click", function (event) {
+        if (event.target === finalizarModal) {
+            finalizarModal.style.display = "none"; // Fecha o modal
+        }
+    });
+
+    // Confirmar finalização ao clicar no botão "Sim"
+    confirmFinalizeBtn?.addEventListener("click", function () {
+        if (finalizarModal) {
+            finalizarModal.style.display = "none"; // Fecha o modal
+        }
+        finalizarAtividadeConfirmada(); // Chama a função para finalizar a atividade
+    });
+}
+
+// Adicionar dinamicamente o botão "Finalizar Atividade"
+function adicionarBotaoFinalizarAtividade() {
+    var questoesContainer = document.getElementById("questoes-container");
+
+    // Verificar se o botão já existe para evitar duplicação
+    if (!document.getElementById("finalizar-atividade")) {
+        var finalizarBtn = document.createElement("button");
+        finalizarBtn.id = "finalizar-atividade";
+        finalizarBtn.className = "btn btn-save";
+        finalizarBtn.textContent = "Finalizar Atividade";
+
+        // Adiciona o botão ao container de questões
+        questoesContainer.insertAdjacentElement("beforeend", finalizarBtn);
+
+        // Configurar os eventos do botão
+        configurarEventosBotaoFinalizar(finalizarBtn);
+    }
+}
+
+// Função para ativar visibilidade das resoluções no container
+function ativarBotoesVisibilidade() {
+    // Seleciona todos os botões de visibilidade dentro do container de questões
+    document.querySelectorAll(".toggle-visibility").forEach(button => {
+        button.addEventListener("click", function () {
+            var targetID = this.dataset.target;
+            var targetElement = document.getElementById(targetID);
+            var eyeShow = this.querySelector(".eye-show");
+            var eyeOff = this.querySelector(".eye-off");
+
+            if (targetElement) {
+                // Alterna visibilidade do conteúdo
+                if (targetElement.style.display === "none" || targetElement.style.display === "") {
+                    targetElement.style.display = "block";
+                    eyeShow.style.display = "inline";
+                    eyeOff.style.display = "none";
+                } else {
+                    targetElement.style.display = "none";
+                    eyeShow.style.display = "none";
+                    eyeOff.style.display = "inline";
+                }
+            }
+        });
+    });
+}
+
+
+
+
+function salvarRespostas() {
+    var respostas = [];
+    document.querySelectorAll("input[type='radio']:checked").forEach((input) => {
+        var questaoId = input.name.split("-")[1];
+        var alternativaId = input.value;
 
         respostas.push({ questao_id: questaoId, alternativa_id: alternativaId });
     });
@@ -296,7 +476,7 @@ function salvarRespostas() {
 
     function shuffleArray(array) {
         for (let i = array.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
+            var j = Math.floor(Math.random() * (i + 1));
             [array[i], array[j]] = [array[j], array[i]];
         }
         return array;
@@ -314,180 +494,15 @@ function salvarRespostas() {
     buscarQuestoes();
 });
 
-    // Configurar eventos para o botão de finalizar atividade
-    function configurarEventosBotaoFinalizar(finalizarBtn) {
-        var finalizarModal = document.getElementById("confirm-finalize-modal");
-        var closeFinalizeModal = document.getElementById("close-finalize-modal");
-        var confirmFinalizeBtn = document.getElementById("confirm-finalize-btn");
-        var questoesContainer = document.getElementById("questoes-container");
+// Garantir que os eventos sejam associados após a renderização
+function renderizarQuestoes(questoes, isResumo = false) {
+    var questoesContainer = document.getElementById("questoes-container");
+    var whiteSpace = document.getElementById("white-space");
 
-        // Evento para abrir o modal de confirmação
-        finalizarBtn.addEventListener("click", function () {
-            if (finalizarModal) {
-                finalizarModal.style.display = "block";
-            }
-        });
+    // Limpar o container de questões
+    questoesContainer.innerHTML = "";
 
-        // Evento para fechar o modal ao clicar no "X"
-        closeFinalizeModal?.addEventListener("click", function () {
-            finalizarModal.style.display = "none";
-        });
-
-        // Evento para confirmar finalização
-        confirmFinalizeBtn?.addEventListener("click", function () {
-            if (finalizarModal) {
-                finalizarModal.style.display = "none";
-            }
-
-
-            // Limpar o localStorage
-            localStorage.removeItem("questoesAtuais");
-            localStorage.removeItem("respostasSelecionadas");
-
-            // Atualizar a interface, se necessário
-            if (questoesContainer) {
-                questoesContainer.innerHTML = `
-            <p style="color: white; text-align: center; font-size: 1.2rem;">
-                Atividade finalizada. Segue abaixo o resumo de acertos e erros.
-            </p>`;
-            }
-        });
-
-        // Fechar o modal ao clicar fora do conteúdo
-        window.addEventListener("click", function (event) {
-            if (event.target === finalizarModal) {
-                finalizarModal.style.display = "none";
-            }
-        });
-    }
-
-    function adicionarBotaoFinalizarAtividade() {
-        var questoesContainer = document.getElementById("questoes-container");
-
-        // Verificar se o botão já existe para evitar duplicação
-        if (!document.getElementById("finalizar-atividade")) {
-            var finalizarBtn = document.createElement("button");
-            finalizarBtn.id = "finalizar-atividade";
-            finalizarBtn.className = "btn btn-save";
-            finalizarBtn.textContent = "Finalizar Atividade";
-
-            // Adiciona o botão ao container de questões
-            questoesContainer.insertAdjacentElement("beforeend", finalizarBtn);
-
-            // Configurar os eventos do botão
-            configurarEventosBotaoFinalizar(finalizarBtn);
-        }
-    }
-
-    questoesContainer.style.display = "none";
-
-    // Adicionar uma verificação dinâmica para eventos após conteúdo renderizado
-    document.addEventListener("click", function (event) {
-        if (event.target && event.target.id === "confirm-finalizar-btn") {
-            configurarFinalizarAtividade();
-        }
-    });
-
-    if (gerarAtividadeBtn) {
-        gerarAtividadeBtn.addEventListener("click", function () {
-            buscarQuestoes();
-        });
-    } else {
-        console.error("O botão 'Gerar Atividade' não foi encontrado.");
-    }
-
-    // Função para ativar a visibilidade dos botões após renderização
-    function ativarBotoesVisibilidade() {
-    // Usar delegação de eventos para garantir funcionalidade dinâmica
-    document.addEventListener("click", function (event) {
-        if (event.target.closest(".toggle-visibility")) {
-            var button = event.target.closest(".toggle-visibility");
-            var targetId = button.dataset.target; // ID do conteúdo da resolução
-            var target = document.getElementById(targetId); // Elemento da resolução
-            var eyeshow = button.querySelector(".eye-show"); // Ícone de olho aberto
-            var eyeoff = button.querySelector(".eye-off"); // Ícone de olho fechado
-
-            if (!target || !eyeshow || !eyeoff) {
-                console.warn("Elementos necessários para visibilidade não encontrados:", button);
-                return;
-            }
-
-            // Alterna entre mostrar e esconder o conteúdo da resolução
-            if (target.style.display === "none" || target.style.display === "") {
-                target.style.display = "block"; // Mostra a resolução
-                eyeshow.style.display = "inline"; // Mostra o ícone de olho aberto
-                eyeoff.style.display = "none"; // Esconde o ícone de olho fechado
-            } else {
-                target.style.display = "none"; // Esconde a resolução
-                eyeshow.style.display = "none"; // Esconde o ícone de olho aberto
-                eyeoff.style.display = "inline"; // Mostra o ícone de olho fechado
-            }
-        }
-    });
-}
-
-function ativarFinalizarAtividade() {
-    var finalizarAtividadeBtn = document.getElementById("finalizar-atividade");
-    var finalizeModal = document.getElementById("confirm-finalize-modal");
-    var closeFinalizeModal = document.getElementById("close-finalize-modal");
-    var confirmFinalizeBtn = document.getElementById("confirm-finalize-btn");
-
-    if (!finalizarAtividadeBtn) return; // Evita erro se o botão não existir
-
-    // Abrir o modal ao clicar no botão "Finalizar atividade"
-    finalizarAtividadeBtn.addEventListener("click", function () {
-        finalizeModal.style.display = "block";
-    });
-
-    // Fechar o modal ao clicar no "X" ou fora do modal
-    closeFinalizeModal.addEventListener("click", function () {
-        finalizeModal.style.display = "none";
-    });
-
-    window.addEventListener("click", function (event) {
-        if (event.target === finalizeModal) {
-            finalizeModal.style.display = "none";
-        }
-    });
-
-    // Confirmar finalização da atividade
-    confirmFinalizeBtn.addEventListener("click", function () {
-
-        // Limpar o localStorage
-        localStorage.removeItem("questoesAtuais");
-        localStorage.removeItem("respostasSelecionadas");
-
-        // Recarregar a página para o estado inicial
-        location.reload();
-    });
-}
-
-document.addEventListener("click", function (event) {
-        // Delegação para o botão "confirm-finalize-btn"
-        if (event.target && event.target.id === "confirm-finalize-btn") {
-            var finalizarModal = document.getElementById("finalizar-atividade-modal");
-            var questoesContainer = document.getElementById("questoes-container");
-
-            if (finalizarModal) finalizarModal.style.display = "none";
-
-            alert("Atividade finalizada com sucesso!");
-
-            // Limpar o localStorage
-            localStorage.removeItem("questoesAtuais");
-            localStorage.removeItem("respostasSelecionadas");
-
-            // Atualize a interface, se necessário
-            if (questoesContainer) {
-                questoesContainer.innerHTML = `
-            <p style="color: white; text-align: center; font-size: 1.2rem;">
-                Atividade finalizada. Segue abaixo o resumo de acertos e erros.
-            </p>`;
-            }
-        }
-    });
-
-    // Garantir que os eventos sejam associados após a renderização
-function renderizarQuestoes(questoes) {
+    // Exibir mensagem caso não existam questões
     if (!questoes || questoes.length === 0) {
         questoesContainer.style.display = "block";
         questoesContainer.innerHTML = `
@@ -497,53 +512,59 @@ function renderizarQuestoes(questoes) {
         return;
     }
 
-    // Esconde o white space apenas se as questões forem geradas
+    questoesContainer.innerHTML = ""; // Limpa o container
+
+    questoes.forEach((questao, index) => {
+        var resolucaoID = `resolucao-${index}`;
+        var questaoHTML = `
+            <div class="questao-item">
+                <h3>Questão ${index + 1}</h3>
+                <p>${questao.descricao}</p>
+                <ul>
+                    ${questao.alternativas.map(alt => `
+                        <li>
+                            <input type="radio" id="alt-${alt.id}" name="alternativa-${questao.id}" value="${alt.id}">
+                            <label for="alt-${alt.id}">${alt.descricao}</label>
+                        </li>
+                    `).join("")}
+                </ul>
+                <div class="resolucao">
+                    <h3 style="display: flex; justify-content: space-between; align-items: center;">
+                        Resolução:
+                        <button class="toggle-visibility" data-target="${resolucaoID}">
+                            <img class="eye-show" src="{% static 'assets/eye-show.svg' %}" alt="Mostrar" style="display: none;">
+                            <img class="eye-off" src="{% static 'assets/eye-off.svg' %}" alt="Esconder" style="display: inline;">
+                        </button>
+                    </h3>
+                    <div id="${resolucaoID}" class="resolucao-content" style="display: none;">
+                        ${questao.resolucao || "Nenhuma resolução disponível."}
+                    </div>
+                </div>
+            </div>
+        `;
+        questoesContainer.insertAdjacentHTML("beforeend", questaoHTML);
+    });
+
+    // Ocultar o white space se as questões forem geradas
     if (whiteSpace) {
         whiteSpace.style.display = "none";
     }
 
+    // Tornar o container de questões visível
     questoesContainer.style.display = "block";
-    questoesContainer.innerHTML = ""; // Limpa o container
 
-    questoes.forEach((questao, index) => {
-        var questaoElement = document.createElement("div");
-        questaoElement.classList.add("questao-item");
-        questaoElement.innerHTML = `
-            <h3>Questão ${index + 1}</h3>
-            <p>${questao.descricao}</p>
-            <ul>
-                ${questao.alternativas.map(alt => `
-                    <li>
-                        <input type="radio" id="alt-${alt.id}" name="alternativa-${questao.id}" value="${alt.id}">
-                        <label for="alt-${alt.id}">${alt.descricao}</label>
-                    </li>
-                `).join("")}
-            </ul>
-            <div class="resolucao">
-                <h3 style="display: flex; justify-content: space-between; align-items: center;">
-                    Resolução:
-                    <button class="toggle-visibility" data-target="resolucao-section-${index}">
-                        <img class="eye-show" src="{% static 'assets/eye-show.svg' %}" alt="Mostrar" style="display: none;">
-                        <img class="eye-off" src="{% static 'assets/eye-off.svg' %}" alt="Esconder" style="display: inline;">
-                    </button>
-                </h3>
-                <div id="resolucao-section-${index}" class="resolucao-content hidden" style="display: none;">
-                    <div>${questao.resolucao || "Nenhuma resolução disponível."}</div>
-                </div>
-            </div>`;
-        questoesContainer.appendChild(questaoElement);
-    });
-     // Adiciona dinamicamente o botão "Finalizar Atividade" ao final da lista de questões
-     adicionarBotaoFinalizarAtividade();
+    // Adicionar dinamicamente o botão "Finalizar Atividade"
+    adicionarBotaoFinalizarAtividade();
 
-    // Reprocessa o MathJax para renderizar as fórmulas matemáticas
+    // Ativar os botões de visibilidade para resoluções
+    ativarBotoesVisibilidade();
+
+    // Reprocessar o MathJax para renderizar fórmulas matemáticas, se necessário
     if (window.MathJax) {
         MathJax.typeset();
     }
 }
 
-ativarBotoesVisibilidade();
-ativarFinalizarAtividade();
 
     var quantidade = quantidadeInput.value.trim();
 
@@ -625,51 +646,63 @@ function salvarAlternativas() {
     });
 
     function buscarQuestoes() {
-    var params = new URLSearchParams(new FormData(document.querySelector("#filtro-questoes-form")));
-    params.append("status", "nao_resolvidas"); 
+    const form = document.querySelector("#filtro-questoes-form");
+    const params = new URLSearchParams(new FormData(form));
 
-
-    // Adicionar filtros de status
-    var statusFilters = [];
+    // Adicionar filtro de status
+    const statusFilters = [];
     document.querySelectorAll("input[name='status']:checked").forEach((checkbox) => {
-        statusFilters.push(checkbox.value);
+        if (!statusFilters.includes(checkbox.value)) {
+            statusFilters.push(checkbox.value);
+        }
     });
+
     if (statusFilters.length > 0) {
         params.append("status", statusFilters.join(","));
     }
 
-    // Adicionar o valor do campo de busca
-    var buscaQuestoes = document.getElementById("busca-questoes").value.trim();
-    if (buscaQuestoes) {
-        params.append("busca", buscaQuestoes);
+    // Garantir que o campo de busca seja enviado
+    const buscaInput = form.querySelector("#busca-questoes");
+    if (buscaInput && buscaInput.value.trim()) {
+        params.set("busca", buscaInput.value.trim());
+    } else {
+        params.delete("busca"); // Remove o parâmetro se o campo estiver vazio
     }
 
+    // Fazer a requisição
     fetch(`/aluno/praticar/api/questoes?${params.toString()}`)
-        .then(response => {
+        .then((response) => {
             if (!response.ok) {
                 throw new Error(`Erro HTTP: ${response.status}`);
             }
             return response.json();
         })
-        .then(data => {
+        .then((data) => {
             console.log("Dados recebidos da API:", data);
-
-            // Exibir mensagem se houver mais questões do que o limite
-            if (data.message) {
-                alert(data.message);
-            }
-
-            // Se nenhuma questão for encontrada
             if (data.questoes.length === 0) {
-                questoesContainer.style.display = "block";
-                questoesContainer.innerHTML = `<p style="color: white; text-align: center; font-size: 1.2rem;">Não há questões para o filtro selecionado.</p>`;
-                return;
+                exibirMensagemSemQuestoes();
+            } else {
+                renderizarQuestoes(data.questoes);
             }
-
-            // Renderizar as questões embaralhadas
-            renderizarQuestoes(data.questoes);
         })
-        .catch(error => console.error("Erro ao buscar questões:", error));
+        .catch((error) => {
+            console.error("Erro ao buscar questões:", error);
+            alert("Erro ao buscar questões. Tente novamente mais tarde.");
+        });
+}
+
+    // Função para exibir mensagem "Nenhuma questão encontrada"
+function exibirMensagemSemQuestoes() {
+    var questoesContainer = document.getElementById("questoes-container");
+
+    // Exibir mensagem no container de questões
+    questoesContainer.innerHTML = `
+        <p style="color: white; text-align: center; font-size: 1.2rem;">
+            Nenhuma questão encontrada para os filtros aplicados.
+        </p>`;
+
+    // Tornar o container visível
+    questoesContainer.style.display = "block";
 }
 
         // Reativar funcionalidade de botão "visualizar resolução"
@@ -958,6 +991,19 @@ function salvarAlternativas() {
             })
             .catch(error => console.error("Erro ao buscar questões:", error));
     });
+
+    document.getElementById("gerar-atividade").addEventListener("click", () => {
+    var buscaInput = document.getElementById("busca-questoes").value.trim();
+
+    // Verificar se o campo de busca tem apenas caracteres válidos
+    if (buscaInput && !/^[a-zA-Záéíóúàèìòùãõâêîôûç\s]+$/i.test(buscaInput)) {
+        alert("Por favor, insira apenas letras na busca.");
+        return;
+    }
+
+    buscarQuestoes(); // Chama a função que fará a busca
+});
+
 
     // Adicionar evento para salvar respostas ao marcar alternativas
     document.addEventListener("change", (event) => {
