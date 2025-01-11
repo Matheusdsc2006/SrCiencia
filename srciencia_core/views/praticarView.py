@@ -9,22 +9,37 @@ from django.db.models import OuterRef, Subquery
 from difflib import SequenceMatcher
 from random import sample
 from random import shuffle
+from reportlab.pdfgen import canvas
+from io import BytesIO
+from reportlab.lib.pagesizes import letter 
+from django.http import HttpResponse
 import random
+import re
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Image, Spacer
+from reportlab.lib.styles import getSampleStyleSheet
+import requests
+import matplotlib.pyplot as plt
+from matplotlib import mathtext
+from reportlab.platypus import Table, TableStyle
+from reportlab.lib import colors
 from django.shortcuts import get_object_or_404
 from django.db.models import Q
+from bs4 import BeautifulSoup
 import json
 
 @login_required
 def aluno_praticar(request):
     """
-    Renderiza a página de prática para o aluno.
+    Renderiza a página de prática para o aluno ou professor.
     """
     disciplinas = Disciplina.objects.all()  
     return render(request, 'aluno_praticar.html', {
-        'disciplinas': disciplinas,  
-        'conteudos': [],   
-        'topicos': [],    
+        'disciplinas': disciplinas,
+        'conteudos': [],
+        'topicos': [],
+        'user_perfil': request.user.perfil,  # Passa o perfil do usuário
     })
+
 
 @login_required
 def buscar_questoes(request):
@@ -281,6 +296,96 @@ def registrar_resposta(request):
         except Exception as e:
             return JsonResponse({'error': f'Erro inesperado: {str(e)}'}, status=500)
 
-    return JsonResponse({'error': 'Método não permitido.'}, status=405)
+    return JsonResponse({'error': 'Método não permitido.'}, status=405) 
+
+def clean_latex(text):
+    """
+    Remove LaTeX notations and replace them with human-readable text.
+    """
+    # Lista de substituições
+    replacements = [
+        (r"\\times", "×"),
+        (r"\\cdot", "·"),
+        (r"\\text\{(.*?)\}", r"\1"),
+        (r"\\frac\{(.*?)\}\{(.*?)\}", r"\1/\2"),
+        (r"\\sqrt\{(.*?)\}", r"√\1"),
+        (r"\\left\(|\\right\)", ""),
+        (r"\^circ", "°"),  # Transforma qualquer ocorrência de ^circ em °
+        (r"\\\^circ", "°"),  # Transforma \^circ em °
+        (r"^circ", "°"),  # Transforma circ isolado em °
+        (r"\\degree", "°"),  # Outras variantes para °
+        (r"\\sin", "sen"),
+        (r"\\cos", "cos"),
+        (r"\\tan", "tan"),
+        (r"\\log", "log"),
+        (r"\\ln", "ln"),
+        (r"\\", ""),  # Remove qualquer barra invertida restante
+        (r"\s+", " "),  # Remove múltiplos espaços
+    ]
+
+    # Aplicando substituições em ordem
+    for pattern, replacement in replacements:
+        text = re.sub(pattern, replacement, text)
+
+    return text
+
+def exportar_atividade(request):
+    # Obter IDs das questões
+    questoes_ids = request.GET.get("questoes", "").split(",")
+    questoes = Questao.objects.filter(id__in=questoes_ids)
+
+    # Configuração do PDF
+    buffer = BytesIO()
+    pdf = SimpleDocTemplate(buffer, pagesize=letter)
+    elements = []
+    styles = getSampleStyleSheet()
+
+    for i, questao in enumerate(questoes, 1):
+        # Extrair texto puro da descrição usando BeautifulSoup
+        soup = BeautifulSoup(questao.descricao, "html.parser")
+        descricao_texto = soup.get_text()
+
+        # Limpar LaTeX na descrição
+        descricao_formatada = clean_latex(descricao_texto)
+
+        # Adicionar título e descrição da questão
+        elements.append(Paragraph(f"<b>Questão {i}:</b> {descricao_formatada}", styles["Normal"]))
+
+        # Adicionar imagem, se disponível
+        for img_tag in soup.find_all("img"):
+            img_url = img_tag.get("src")
+            if img_url:
+                try:
+                    response = requests.get(img_url, stream=True)
+                    if response.status_code == 200 and "image" in response.headers["Content-Type"]:
+                        img = Image(BytesIO(response.content))
+                        img.drawHeight = 150  # Ajustar altura
+                        img.drawWidth = 300  # Ajustar largura
+                        elements.append(img)
+                except Exception as e:
+                    elements.append(Paragraph(f"Erro ao carregar imagem: {e}", styles["Normal"]))
+
+        # Adicionar alternativas
+        elements.append(Paragraph("<b>Alternativas:</b>", styles["Normal"]))
+        for alternativa in questao.alternativas.all():
+            alternativa_texto = clean_latex(alternativa.descricao)
+            elements.append(Paragraph(f"- {alternativa_texto}", styles["Normal"]))
+
+        elements.append(Spacer(1, 12))  # Espaçamento entre questões
+
+    # Construir o PDF
+    pdf.build(elements)
+    buffer.seek(0)
+
+    # Retornar o PDF como resposta
+    response = HttpResponse(buffer, content_type="application/pdf")
+    response["Content-Disposition"] = 'attachment; filename="atividade.pdf"'
+    return response
+
+
+
+
+
+
 
 

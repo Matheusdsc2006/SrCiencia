@@ -743,3 +743,16 @@ body {
     border-radius: 5px;
 }
 
+.btn-exportar {
+    background-color: var(--gray); 
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    cursor: pointer;
+    margin-left: 514px;
+    width: 220px;
+}
+
+.btn-exportar:hover {
+    background-color: black;
+}

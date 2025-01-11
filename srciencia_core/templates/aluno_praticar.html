@@ -159,6 +159,9 @@
                     <div class="btn-group">
                         <button type="button" class="btn btn-save" id="gerar-atividade">Gerar atividade</button>
                         <button type="reset" class="btn btn-cancel">Limpar</button>
+                        {% if user.perfil == 3 %}
+                        <button type="button" class="btn btn-exportar" id="exportar-atividade">Exportar atividade</button>
+                        {% endif %}
                     </div>
                 </form>
     
@@ -239,7 +242,9 @@
     var clearButton = document.querySelector(".btn-cancel");
     var clearModal = document.getElementById("confirm-clear-modal"); 
     var closeClearModal = document.getElementById("close-clear-modal"); 
-    var confirmClearButton = document.getElementById("confirm-clear-btn"); 
+    var confirmClearButton = document.getElementById("confirm-clear-btn");
+    var exportarAtividadeBtn = document.getElementById("exportar-atividade");
+ 
     var questoesData = null;
 
     var accountModal = document.getElementById("account-modal");
@@ -252,6 +257,27 @@
     var accountList = document.querySelector(".account-list");
     var newAccountInput = document.getElementById("new-account");
     let selectedEmail = null;
+
+    if (exportarAtividadeBtn) {
+        exportarAtividadeBtn.addEventListener("click", function () {
+            var questoesFiltradas = JSON.parse(localStorage.getItem("questoesAtuais"));
+
+            if (!questoesFiltradas || !questoesFiltradas.questoes.length) {
+                alert("Nenhuma questão encontrada para exportar.");
+                return;
+            }
+
+            // Extrair IDs das questões filtradas
+            var questoesIds = questoesFiltradas.questoes.map((q) => q.id);
+
+            // Fazer a requisição para exportar o PDF
+            var params = new URLSearchParams({ questoes: questoesIds });
+            var url = `/aluno/praticar/exportar/?${params.toString()}`;
+
+            // Abrir o PDF gerado
+            window.open(url, '_blank');
+        });
+    }
 
 
     function exibirResumo(questoes) {
@@ -646,11 +672,11 @@ function salvarAlternativas() {
     });
 
     function buscarQuestoes() {
-    const form = document.querySelector("#filtro-questoes-form");
-    const params = new URLSearchParams(new FormData(form));
+    var form = document.querySelector("#filtro-questoes-form");
+    var params = new URLSearchParams(new FormData(form));
 
     // Adicionar filtro de status
-    const statusFilters = [];
+    var statusFilters = [];
     document.querySelectorAll("input[name='status']:checked").forEach((checkbox) => {
         if (!statusFilters.includes(checkbox.value)) {
             statusFilters.push(checkbox.value);
@@ -662,7 +688,7 @@ function salvarAlternativas() {
     }
 
     // Garantir que o campo de busca seja enviado
-    const buscaInput = form.querySelector("#busca-questoes");
+    var buscaInput = form.querySelector("#busca-questoes");
     if (buscaInput && buscaInput.value.trim()) {
         params.set("busca", buscaInput.value.trim());
     } else {

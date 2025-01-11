@@ -16,4 +16,7 @@ urlpatterns = [
 
     # Rota para finalizar a atividade
     path('finalizar_atividade/', finalizar_atividade, name='finalizar_atividade'),
+
+    #Rota para exportar a atividade
+    path("exportar/", exportar_atividade, name="exportar_atividade"), 
 ]
