@@ -1,0 +1,16 @@
+{
+    "builds": [
+        {
+            "src": "srciencia_admin/wsgi.py",
+            "use": "@vercel/python",
+            "config": { "maxLambdaSize": "15mb", "runtime": "python3.10" }
+        }
+    ],
+    "routes": [
+        {
+            "src": "/(.*)",
+            "dest": "srciencia_admin/wsgi.py"
+        }
+    ],
+    "buildCommand": "apt-get update && apt-get install -y libfreetype6-dev libjpeg-dev gcc && pip install -r requirements.txt"
+}
