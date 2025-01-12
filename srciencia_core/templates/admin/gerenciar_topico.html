@@ -166,6 +166,7 @@
             event.preventDefault(); // Impede o comportamento padrão
             const query = searchInput.value.trim();
             fetchTopics(query, document.getElementById("list-container"));
+            container.innerHTML = "";
         });
     }
 
