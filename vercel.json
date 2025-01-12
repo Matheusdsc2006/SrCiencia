@@ -12,5 +12,5 @@
             "dest": "srciencia_admin/wsgi.py"
         }
     ],
-    "buildCommand": "apt-get update && apt-get install -y libfreetype6-dev libjpeg-dev && pip install -r requirements.txt"
+    "buildCommand": "apt-get update && apt-get install -y libfreetype6-dev libjpeg-dev gcc && pip install -r requirements.txt"
 }
