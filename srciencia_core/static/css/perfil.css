@@ -1,0 +1,132 @@
+:root {
+    --light-purple: #f3eaff;
+    --dark-purple: #5e4b8a;
+    --primary-purple: #7d5baa;
+    --white: #ffffff;
+    --gray: #666666;
+    --light-gray: #cccccc;
+    --black: #000000;
+}
+
+html{
+    overflow-x: hidden;
+}
+
+.sidebar{
+    z-index: 1 !important   ;
+}
+
+body {
+    font-family: 'Roboto', Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: var(--light-purple);
+    color: var(--gray);
+}
+
+.container {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* Main content */
+.main-container {
+    flex: 1;
+    padding: 40px;
+    margin-left: 0px;
+}
+
+
+.profile-section h1 {
+    font-size: 2rem;
+    color: var(--dark-purple);
+    font-weight: bold;
+    margin-left: 45px;
+}
+
+.profile-section .info-box{
+    width: 865px;
+}
+
+.profile-section{
+    width: 1145px;
+}
+
+.profile-card {
+    display: flex;
+    align-items: center;
+    border-radius: 10px;
+    padding: 20px;
+    gap: 40px;
+}
+
+.profile-image img {
+    width: 220px;
+    height: 220px;
+    border-radius: 50%;
+    border: 2px solid var(--light-gray);
+    object-fit: cover;
+    margin-left: 0px;
+    margin-bottom: 10px;
+}
+
+.btn-edit-perfil {
+    background-color: var(--primary-purple);
+    color: var(--white);
+    border: none;
+    border-radius: 5px;
+    padding: 8px 15px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    width: 220px;
+    height: 45px;
+    margin-bottom: -10px;
+}
+
+.btn-edit-perfil:hover {
+    background-color: var(--dark-purple);
+}
+
+.profile-info p {
+    margin: 5px 0;
+    font-size: 1rem;
+    color: var(--gray);
+}
+
+.profile-info p strong {
+    color: var(--dark-purple);
+}
+
+.additional-info {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+    gap: 20px;
+}
+
+.info-box {
+    background-color: var(--white);
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    flex: 1;
+    text-align: start;
+    font-size: 1rem;
+    color: var(--gray);
+    width: 1000px;
+}
+
+.info-box p strong {
+    color: var(--dark-purple);
+}
+
+.detalhe_perfil{
+    position: fixed;
+    width: 1900px;
+    left: 0px;
+}
+
+.btn-confirm-sim:hover{
+    background-color: var(--dark-purple);
+}

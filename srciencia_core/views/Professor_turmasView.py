@@ -1,18 +1,16 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponseForbidden
 from srciencia_core.models.Turma import Turma, Arquivo
 import random
 import string
-from django.http import HttpResponseForbidden
-
 
 @login_required
 def professor_turmas(request):
-    # Verifica se o usuário é professor
-    if not request.user.is_staff:
-        return HttpResponseForbidden("Acesso negado para alunos.")
+    # Verifica se o usuário é professor (perfil 3)
+    if request.user.perfil != 3:
+        return HttpResponseForbidden("Acesso negado para não-professores.")
 
     turmas = Turma.objects.filter(professor=request.user).order_by("-criado_em")
 
@@ -31,8 +29,9 @@ def professor_turmas(request):
 
 @login_required
 def listar_turmas_professor(request):
-    if not request.user.is_staff:
-        return HttpResponseForbidden("Acesso negado para alunos.")
+    # Verifica se o usuário é professor (perfil 3)
+    if request.user.perfil != 3:
+        return HttpResponseForbidden("Acesso negado para não-professores.")
 
     turmas = Turma.objects.filter(professor=request.user).values(
         "id", "nome", "descricao", "codigo", "professor__username"
@@ -43,6 +42,10 @@ def listar_turmas_professor(request):
 
 @login_required
 def criar_turma(request):
+    # Verifica se o usuário é professor (perfil 3)
+    if request.user.perfil != 3:
+        return HttpResponseForbidden("Acesso negado para não-professores.")
+
     if request.method == "POST":
         nome = request.POST.get("class_name")
         descricao = request.POST.get("class_description", "")
@@ -67,14 +70,16 @@ def criar_turma(request):
 
     return JsonResponse({"success": False, "message": "Método inválido."})
 
-from django.shortcuts import render, get_object_or_404
-from django.http import JsonResponse
 
 @login_required
 def upload_arquivo(request, turma_id):
+    # Verifica se o usuário é professor (perfil 3)
+    if request.user.perfil != 3:
+        return HttpResponseForbidden("Acesso negado para não-professores.")
+
     if request.method == 'POST':
         turma = get_object_or_404(Turma, id=turma_id, professor=request.user)
-        arquivo = request.FILES.get('arquivo')  # Verifica se o arquivo foi enviado
+        arquivo = request.FILES.get('arquivo')
         if not arquivo:
             return JsonResponse({'success': False, 'message': 'Nenhum arquivo enviado.'})
 
@@ -83,6 +88,7 @@ def upload_arquivo(request, turma_id):
 
         return JsonResponse({'success': True, 'message': 'Arquivo enviado com sucesso!'})
     return JsonResponse({'success': False, 'message': 'Método inválido.'})
+
 
 @login_required
 def listar_arquivos(request, turma_id):
@@ -107,13 +113,12 @@ def listar_arquivos(request, turma_id):
 
 @login_required
 def remover_arquivo(request, arquivo_id):
+    # Verifica se o usuário é professor (perfil 3)
+    if request.user.perfil != 3:
+        return HttpResponseForbidden("Acesso negado para não-professores.")
+
     if request.method == "POST":
         arquivo = get_object_or_404(Arquivo, id=arquivo_id, turma__professor=request.user)
         arquivo.delete()
         return JsonResponse({"success": True, "message": "Arquivo removido com sucesso!"})
     return JsonResponse({"success": False, "message": "Método inválido."})
-
-
-
-
-

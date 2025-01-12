@@ -3,6 +3,7 @@ from srciencia_core.views.Professor_turmasView import *
 from srciencia_core.views.Visualizar_alunosView import *
 from srciencia_core.views.Excluir_turmaView import *
 from srciencia_core.views.praticarView import *
+from srciencia_core.views.PerfilView import *
 
 urlpatterns = [
     path("", professor_turmas, name="professor_turmas"), 

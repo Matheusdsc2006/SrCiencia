@@ -19,15 +19,24 @@
             <nav>
                 <ul>
                     <li><a href="{% url 'pagina_inicial' %}" class="active"><img src="{% static 'assets/home.svg' %}" alt="">Página inicial</a></li>
-                    <li><a href="#"><img src="{% static 'assets/profile.svg' %}" alt="">Meu perfil</a></li>
+                    <li>
+                        <a href="{% if user.perfil == 3 %}{% url 'professor_perfil' %}{% elif user.perfil == 2 %}{% url 'aluno_perfil' %}{% endif %}">
+                            <img src="{% static 'assets/profile.svg' %}" alt="">Meu Perfil
+                        </a>
+                    </li>
                     <li><a href="{% url 'aluno_praticar' %}"><img src="{% static 'assets/practice.svg' %}" alt="">Praticar</a></li>
-                    <li><a href="{% url 'turmas' %}"><img src="{% static 'assets/classes.svg' %}" alt="">Turmas</a></li>
+                    <li>
+                        <a href="{% if user.perfil == 3 %}{% url 'professor_turmas' %}{% else %}{% url 'turmas' %}{% endif %}">
+                            <img src="{% static 'assets/classes.svg' %}" alt="">Turmas
+                        </a>
+                    </li>
                     <li><a href="#"><img src="{% static 'assets/forum.svg' %}" alt="">Fórum</a></li>
                     <li><a href="#"><img src="{% static 'assets/help.svg' %}" alt="">Ajuda</a></li>
                     <li><a href="{% url 'login' %}" class="logout"><img src="{% static 'assets/logout.svg' %}" alt="">Sair</a></li>
                 </ul>
             </nav>
         </aside>
+        
         <!-- Conteúdo Principal -->
         <main class="main-container">
             <div class="header-container-inicio" style="margin-top: 20px;">

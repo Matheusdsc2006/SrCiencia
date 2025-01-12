@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth import get_user_model
 from django_ckeditor_5.fields import CKEditor5Field
 
 DIFICULDADE = {
@@ -61,6 +62,15 @@ class Questao(models.Model):
             self.dificuldade = 3  # Difícil
         self.save()
 
+User = get_user_model()
+
+class Resolucao(models.Model):
+    aluno = models.ForeignKey(User, on_delete=models.CASCADE, related_name="resolucoes")
+    questao = models.ForeignKey(Questao, on_delete=models.CASCADE, related_name="resolvido_por")
+    data_resolucao = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.aluno} resolveu {self.questao}"
 
 
 

@@ -1,5 +1,6 @@
 from django.urls import path
 from srciencia_core.views.praticarView import *
+from srciencia_core.views.PerfilView import *
 
 urlpatterns = [
     # Página inicial de prática para o aluno
@@ -18,5 +19,5 @@ urlpatterns = [
     path('finalizar_atividade/', finalizar_atividade, name='finalizar_atividade'),
 
     #Rota para exportar a atividade
-    path("exportar/", exportar_atividade, name="exportar_atividade"), 
+    path("exportar/", exportar_atividade, name="exportar_atividade"),
 ]
