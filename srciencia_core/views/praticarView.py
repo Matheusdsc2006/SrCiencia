@@ -18,6 +18,9 @@ import re
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Image, Spacer
 from reportlab.lib.styles import getSampleStyleSheet
 import requests
+from django.db.models.functions import Lower
+from django.db.models import Value
+from django.db.models.expressions import Func
 import matplotlib.pyplot as plt
 from matplotlib import mathtext
 from reportlab.platypus import Table, TableStyle
@@ -37,7 +40,8 @@ def aluno_praticar(request):
         'disciplinas': disciplinas,
         'conteudos': [],
         'topicos': [],
-        'user_perfil': request.user.perfil,  # Passa o perfil do usuário
+        'exibir_resumo': False, 
+        'user_perfil': request.user.perfil,  
     })
 
 
@@ -111,8 +115,6 @@ def buscar_questoes(request):
                 print(f"Questões encontradas por busca direta: {questoes.count()}")
             else:
                 print("Nenhuma busca aplicada. Exibindo todas as questões.")
-
-
 
             # Embaralhar e limitar quantidade
             questoes = list(questoes)
@@ -220,7 +222,13 @@ def reportar_questao(request):
 def finalizar_atividade(request):
     if request.method == 'POST':
         try:
+            # Carregar dados do corpo da requisição
             respostas = json.loads(request.body)
+
+            # Validar as respostas
+            if not isinstance(respostas, list):
+                return JsonResponse({'error': 'Formato inválido de dados enviados.'}, status=400)
+
             aluno = request.user
             questoes_resolvidas = []
 
@@ -228,15 +236,20 @@ def finalizar_atividade(request):
                 questao_id = resposta.get('questao_id')
                 alternativa_id = resposta.get('alternativa_id')
 
+                # Verificar se os IDs foram enviados
                 if not questao_id or not alternativa_id:
                     continue
 
-                questao = Questao.objects.get(id=questao_id)
-                alternativa = questao.alternativas.get(id=alternativa_id)
-                correta = alternativa.correta
+                try:
+                    questao = Questao.objects.get(id=questao_id)
+                    alternativa = questao.alternativas.get(id=alternativa_id)
+                except Questao.DoesNotExist:
+                    return JsonResponse({'error': f'Questão {questao_id} não encontrada.'}, status=404)
+                except Alternativa.DoesNotExist:
+                    return JsonResponse({'error': f'Alternativa {alternativa_id} não encontrada.'}, status=404)
 
-                # Salvar ou atualizar a resposta do aluno
-                resposta_aluno, _ = RespostaAluno.objects.update_or_create(
+                correta = alternativa.correta
+                RespostaAluno.objects.update_or_create(
                     aluno=aluno,
                     questao=questao,
                     defaults={
@@ -245,25 +258,22 @@ def finalizar_atividade(request):
                     },
                 )
 
-                # Adicionar a questão ao resumo
                 questoes_resolvidas.append({
                     'id': questao.id,
                     'descricao': questao.descricao,
                     'alternativas': list(questao.alternativas.values('id', 'descricao', 'correta')),
                     'alternativa_selecionada': alternativa.id,
-                    'resolucao': questao.resolucao or "",  # Inclui a resolução
+                    'resolucao': questao.resolucao or "Nenhuma resolução disponível."
                 })
 
-            return JsonResponse({
-                'message': 'Atividade finalizada com sucesso!',
-                'questoes_resolvidas': questoes_resolvidas,
-            })
+            return JsonResponse({'message': 'Atividade finalizada com sucesso!', 'questoes_resolvidas': questoes_resolvidas})
 
+        except json.JSONDecodeError:
+            return JsonResponse({'error': 'Erro ao decodificar os dados JSON.'}, status=400)
         except Exception as e:
-            return JsonResponse({'error': f'Erro inesperado: {str(e)}'}, status=500)
+            return JsonResponse({'error': f'Erro interno: {str(e)}'}, status=500)
 
     return JsonResponse({'error': 'Método não permitido.'}, status=405)
-
 
 
 @csrf_exempt

@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token }}">
+    <input type="hidden" id="csrf_token" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
     <title>SR. Ciência - Praticar</title>
     <script>
         window.MathJax = {
@@ -149,7 +150,9 @@
                 <div id="white-space" class="hidden">
                     <h2 class="gerar">Aguardando filtro...</h2>
                 </div>
-    
+                <div id="acertos-container" class="hidden">
+                    <h3 class="acertos-text">Número de acertos: <span id="numero-acertos" style="margin-left: 10px;">0</span>/<span id="total-questoes">0</span></h3>
+                </div>                                                         
                 <!-- Conteúdo dinâmico das questões -->
                 <section id="questoes-container">
                     <!-- Questões serão geradas aqui -->
@@ -192,7 +195,7 @@
             <p>Tem certeza de que deseja finalizar a atividade? Suas respostas não poderão ser alteradas.</p>
             <button id="confirm-finalize-btn" class="btn-confirm-sim">Sim</button>
         </div>
-    </div>
+    </div>    
      
     <div id="confirm-clear-modal" class="modal">
         <div class="modal-content">
@@ -206,6 +209,10 @@
     
 <script>
     document.addEventListener("DOMContentLoaded", function () {
+    configurarModalFinalizarAtividade();
+    exibirResumo();
+    carregarResumo();
+    inicializarPagina();
     // Referências dos elementos
     var disciplinaSelect = document.getElementById("disciplina");
     var conteudoSelect = document.getElementById("conteudo");
@@ -224,9 +231,9 @@
     var closeClearModal = document.getElementById("close-clear-modal"); 
     var confirmClearButton = document.getElementById("confirm-clear-btn");
     var exportarAtividadeBtn = document.getElementById("exportar-atividade");
- 
+    var userEmail = "{{ user.email }}"; 
+    var localStorageKey = `progressoAtividade_${userEmail}`;
     var questoesData = null;
-
     var accountModal = document.getElementById("account-modal");
     var accountConfirmationModal = document.getElementById("account-confirmation-modal");
     var changeAccountButton = document.getElementById("change-account-btn");
@@ -238,30 +245,78 @@
     var newAccountInput = document.getElementById("new-account");
     let selectedEmail = null;
 
-    if (exportarAtividadeBtn) {
-        exportarAtividadeBtn.addEventListener("click", function () {
-            var questoesFiltradas = JSON.parse(localStorage.getItem("questoesAtuais"));
+    // Função para salvar progresso no localStorage
+    function salvarProgresso(questoes) {
+    var progresso = {
+        questoes: questoes, // Salva as questões renderizadas
+        respostasSelecionadas: {} // Salva as alternativas selecionadas
+    };
 
-            if (!questoesFiltradas || !questoesFiltradas.questoes.length) {
-                alert("Nenhuma questão encontrada para exportar.");
-                return;
-            }
+    // Salvar alternativas selecionadas
+    document.querySelectorAll("input[type='radio']:checked").forEach((input) => {
+        var questaoId = input.name.split("-")[1];
+        progresso.respostasSelecionadas[questaoId] = input.value;
+    });
 
-            // Extrair IDs das questões filtradas
-            var questoesIds = questoesFiltradas.questoes.map((q) => q.id);
+    localStorage.setItem(localStorageKey, JSON.stringify(progresso));
+}
 
-            // Fazer a requisição para exportar o PDF
-            var params = new URLSearchParams({ questoes: questoesIds });
-            var url = `/aluno/praticar/exportar/?${params.toString()}`;
+    // Função para carregar progresso do localStorage
+function carregarProgresso() {
+    var progresso = JSON.parse(localStorage.getItem(localStorageKey));
 
-            // Abrir o PDF gerado
-            window.open(url, '_blank');
-        });
+    // Verifica se há progresso e questões a serem restauradas
+    if (progresso && progresso.questoes && progresso.questoes.length > 0) {
+        renderizarQuestoes(progresso.questoes);
+
+        // Garantir que as alternativas sejam restauradas
+        if (progresso.respostasSelecionadas) {
+            Object.entries(progresso.respostasSelecionadas).forEach(([questaoId, alternativaId]) => {
+                var input = document.querySelector(`input[name="alternativa-${questaoId}"][value="${alternativaId}"]`);
+                if (input) input.checked = true; // Marca a alternativa salva
+            });
+        }
+
+        // Emitir alerta informando que o progresso foi restaurado apenas se houver questões
+        alert("Seu progresso foi restaurado!");
+    } else {
+        console.log("Nenhum progresso salvo encontrado ou progresso vazio.");
+    }
+}
+
+    // Limpar progresso do usuário logado
+    function limparProgresso() {
+        localStorage.removeItem(localStorageKey);
     }
 
+    if (exportarAtividadeBtn) {
+    exportarAtividadeBtn.addEventListener("click", function () {
+        var questoesFiltradas = JSON.parse(localStorage.getItem("questoesAtuais"));
 
-    function exibirResumo(questoes) {
+        if (!questoesFiltradas || !questoesFiltradas.questoes.length) {
+            alert("Nenhuma questão encontrada para exportar.");
+            return;
+        }
+
+        // Extrair IDs das questões filtradas
+        var questoesIds = questoesFiltradas.questoes.map((q) => q.id);
+
+        // varruir os parâmetros para envio
+        var params = new URLSearchParams({ questoes: questoesIds });
+
+        var url = `{% url 'exportar_atividade' %}?${params.toString()}`;
+
+        // Abrir o PDF gerado
+        window.open(url, '_blank');
+    });
+}
+
+
+function exibirResumo(questoes) {
     var questoesContainer = document.getElementById("questoes-container");
+    var acertosContainer = document.getElementById("acertos-container");
+    var numeroAcertos = document.getElementById("numero-acertos");
+    var totalQuestoes = document.getElementById("total-questoes");
 
     if (!questoes || questoes.length === 0) {
         questoesContainer.innerHTML = `
@@ -271,8 +326,24 @@
         return;
     }
 
+    // Calcular número de acertos
+    var acertos = questoes.filter((questao) => {
+        return questao.alternativas.some(
+            (alt) => alt.id === questao.alternativa_selecionada && alt.correta
+        );
+    }).length;
+
+    // Atualizar o texto no container de acertos
+    numeroAcertos.textContent = acertos;
+    totalQuestoes.textContent = questoes.length;
+
+    // Exibir o container de acertos
+    acertosContainer.classList.remove("hidden");
+    acertosContainer.style.display = "block";
+
     questoesContainer.innerHTML = ""; // Limpar o container
 
+    // Renderizar as questões do resumo
     questoes.forEach((questao, index) => {
         var resolucaoID = `resolucao-${index}`;
         var temResolucao = questao.resolucao && questao.resolucao.trim(); // Confirma se há resolução válida
@@ -316,7 +387,6 @@
         
         questoesContainer.insertAdjacentHTML("beforeend", questaoElement);
     });
-    console.log("Dados recebidos para o resumo:", questoes);
 
     // Reativar MathJax, se necessário
     if (window.MathJax) {
@@ -356,7 +426,7 @@ function finalizarAtividadeConfirmada() {
         respostas.push({ questao_id: questaoId, alternativa_id: alternativaId });
     });
 
-    fetch("/aluno/praticar/finalizar_atividade/", {
+    fetch("{% url 'finalizar_atividade' %}", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -364,14 +434,81 @@ function finalizarAtividadeConfirmada() {
         },
         body: JSON.stringify(respostas),
     })
-    .then((response) => response.json()) // Corrigido: encadeamento do .then
-    .then((data) => {
-        if (data.questoes_resolvidas) {
-            exibirResumo(data.questoes_resolvidas); // Exibe o resumo das questões resolvidas
-        }
-    })
-    .catch((error) => console.error("Erro ao finalizar a atividade:", error));
+        .then((response) => {
+            if (!response.ok) {
+                throw new Error(`Erro HTTP: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then((data) => {
+            if (data.questoes_resolvidas) {
+                // Salvar resumo no localStorage e indicar recarregamento para resumo
+                localStorage.setItem("resumoAtividade", JSON.stringify({
+                    questoes: data.questoes_resolvidas,
+                }));
+                localStorage.setItem("exibirResumo", "true");
+
+                // Limpar progresso salvo após finalizar
+                localStorage.removeItem(localStorageKey);
+
+                // Atualize a interface sem recarregar imediatamente
+                carregarResumo();
+            }
+        })
+        .catch((error) => console.error("Erro ao finalizar a atividade:", error));
 }
+
+
+
+// Configurar o modal de confirmação
+function configurarModalFinalizarAtividade() {
+    var finalizarModal = document.getElementById("confirm-finalize-modal");
+    var closeFinalizeModal = document.getElementById("close-finalize-modal");
+    var confirmFinalizeBtn = document.getElementById("confirm-finalize-btn");
+
+    document.addEventListener("click", (event) => {
+    if (event.target && event.target.id === "finalizar-atividade") {
+        event.preventDefault(); // Impede comportamento padrão
+        var finalizarModal = document.getElementById("confirm-finalize-modal");
+        if (finalizarModal) {
+            finalizarModal.style.display = "block"; // Exibe o modal
+        }
+    }
+});
+
+
+    // Fechar modal ao clicar no "X"
+    closeFinalizeModal?.addEventListener("click", () => {
+        if (finalizarModal) {
+            finalizarModal.style.display = "none";
+        }
+    });
+
+    // Fechar modal ao clicar fora do conteúdo
+    window.addEventListener("click", (event) => {
+        if (event.target === finalizarModal) {
+            finalizarModal.style.display = "none";
+        }
+    });
+
+    confirmFinalizeBtn?.addEventListener("click", function (event) {
+    event.preventDefault(); // Impede envio/recarregamento
+    finalizarAtividadeConfirmada(); // Finaliza a atividade após confirmação
+
+    // Força a barra de rolagem para o topo da página
+    document.documentElement.scrollTop = 0; // Para navegadores modernos
+    document.body.scrollTop = 0; // Para compatibilidade com navegadores mais antigos
+    document.querySelector('html').scrollTop = 0; // Força o scroll no elemento <html>
+    
+    var finalizarModal = document.getElementById("confirm-finalize-modal");
+    if (finalizarModal) {
+        finalizarModal.style.display = "none"; // Fecha o modal
+    }
+});
+
+
+}
+
 
 // Configurar eventos do botão "Finalizar Atividade"
 function configurarEventosBotaoFinalizar(finalizarBtn) {
@@ -422,11 +559,9 @@ function adicionarBotaoFinalizarAtividade() {
 
         // Adiciona o botão ao container de questões
         questoesContainer.insertAdjacentElement("beforeend", finalizarBtn);
-
-        // Configurar os eventos do botão
-        configurarEventosBotaoFinalizar(finalizarBtn);
     }
 }
+
 
 // Função para ativar visibilidade das resoluções no container
 function ativarBotoesVisibilidade() {
@@ -466,17 +601,18 @@ function salvarRespostas() {
         respostas.push({ questao_id: questaoId, alternativa_id: alternativaId });
     });
 
-    fetch("/aluno/praticar/registrar_resposta/", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            "X-CSRFToken": document.querySelector("[name='csrfmiddlewaretoken']").value,
-        },
-        body: JSON.stringify(respostas),
-    })
-    .then((response) => response.json())
-    .then((data) => alert(data.message || "Respostas salvas com sucesso!"))
-    .catch((error) => console.error("Erro ao salvar respostas:", error));
+    fetch("{% url 'registrar_resposta' %}", {
+    method: "POST",
+    headers: {
+        "Content-Type": "application/json",
+        "X-CSRFToken": document.querySelector("[name='csrfmiddlewaretoken']").value,
+    },
+    body: JSON.stringify(respostas), // 
+})
+.then((response) => response.json())
+.then((data) => alert(data.message || "Respostas salvas com sucesso!"))
+.catch((error) => console.error("Erro ao salvar respostas:", error));
+
 }
 
 
@@ -487,18 +623,6 @@ function salvarRespostas() {
         }
         return array;
     }
-    
-    document.getElementById("gerar-atividade").addEventListener("click", () => {
-    var buscaInput = document.getElementById("busca-questoes").value.trim();
-
-    // Permitir apenas letras e espaços
-    if (buscaInput && !/^[a-zA-Z ]+$/.test(buscaInput)) {
-        alert("Por favor, insira apenas letras na busca.");
-        return;
-    }
-
-    buscarQuestoes();
-});
 
 // Garantir que os eventos sejam associados após a renderização
 function renderizarQuestoes(questoes, isResumo = false) {
@@ -569,8 +693,8 @@ function renderizarQuestoes(questoes, isResumo = false) {
     if (window.MathJax) {
         MathJax.typeset();
     }
-}
 
+}
 
     var quantidade = quantidadeInput.value.trim();
 
@@ -605,24 +729,58 @@ function carregarQuestoesSalvas() {
     }
 }
 
+// Verificar se há resumo salvo no localStorage ao carregar a página
+function carregarResumo() {
+    var exibirResumoFlag = localStorage.getItem("exibirResumo") === "true";
+    var resumoAtividade = JSON.parse(localStorage.getItem("resumoAtividade"));
+
+    if (exibirResumoFlag && resumoAtividade && resumoAtividade.questoes) {
+        exibirResumo(resumoAtividade.questoes);
+
+        // Tornar visível o container de resumo
+        var acertosContainer = document.getElementById("acertos-container");
+        if (acertosContainer) {
+            acertosContainer.classList.remove("hidden");
+            acertosContainer.style.display = "block";
+        }
+
+        // Redirecionar para o topo da página
+        setTimeout(() => {
+            document.documentElement.scrollTo({ top: 0, behavior: "smooth" });
+        }, 100); // Pequeno atraso para garantir que o DOM esteja atualizado
+
+        // Limpar indicador e resumo do localStorage
+        localStorage.removeItem("exibirResumo");
+        localStorage.removeItem("resumoAtividade");
+    } else {
+        carregarProgresso(); // Restaurar progresso normalmente
+    }
+}
+
 
 function inicializarPagina() {
-        var questoesSalvas = JSON.parse(localStorage.getItem("questoesAtuais"));
-        var questoesContainer = document.getElementById("questoes-container");
-        var whiteSpace = document.getElementById("white-space");
+    var questoesContainer = document.getElementById("questoes-container");
+    var whiteSpace = document.getElementById("white-space");
 
-        if (questoesSalvas && questoesSalvas.questoes && questoesSalvas.questoes.length > 0) {
-            alert("Seu progresso foi restaurado!"); // Exibe o alerta
-            renderizarQuestoes(questoesSalvas.questoes); // Renderiza as questões salvas
-            carregarRespostasSalvas(); // Restaura as respostas salvas
-            whiteSpace.style.display = "none"; // Oculta o white space
+    // Tenta carregar o progresso salvo
+    carregarProgresso();
 
-            // Adiciona dinamicamente o botão "Finalizar Atividade"
-            adicionarBotaoFinalizarAtividade();
-        } else {
-            whiteSpace.style.display = "flex"; // Mostra o espaço branco se não houver progresso salvo
-        }
+    // Se nenhuma questão foi carregada, exibe o espaço em branco
+    var progresso = JSON.parse(localStorage.getItem(localStorageKey));
+    if (!progresso || !progresso.questoes || progresso.questoes.length === 0) {
+        console.log("Nenhum progresso salvo. Exibindo espaço em branco.");
+        whiteSpace.style.display = "flex"; // Mostra o espaço em branco
+        questoesContainer.style.display = "none"; // Oculta o container de questões
     }
+}
+
+document.addEventListener("change", (event) => {
+    if (event.target.matches("input[type='radio']")) {
+        var progresso = JSON.parse(localStorage.getItem(localStorageKey));
+        var questoes = progresso ? progresso.questoes : [];
+        salvarProgresso(questoes); // Atualiza o progresso salvo
+    }
+});
 
     function validarQuantidade() {
         var quantidade = quantidadeInput.value.trim();
@@ -655,28 +813,38 @@ function salvarAlternativas() {
     var form = document.querySelector("#filtro-questoes-form");
     var params = new URLSearchParams(new FormData(form));
 
+    // Limpar progresso salvo antes de uma nova busca
+    localStorage.removeItem(localStorageKey);
+
     // Adicionar filtro de status
     var statusFilters = [];
     document.querySelectorAll("input[name='status']:checked").forEach((checkbox) => {
-        if (!statusFilters.includes(checkbox.value)) {
-            statusFilters.push(checkbox.value);
-        }
+        statusFilters.push(checkbox.value);
     });
 
     if (statusFilters.length > 0) {
-        params.append("status", statusFilters.join(","));
+        params.set("status", statusFilters.join(",")); // Atualiza o parâmetro com os valores selecionados
+    } else {
+        params.delete("status"); // Remove o parâmetro se nenhum filtro estiver selecionado
     }
 
     // Garantir que o campo de busca seja enviado
     var buscaInput = form.querySelector("#busca-questoes");
     if (buscaInput && buscaInput.value.trim()) {
-        params.set("busca", buscaInput.value.trim());
+        params.set("busca", buscaInput.value.trim()); // Garante que o valor do campo seja enviado
     } else {
-        params.delete("busca"); // Remove o parâmetro se o campo estiver vazio
+        params.delete("busca"); // Remove o parâmetro de busca se estiver vazio
     }
 
-    // Fazer a requisição
-    fetch(`/aluno/praticar/api/questoes?${params.toString()}`)
+    // Garantir que a quantidade seja válida
+    var quantidade = parseInt(document.getElementById("quantidade").value.trim());
+    if (isNaN(quantidade) || quantidade <= 0 || quantidade > 50) {
+        alert("Por favor, insira um número válido de questões (1 a 50).");
+        return;
+    }
+
+    // Fazer a requisição para o backend
+    fetch(`/aluno/api/questoes?${params}`)
         .then((response) => {
             if (!response.ok) {
                 throw new Error(`Erro HTTP: ${response.status}`);
@@ -684,16 +852,30 @@ function salvarAlternativas() {
             return response.json();
         })
         .then((data) => {
-            console.log("Dados recebidos da API:", data);
-            if (data.questoes.length === 0) {
-                exibirMensagemSemQuestoes();
-            } else {
-                renderizarQuestoes(data.questoes);
+            // Limpar interface e progresso local antes de renderizar novos dados
+            var questoesContainer = document.getElementById("questoes-container");
+            questoesContainer.innerHTML = ""; // Limpa o container para evitar sobreposição
+            var questoesFiltradas = data.questoes.slice(0, quantidade);
+
+            if (questoesFiltradas.length === 0) {
+                // Exibir mensagem de "Nenhuma questão encontrada"
+                questoesContainer.innerHTML = `
+                    <p style="color: white; text-align: center; font-size: 1.2rem;">
+                        Nenhuma questão encontrada para os filtros aplicados.
+                    </p>`;
+                questoesContainer.style.display = "block";
+                localStorage.removeItem(localStorageKey); // Remove cache vazio
+                return;
             }
+
+            // Renderizar questões filtradas
+            renderizarQuestoes(questoesFiltradas);
+
+            // Salvar progresso no localStorage
+            salvarProgresso(questoesFiltradas);
         })
         .catch((error) => {
             console.error("Erro ao buscar questões:", error);
-            alert("Erro ao buscar questões. Tente novamente mais tarde.");
         });
 }
 
@@ -977,12 +1159,14 @@ function exibirMensagemSemQuestoes() {
             return;
         }
 
+        buscarQuestoes();
+
         // Parâmetros para requisição de questões
         var filtroForm = document.querySelector("#filtro-questoes-form");
         var params = new URLSearchParams(new FormData(filtroForm));
 
         // Requisição para buscar as questões
-        fetch(`/aluno/praticar/api/questoes?${params.toString()}`)
+        fetch("{% url 'buscar_questoes' %}?${params.toString()}")
             .then(response => {
                 if (!response.ok) throw new Error(`Erro HTTP: ${response.status}`);
                 return response.json();
@@ -997,15 +1181,13 @@ function exibirMensagemSemQuestoes() {
             })
             .catch(error => console.error("Erro ao buscar questões:", error));
     });
-
+    
     document.getElementById("gerar-atividade").addEventListener("click", () => {
-    var buscaInput = document.getElementById("busca-questoes").value.trim();
-
-    // Verificar se o campo de busca tem apenas caracteres válidos
-    if (buscaInput && !/^[a-zA-Záéíóúàèìòùãõâêîôûç\s]+$/i.test(buscaInput)) {
-        alert("Por favor, insira apenas letras na busca.");
-        return;
-    }
+        var quantidade = document.getElementById("quantidade").value.trim();
+        if (!quantidade || isNaN(quantidade) || quantidade <= 0 || quantidade > 50) {
+            alert("Por favor, insira um número válido de questões (1 a 50).");
+            return;
+        }
 
     buscarQuestoes(); // Chama a função que fará a busca
 });
