@@ -35,7 +35,7 @@ def login_view(request):
                 request.session.modified = True
                 
                 if user.is_superuser:
-                    return redirect('questao_list') 
+                    return redirect('questao_list')
                 return redirect('pagina_inicial')  
             else:
                 messages.error(request, "Credenciais inválidas. Por favor, tente novamente.")

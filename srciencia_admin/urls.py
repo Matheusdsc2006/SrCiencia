@@ -9,6 +9,7 @@ from srciencia_core.views.Visualizar_alunosView import listar_alunos_turma
 urlpatterns = [
     # Administração
     path('admin/', admin.site.urls),
+    path('', include('srciencia_core.urls.adminUrls')),
 
     # Autenticação
     path('', include('srciencia_auth.urls.HomeUrls')),
