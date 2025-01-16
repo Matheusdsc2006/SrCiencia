@@ -20,6 +20,7 @@ urlpatterns = [
     path('api/conteudos/<int:disciplina_id>/', get_conteudos, name='get_conteudos'),
     path('api/topicos/<int:conteudo_id>/', get_topicos, name='get_topicos'),
 
+
     # CKEditor
     path("ckeditor5/", include('django_ckeditor_5.urls')),
 

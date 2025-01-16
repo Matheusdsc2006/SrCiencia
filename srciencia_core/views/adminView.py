@@ -140,21 +140,21 @@ def get_conteudos(request, disciplina_id):
     try:
         conteudos = Conteudo.objects.filter(disciplina_id=disciplina_id).values('id', 'nome')
         if not conteudos:
-            return Response([], status=200) 
+            return Response([], status=200)  # Retorna lista vazia ao invés de erro
         return Response(list(conteudos), status=200)
     except Exception as e:
         return Response({'error': str(e)}, status=500)
-
 
 @api_view(['GET'])
 def get_topicos(request, conteudo_id):
     try:
         topicos = Topico.objects.filter(conteudo_id=conteudo_id).values('id', 'nome')
-        return Response(list(topicos))  
-    except Topico.DoesNotExist:
-        return Response({'error': 'Nenhum tópico encontrado.'}, status=404)
+        if not topicos:
+            return Response([], status=200)  # Retorna lista vazia ao invés de erro
+        return Response(list(topicos), status=200)
     except Exception as e:
         return Response({'error': str(e)}, status=500)
+
 
 
 
@@ -366,4 +366,3 @@ def buscar_disciplinas(request):
         if query in unidecode(disciplina.nome.lower())
     ]
     return JsonResponse({'disciplinas': data, 'total': len(data)}, safe=False)
-

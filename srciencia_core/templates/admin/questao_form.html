@@ -1,174 +1,174 @@
-    {% extends "base-admin.html" %}
-    {% load static %}
-    {% block styles %}
-    <link rel="stylesheet" href="{% static 'css/questoes.css' %}">
-    <link rel="stylesheet" href="{% static 'css/global.css' %}">
-    <link rel="stylesheet" href="{% static 'css/global-core.css' %}">
-    {% endblock %}
+{% extends "base-admin.html" %}
+{% load static %}
+{% block styles %}
+<link rel="stylesheet" href="{% static 'css/questoes.css' %}">
+<link rel="stylesheet" href="{% static 'css/global.css' %}">
+<link rel="stylesheet" href="{% static 'css/global-core.css' %}">
+{% endblock %}
 
-    {% block content %}
-    <main>
-        <div class="header-container">
-            <a href="{% url 'questao_list' %}" class="btn-back">Voltar</a>
-            <h2 class="edit-quest">
-                {% if questao_form.instance.pk %}Editar Questão{% else %}Nova Questão{% endif %}
-            </h2>
-        </div>
-        <form method="post" enctype="multipart/form-data" id="questao-form">
-            {% csrf_token %}
-    
-            <div class="descricao">
-                <label for="{{ questao_form.descricao.id_for_label }}">Descrição:</label>
-                {{ questao_form.descricao }}
-                {% if questao_form.descricao.errors %}
-                <div class="error-messages">
-                    {% for error in questao_form.descricao.errors %}
-                    <span class="error">{{ error }}</span>
-                    {% endfor %}
-                </div>
-                {% endif %}
-            </div>            
-            <div class="select-boxes">
-                <div>
-                    <label for="ano">Ano:</label>
-                    <select id="ano" name="ano" class="styled-select">
-                        <option value="" disabled selected>Informe o ano</option>
-                        {% for ano in anos %}
-                        <option value="{{ ano }}" {% if questao_form.instance.ano == ano %}selected{% endif %}>
-                            {{ ano }}
-                        </option>
-                        {% endfor %}
-                    </select>
-                </div>
-                <div>
-                    <label for="{{ questao_form.banca.id_for_label }}">Banca:</label>
-                    {{ questao_form.banca }}
-                </div>
-                <div>
-                    <label for="{{ questao_form.disciplina.id_for_label }}">Disciplina:</label>
-                    {{ questao_form.disciplina }}
-                </div>
-                <div>
-                    <label for="{{ questao_form.conteudo.id_for_label }}">Conteúdo:</label>
-                    <select id="id_conteudo" name="conteudo" data-selected="{{ conteudo_id }}">
-                        <option value="">---------</option>
-                        {% for conteudo in conteudos %}
-                        <option value="{{ conteudo.id }}" {% if conteudo.id == conteudo_id %}selected{% endif %}>
-                            {{ conteudo.nome }}
-                        </option>
-                        {% endfor %}
-                    </select>
-                </div>
-                
-                <div>
-                    <label for="{{ questao_form.topico.id_for_label }}">Tópico:</label>
-                    <select id="id_topico" name="topico" data-selected="{{ topico_id }}">
-                        <option value="">---------</option>
-                        {% for topico in topicos %}
-                        <option value="{{ topico.id }}" {% if topico.id == topico_id %}selected{% endif %}>
-                            {{ topico.nome }}
-                        </option>
-                        {% endfor %}
-                    </select>
-                </div>                                     
-            </div>
-            <div class="resolv">
-                <label for="{{ questao_form.resolucao.id_for_label }}">Resolução:</label>
-                {{ questao_form.resolucao }}
-                {% if questao_form.resolucao.errors %}
-                <div class="error-messages">
-                    {% for error in questao_form.resolucao.errors %}
-                    <span class="error">{{ error }}</span>
-                    {% endfor %}
-                </div>
-                {% endif %}
-            </div>
-            <h3 class="alt">Alternativas</h3>
-            {{ formset.management_form }}
-            <div class="alternativas">
-                {% for form in formset %}
-                <div class="alternativa">
-                    {{ form.id }}
+{% block content %}
+<main>
+    <div class="header-container">
+        <a href="{% url 'questao_list' %}" class="btn-back">Voltar</a>
+        <h2 class="edit-quest">
+            {% if questao_form.instance.pk %}Editar Questão{% else %}Nova Questão{% endif %}
+        </h2>
+    </div>
+    <form method="post" enctype="multipart/form-data" id="questao-form">
+        {% csrf_token %}
 
-                    <!-- Linha com todos os campos alinhados -->
-                    <div class="linha-alternativa">
-                        <!-- Checkbox -->
-                        <div class="checkbox-correta">
-                            <input 
-                                type="checkbox" 
-                                id="{{ form.correta.id_for_label }}" 
-                                name="{{ form.correta.html_name }}" 
-                                {% if form.correta.value %}checked{% endif %}
-                            >
-                            <label for="{{ form.correta.id_for_label }}"></label>
-                        </div>                        
-
-                        <!-- Campo de Descrição -->
-                        <div class="input-group descricao">
-                            <label for="{{ form.descricao.id_for_label }}">Descrição:</label>
-                            {{ form.descricao }}
-                            {% if form.descricao.errors %}
-                            <div class="error-messages">
-                                {% for error in form.descricao.errors %}
-                                <span class="error">{{ error }}</span>
-                                {% endfor %}
-                            </div>
-                            {% endif %}
-                        </div>
-
-                        <!-- Campo de URL da Imagem -->
-                        <div class="input-group url-imagem">
-                            <label for="{{ form.imagem_url.id_for_label }}">URL da Imagem (opcional):</label>
-                            {{ form.imagem_url }}
-                            {% if form.imagem_url.errors %}
-                            <div class="error-messages">
-                                {% for error in form.imagem_url.errors %}
-                                <span class="error">{{ error }}</span>
-                                {% endfor %}
-                            </div>
-                            {% endif %}
-                        </div>
-                    </div>
-                </div>
+        <div class="descricao">
+            <label for="{{ questao_form.descricao.id_for_label }}">Descrição:</label>
+            {{ questao_form.descricao }}
+            {% if questao_form.descricao.errors %}
+            <div class="error-messages">
+                {% for error in questao_form.descricao.errors %}
+                <span class="error">{{ error }}</span>
                 {% endfor %}
             </div>
-            <p>* Marque qual deve ser a(s) alternativa(s) correta(s)</p>
-                        
+            {% endif %}
+        </div>            
+        <div class="select-boxes">
             <div>
-                <button type="submit" class="btn btn-save">Salvar</button>
-                <a href="{% url 'questao_list' %}" class="btn btn-cancel">Cancelar</a>
+                <label for="ano">Ano:</label>
+                <select id="ano" name="ano" class="styled-select">
+                    <option value="" disabled selected>Informe o ano</option>
+                    {% for ano in anos %}
+                    <option value="{{ ano }}" {% if questao_form.instance.ano == ano %}selected{% endif %}>
+                        {{ ano }}
+                    </option>
+                    {% endfor %}
+                </select>
             </div>
-    
-            <!-- Mensagens de Erro -->
-            {% if questao_form.errors %}
-            <div class="errors">
-                <ul>
-                    {% for error in questao_form.non_field_errors %}
-                    <li>{{ error }}</li>
+            <div>
+                <label for="{{ questao_form.banca.id_for_label }}">Banca:</label>
+                {{ questao_form.banca }}
+            </div>
+            <div>
+                <label for="{{ questao_form.disciplina.id_for_label }}">Disciplina:</label>
+                {{ questao_form.disciplina }}
+            </div>
+            <div>
+                <label for="{{ questao_form.conteudo.id_for_label }}">Conteúdo:</label>
+                <select id="id_conteudo" name="conteudo" data-selected="{{ conteudo_id }}">
+                    <option value="">---------</option>
+                    {% for conteudo in conteudos %}
+                    <option value="{{ conteudo.id }}" {% if conteudo.id == conteudo_id %}selected{% endif %}>
+                        {{ conteudo.nome }}
+                    </option>
                     {% endfor %}
-                    {% for field, errors in questao_form.errors.items %}
-                    <li>{{ field }}: {{ errors }}</li>
+                </select>
+            </div>
+            
+            <div>
+                <label for="{{ questao_form.topico.id_for_label }}">Tópico:</label>
+                <select id="id_topico" name="topico" data-selected="{{ topico_id }}">
+                    <option value="">---------</option>
+                    {% for topico in topicos %}
+                    <option value="{{ topico.id }}" {% if topico.id == topico_id %}selected{% endif %}>
+                        {{ topico.nome }}
+                    </option>
                     {% endfor %}
-                </ul>
+                </select>
+            </div>                                     
+        </div>
+        <div class="resolv">
+            <label for="{{ questao_form.resolucao.id_for_label }}">Resolução:</label>
+            {{ questao_form.resolucao }}
+            {% if questao_form.resolucao.errors %}
+            <div class="error-messages">
+                {% for error in questao_form.resolucao.errors %}
+                <span class="error">{{ error }}</span>
+                {% endfor %}
             </div>
             {% endif %}
-    
-            {% if formset.errors %}
-            <div class="errors">
-                <ul>
-                    {% for form in formset %}
-                    {% for field, errors in form.errors.items %}
-                    <li>{{ field }}: {{ errors }}</li>
-                    {% endfor %}
-                    {% endfor %}
-                </ul>
-            </div>
-            {% endif %}
-        </form>
-    </main>    
-    {% endblock %}
+        </div>
+        <h3 class="alt">Alternativas</h3>
+        {{ formset.management_form }}
+        <div class="alternativas">
+            {% for form in formset %}
+            <div class="alternativa">
+                {{ form.id }}
 
-    {% block scripts %}
-        {{ questao_form.media }}
-        <script src="{% static 'js/questao-form.js' %}"></script>
-    {% endblock %}
+                <!-- Linha com todos os campos alinhados -->
+                <div class="linha-alternativa">
+                    <!-- Checkbox -->
+                    <div class="checkbox-correta">
+                        <input 
+                            type="checkbox" 
+                            id="{{ form.correta.id_for_label }}" 
+                            name="{{ form.correta.html_name }}" 
+                            {% if form.correta.value %}checked{% endif %}
+                        >
+                        <label for="{{ form.correta.id_for_label }}"></label>
+                    </div>                        
+
+                    <!-- Campo de Descrição -->
+                    <div class="input-group descricao">
+                        <label for="{{ form.descricao.id_for_label }}">Descrição:</label>
+                        {{ form.descricao }}
+                        {% if form.descricao.errors %}
+                        <div class="error-messages">
+                            {% for error in form.descricao.errors %}
+                            <span class="error">{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Campo de URL da Imagem -->
+                    <div class="input-group url-imagem">
+                        <label for="{{ form.imagem_url.id_for_label }}">URL da Imagem (opcional):</label>
+                        {{ form.imagem_url }}
+                        {% if form.imagem_url.errors %}
+                        <div class="error-messages">
+                            {% for error in form.imagem_url.errors %}
+                            <span class="error">{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <p>* Marque qual deve ser a(s) alternativa(s) correta(s)</p>
+                    
+        <div>
+            <button type="submit" class="btn btn-save">Salvar</button>
+            <a href="{% url 'questao_list' %}" class="btn btn-cancel">Cancelar</a>
+        </div>
+
+        <!-- Mensagens de Erro -->
+        {% if questao_form.errors %}
+        <div class="errors">
+            <ul>
+                {% for error in questao_form.non_field_errors %}
+                <li>{{ error }}</li>
+                {% endfor %}
+                {% for field, errors in questao_form.errors.items %}
+                <li>{{ field }}: {{ errors }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+
+        {% if formset.errors %}
+        <div class="errors">
+            <ul>
+                {% for form in formset %}
+                {% for field, errors in form.errors.items %}
+                <li>{{ field }}: {{ errors }}</li>
+                {% endfor %}
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+    </form>
+</main>    
+{% endblock %}
+
+{% block scripts %}
+    {{ questao_form.media }}
+    <script src="{% static 'js/questao-form.js' %}"></script>
+{% endblock %}

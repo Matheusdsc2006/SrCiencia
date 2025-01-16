@@ -27,9 +27,24 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Função para carregar conteúdos com base na disciplina selecionada
     function carregarConteudos(disciplinaId) {
-        fetch(`/api/conteudos/${disciplinaId}`)
-            .then((response) => response.json())
+        // Verifica se a disciplina é válida
+        if (!disciplinaId) {
+            console.error("Disciplina ID inválido:", disciplinaId);
+            conteudoField.innerHTML = '<option value="">---------</option>';
+            conteudoField.disabled = true;
+            return;
+        }
+
+        // Faz a requisição ao endpoint de conteúdos
+        fetch(`/api/conteudos/${disciplinaId}/`)
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error(`Erro ao carregar conteúdos: ${response.statusText}`);
+                }
+                return response.json();
+            })
             .then((data) => {
+                // Atualiza o select de conteúdos
                 conteudoField.innerHTML = '<option value="">---------</option>';
                 data.forEach((item) => {
                     var option = document.createElement("option");
@@ -38,12 +53,12 @@ document.addEventListener("DOMContentLoaded", function () {
                     conteudoField.appendChild(option);
                 });
 
-                // Selecionar o valor atual se já existir
+                conteudoField.disabled = false;
+
+                // Seleciona o valor atual, se existir
                 if (conteudoField.dataset.selected) {
                     conteudoField.value = conteudoField.dataset.selected;
                 }
-
-                conteudoField.disabled = false;
             })
             .catch((error) => {
                 console.error("Erro ao carregar conteúdos:", error);
@@ -52,15 +67,15 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Função para carregar tópicos com base no conteúdo selecionado
     function carregarTopicos(conteudoId) {
-        // Verifica se o conteúdo ID é válido
+        // Verifica se o conteúdo é válido
         if (!conteudoId || conteudoId === "None") {
             console.error("Conteúdo ID inválido:", conteudoId);
-            topicoField.innerHTML = '<option value="">---------</option>'; // Reseta o campo de tópicos
-            topicoField.disabled = true; // Desabilita o select de tópicos
-            return; // Interrompe a execução da função
+            topicoField.innerHTML = '<option value="">---------</option>';
+            topicoField.disabled = true;
+            return;
         }
-    
-        // Faz a requisição para o endpoint de tópicos
+
+        // Faz a requisição ao endpoint de tópicos
         fetch(`/api/topicos/${conteudoId}/`)
             .then((response) => {
                 if (!response.ok) {
@@ -69,6 +84,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 return response.json();
             })
             .then((data) => {
+                // Atualiza o select de tópicos
                 topicoField.innerHTML = '<option value="">---------</option>';
                 data.forEach((item) => {
                     var option = document.createElement("option");
@@ -76,10 +92,10 @@ document.addEventListener("DOMContentLoaded", function () {
                     option.textContent = item.nome;
                     topicoField.appendChild(option);
                 });
-    
+
                 topicoField.disabled = false;
-    
-                // Selecionar o valor atual se já existir
+
+                // Seleciona o valor atual, se existir
                 if (topicoField.dataset.selected) {
                     topicoField.value = topicoField.dataset.selected;
                 }
@@ -87,6 +103,31 @@ document.addEventListener("DOMContentLoaded", function () {
             .catch((error) => {
                 console.error("Erro ao carregar tópicos:", error);
             });
+    }
+
+    // Event Listener para carregar conteúdos ao alterar a disciplina
+    disciplinaField.addEventListener("change", function () {
+        var disciplinaId = this.value; // Obtém o ID da disciplina selecionada
+        carregarConteudos(disciplinaId); // Chama a função para carregar conteúdos
+        topicoField.innerHTML = '<option value="">---------</option>'; // Reseta os tópicos
+        topicoField.disabled = true;
+    });
+
+    // Event Listener para carregar tópicos ao alterar o conteúdo
+    conteudoField.addEventListener("change", function () {
+        var conteudoId = this.value; // Obtém o ID do conteúdo selecionado
+        carregarTopicos(conteudoId); // Chama a função para carregar tópicos
+    });
+
+    // Inicialização: carregar conteúdos e tópicos se houver valores pré-selecionados
+    var disciplinaId = disciplinaField.value;
+    if (disciplinaId) {
+        carregarConteudos(disciplinaId);
+
+        var conteudoId = conteudoField.dataset.selected;
+        if (conteudoId) {
+            carregarTopicos(conteudoId);
+        }
     }
     
 
@@ -290,7 +331,7 @@ document.addEventListener("DOMContentLoaded", function () {
             alert("Você esqueceu de adicionar um conteúdo ou tópico!"); // Exibir alerta
         }
     });
-    const loadConteudos = (disciplinaId) => {
+    var loadConteudos = (disciplinaId) => {
         fetch(`/app/u/0/api/conteudos/${disciplinaId}/`)
             .then(response => {
                 if (!response.ok) {
@@ -299,10 +340,10 @@ document.addEventListener("DOMContentLoaded", function () {
                 return response.json();
             })
             .then(data => {
-                const conteudoSelect = document.getElementById('id_conteudo');
+                var conteudoSelect = document.getElementById('id_conteudo');
                 conteudoSelect.innerHTML = '<option value="">---------</option>';
                 data.forEach(conteudo => {
-                    const option = document.createElement('option');
+                    var option = document.createElement('option');
                     option.value = conteudo.id;
                     option.textContent = conteudo.nome;
                     conteudoSelect.appendChild(option);
@@ -311,7 +352,7 @@ document.addEventListener("DOMContentLoaded", function () {
             .catch(error => console.error('Erro ao carregar conteúdos:', error));
     };
     
-    const loadTopicos = (conteudoId) => {
+    var loadTopicos = (conteudoId) => {
         fetch(`/app/u/0/api/topicos/${conteudoId}/`)
             .then(response => {
                 if (!response.ok) {
@@ -320,10 +361,10 @@ document.addEventListener("DOMContentLoaded", function () {
                 return response.json();
             })
             .then(data => {
-                const topicoSelect = document.getElementById('id_topico');
+                var topicoSelect = document.getElementById('id_topico');
                 topicoSelect.innerHTML = '<option value="">---------</option>';
                 data.forEach(topico => {
-                    const option = document.createElement('option');
+                    var option = document.createElement('option');
                     option.value = topico.id;
                     option.textContent = topico.nome;
                     topicoSelect.appendChild(option);
@@ -354,7 +395,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
     form.addEventListener("submit", function (event) {
         // Obter todos os checkboxes de alternativas
-        const checkboxes = document.querySelectorAll("input[type='checkbox'][name*='correta']");
+        var checkboxes = document.querySelectorAll("input[type='checkbox'][name*='correta']");
         let atLeastOneChecked = false;
 
         // Verificar se pelo menos um checkbox está marcado
