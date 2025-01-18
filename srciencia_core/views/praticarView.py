@@ -9,6 +9,7 @@ from django.db.models import OuterRef, Subquery
 from difflib import SequenceMatcher
 from random import sample
 from random import shuffle
+from django.views.decorators.http import require_POST
 from reportlab.pdfgen import canvas
 from io import BytesIO
 from reportlab.lib.pagesizes import letter 
@@ -78,34 +79,35 @@ def buscar_questoes(request):
             if disciplina_id:
                 questoes = questoes.filter(disciplina_id=disciplina_id)
                 print(f"Após filtro disciplina: {questoes.count()}")
+
             if conteudo_id:
                 questoes = questoes.filter(conteudo_id=conteudo_id)
                 print(f"Após filtro conteúdo: {questoes.count()}")
+
             if dificuldade:
                 questoes = questoes.filter(dificuldade=dificuldade)
                 print(f"Após filtro dificuldade: {questoes.count()}")
 
             # Filtrar por status
+            usuario = request.user
+
             if 'nao_resolvidas' in status_filtros:
                 # Excluir questões já respondidas
-                questoes = questoes.exclude(respostas__aluno=request.user)
+                questoes = questoes.exclude(respostas__aluno=usuario)
                 print(f"Filtro 'não resolvidas' aplicado. Total após filtro: {questoes.count()}")
             else:
-                # Nenhuma exclusão deve ocorrer
                 print("Filtro 'não resolvidas' não aplicado. Exibindo todas as questões.")
 
-            # Garantir que apenas filtros válidos sejam aplicados
             if 'que_errei' in status_filtros:
                 questoes = questoes.filter(
-                    respostas__aluno=request.user,
+                    respostas__aluno=usuario,
                     respostas__correta=False
                 )
                 print(f"Filtro 'que errei' aplicado. Total após filtro: {questoes.count()}")
-            if 'com_resolucao' in status_filtros:
-                questoes = questoes.filter(
-                    Q(resolucao__isnull=False) & ~Q(resolucao="")
-                )
-                print(f"Filtro 'com resolução' aplicado. Total após filtro: {questoes.count()}")
+
+            if 'favoritadas' in status_filtros:
+                questoes = questoes.filter(favoritada_por=request.user) 
+                print(f"Filtro 'favoritadas' aplicado. Total após filtro: {questoes.count()}")
 
 
             # Filtro de busca textual
@@ -135,6 +137,7 @@ def buscar_questoes(request):
                     'disciplina': q.disciplina.nome if q.disciplina else None,
                     'conteudo': q.conteudo.nome if q.conteudo else None,
                     'topico': q.topico.nome if q.topico else None,
+                    'favoritada': usuario in q.favoritada_por.all(), 
                 }
                 for q in questoes
             ]
@@ -392,9 +395,18 @@ def exportar_atividade(request):
     response["Content-Disposition"] = 'attachment; filename="atividade.pdf"'
     return response
 
-
-
-
+@login_required
+def favoritar_questao(request, questao_id):
+    try:
+        questao = Questao.objects.get(id=questao_id)
+        if questao.favoritada_por.filter(id=request.user.id).exists():
+            questao.favoritada_por.remove(request.user) 
+            return JsonResponse({'success': True, 'favoritada': False})
+        else:
+            questao.favoritada_por.add(request.user) 
+            return JsonResponse({'success': True, 'favoritada': True})
+    except Questao.DoesNotExist:
+        return JsonResponse({'success': False, 'error': 'Questão não encontrada'})
 
 
 

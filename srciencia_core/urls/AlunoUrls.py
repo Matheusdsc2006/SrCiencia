@@ -18,6 +18,9 @@ urlpatterns = [
     # Rota para finalizar a atividade
     path('finalizar_atividade/', finalizar_atividade, name='finalizar_atividade'),
 
-    #Rota para exportar a atividade
+    # Rota para exportar a atividade
     path("exportar/", exportar_atividade, name="exportar_atividade"),
+
+    # Rota para favoritar questão
+    path("favoritar_questao/<int:questao_id>/", favoritar_questao, name="favoritar_questao"),
 ]

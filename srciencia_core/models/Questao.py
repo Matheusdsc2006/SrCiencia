@@ -32,8 +32,12 @@ class Topico(models.Model):
 
     def __str__(self):
         return self.nome
+    
+    
+User = get_user_model()
 
 class Questao(models.Model):
+    # Campos existentes
     descricao = CKEditor5Field('descricao', config_name='default')
     alteravel = models.BooleanField(default=False)
     banca = models.ForeignKey(Banca, on_delete=models.SET_NULL, null=True, blank=True)
@@ -42,13 +46,22 @@ class Questao(models.Model):
     topico = models.ForeignKey(Topico, on_delete=models.SET_NULL, null=True, blank=True)
     resolucao = CKEditor5Field('resolucao', config_name='default', blank=True, null=True)
     dificuldade = models.IntegerField(choices=DIFICULDADE, default=1)
-    ano = models.PositiveIntegerField(null=True, blank=True, verbose_name="Ano") 
+    ano = models.PositiveIntegerField(null=True, blank=True, verbose_name="Ano")
     data_criacao = models.DateTimeField(auto_now_add=True)
     data_atualizacao = models.DateTimeField(auto_now=True)
-    taxa_acertos = models.FloatField(default=0, verbose_name="Taxa de Acertos (%)")  # Novo campo
+    taxa_acertos = models.FloatField(default=0, verbose_name="Taxa de Acertos (%)")
+
+    # Relacionamento para favoritadas
+    favoritada_por = models.ManyToManyField(User, related_name="questoes_favoritas", blank=True)
 
     def __str__(self):
         return f"Questão {self.id}: {self.descricao[:50]}"
+    
+    def foi_favoritada_por(self, usuario):
+        """
+        Verifica se uma questão foi favoritada por um usuário.
+        """
+        return self.favoritada_por.filter(id=usuario.id).exists()
 
     def calcular_dificuldade(self):
         """
@@ -85,3 +98,4 @@ class Alternativa(models.Model):
 
     def __str__(self):
         return f"Alternativa {self.id} - {'Correta' if self.correta else 'Incorreta'}"
+    
