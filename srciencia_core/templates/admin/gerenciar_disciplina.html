@@ -95,49 +95,56 @@
     }
 
     // Função para realizar a busca e atualizar o contêiner especificado
-    const fetchDisciplinas = (query, container, isModal = false) => {
-        fetch(`/app/u/0/buscar_disciplinas/?q=${query}`)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                return response.json();
-            })
-            .then(data => {
-                container.innerHTML = "";
-                if (data.length === 0) {
-                    container.innerHTML = "<p>Nenhuma disciplina encontrada.</p>";
+    var fetchDisciplinas = (query, container, isModal = false) => {
+    fetch(`{% url 'buscar_disciplinas' %}?q=${query}`)
+        .then(response => response.json())
+        .then(data => {
+            // Limpa o conteúdo anterior
+            container.innerHTML = "";
+
+            if (data.disciplinas.length === 0) {
+                container.innerHTML = "<p>Nenhuma disciplina encontrada.</p>";
+            } else {
+                // Verifica IDs já existentes no container
+                const existingIds = new Set(
+                    Array.from(container.querySelectorAll("input[name='disciplina_id']")).map(input => input.value)
+                );
+
+                var disciplinasToDisplay = isModal ? data.disciplinas : data.disciplinas.slice(0, 5);
+
+                disciplinasToDisplay.forEach(item => {
+                    // Só adiciona se o ID ainda não estiver no container
+                    if (!existingIds.has(String(item.id))) {
+                        var div = document.createElement("div");
+                        div.className = "list-item";
+                        div.innerHTML = `
+                            <span>${item.nome}</span>
+                            <form method="post" class="delete-form">
+                                {% csrf_token %}
+                                <input type="hidden" name="disciplina_id" value="${item.id}">
+                                <button type="submit" name="delete" class="btn-delete">Remover</button>
+                            </form>`;
+                        container.appendChild(div);
+                    }
+                });
+            }
+
+            // Verifica se o botão "Ver mais" existe antes de manipulá-lo
+            if (typeof viewMoreBtn !== 'undefined' && viewMoreBtn !== null) {
+                if (!isModal && data.disciplinas.length > 5) {
+                    viewMoreBtn.style.display = "block";
                 } else {
-                    const existingIds = new Set(
-                        Array.from(container.querySelectorAll("input[name='disciplina_id']")).map(input => input.value)
-                    );
-                    const itemsToDisplay = isModal ? data : data.slice(0, 5);
-                    itemsToDisplay.forEach(item => {
-                        if (!existingIds.has(String(item.id))) {
-                            const div = document.createElement("div");
-                            div.className = "list-item";
-                            div.innerHTML = `
-                                <span>${item.nome}</span>
-                                <form method="post" class="delete-form">
-                                    {% csrf_token %}
-                                    <input type="hidden" name="disciplina_id" value="${item.id}">
-                                    <button type="submit" name="delete" class="btn-delete">Remover</button>
-                                </form>`;
-                            container.appendChild(div);
-                        }
-                    });
+                    viewMoreBtn.style.display = "none";
                 }
-                if (!isModal && data.length > 5) {
-                    if (viewMoreBtn) viewMoreBtn.style.display = "block";
-                } else {
-                    if (viewMoreBtn) viewMoreBtn.style.display = "none";
-                }
-            })
-            .catch(error => {
-                console.error("Erro ao buscar disciplinas:", error);
-                container.innerHTML = "<p>Erro ao buscar disciplinas. Tente novamente.</p>";
-            });
-    };
+            }
+        })
+        .catch(error => {
+            console.error("Erro ao buscar disciplinas:", error);
+            container.innerHTML = "<p>Erro ao buscar disciplinas. Tente novamente.</p>";
+        });
+};
+
+
 
     // Busca ao clicar no botão "Buscar"
     if (searchButton) {

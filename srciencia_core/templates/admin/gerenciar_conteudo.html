@@ -106,54 +106,72 @@
             });
         }
 
-        // Função para realizar a busca e atualizar o contêiner especificado
-        const fetchConteudos = (query, container, isModal = false) => {
-            fetch(`/app/u/0/buscar_conteudos/?q=${query}`)
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    container.innerHTML = "";
-                    if (data.length === 0) {
-                        container.innerHTML = "<p>Nenhum conteúdo encontrado.</p>";
-                    } else {
-                        const existingIds = new Set(
-                            Array.from(container.querySelectorAll("input[name='conteudo_id']")).map(input => input.value)
-                        );
-                        const itemsToDisplay = isModal ? data : data.slice(0, 5);
-                        itemsToDisplay.forEach(item => {
-                            if (!existingIds.has(String(item.id))) {
-                                const div = document.createElement("div");
-                                div.className = "list-item";
-                                div.innerHTML = `
-                                    <span>${item.nome} 
-                                        <span style="font-weight: 400; color: gray;">
-                                            (${item.disciplina_nome})
-                                        </span>
-                                    </span>
-                                    <form method="post" class="delete-form">
-                                        {% csrf_token %}
-                                        <input type="hidden" name="conteudo_id" value="${item.id}">
-                                        <button type="submit" name="delete" class="btn-delete">Remover</button>
-                                    </form>`;
-                                container.appendChild(div);
-                            }
-                        });
-                    }
-                    if (!isModal && data.length > 5) {
-                        if (viewMoreBtn) viewMoreBtn.style.display = "block";
-                    } else {
-                        if (viewMoreBtn) viewMoreBtn.style.display = "none";
-                    }
-                })
-                .catch(error => {
-                    console.error("Erro ao buscar conteúdos:", error);
-                    container.innerHTML = "<p>Erro ao buscar conteúdos. Tente novamente.</p>";
-                });
-        };
+// Função para realizar a busca e atualizar o contêiner especificado
+const fetchConteudos = (query, container, isModal = false) => {
+    fetch(`{% url 'buscar_conteudos' %}?q=${query}`)
+        .then(response => {
+            // Verifica se a resposta foi bem-sucedida
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+    console.log("Dados recebidos do servidor:", data);
+
+    // Acessa a chave `conteudos` se os dados vierem encapsulados em um objeto
+    const conteudos = data.conteudos || []; 
+
+    if (!Array.isArray(conteudos)) {
+        throw new Error("Os dados retornados pelo servidor não são uma lista válida.");
+    }
+
+    // Limpa o conteúdo anterior do container
+    container.innerHTML = "";
+
+    if (conteudos.length === 0) {
+        container.innerHTML = "<p>Nenhum conteúdo encontrado.</p>";
+    } else {
+        const existingIds = new Set(
+            Array.from(container.querySelectorAll("input[name='conteudo_id']")).map(input => input.value)
+        );
+
+        const itemsToDisplay = isModal ? conteudos : conteudos.slice(0, 5);
+
+        itemsToDisplay.forEach(item => {
+            if (!existingIds.has(String(item.id))) {
+                const div = document.createElement("div");
+                div.className = "list-item";
+                div.innerHTML = `
+                    <span>${item.nome} 
+                        <span style="font-weight: 400; color: gray;">
+                            (${item.disciplina_nome || "Sem disciplina"})
+                        </span>
+                    </span>
+                    <form method="post" class="delete-form">
+                        {% csrf_token %}
+                        <input type="hidden" name="conteudo_id" value="${item.id}">
+                        <button type="submit" name="delete" class="btn-delete">Remover</button>
+                    </form>`;
+                container.appendChild(div);
+            }
+        });
+    }
+
+    if (typeof viewMoreBtn !== 'undefined' && viewMoreBtn !== null) {
+        if (!isModal && conteudos.length > 5) {
+            viewMoreBtn.style.display = "block";
+        } else {
+            viewMoreBtn.style.display = "none";
+        }
+    }
+})
+.catch(error => {
+    console.error("Erro ao buscar conteúdos:", error);
+    container.innerHTML = "<p>Erro ao buscar conteúdos. Tente novamente.</p>";
+});
+};
+
 
         // Busca ao clicar no botão "Buscar"
         if (searchButton) {

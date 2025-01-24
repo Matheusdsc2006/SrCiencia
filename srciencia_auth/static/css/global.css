@@ -258,7 +258,6 @@ footer .footer-copyright a:hover {
 
 #call-to-login button:hover{
     box-shadow: var(--box-shadow);
-    border: 2px solid black;
 }
 
 /* Espaçamento entre os botões */

@@ -15,7 +15,6 @@ urlpatterns = [
     path('api/topicos/<int:conteudo_id>/', get_topicos, name='get_topicos'),
 
     # Adicionar Tipos
-    path("gerenciar-banca/", gerenciar_banca, name="gerenciar_banca"),
     path("gerenciar_disciplina/", gerenciar_disciplina, name="gerenciar_disciplina"),
     path('gerenciar_banca/', gerenciar_banca, name='gerenciar_banca'),
     path('gerenciar_conteudo/', gerenciar_conteudo, name='gerenciar_conteudo'),

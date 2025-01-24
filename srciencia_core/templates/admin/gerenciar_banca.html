@@ -95,49 +95,73 @@
         }
 
         // Função para realizar a busca e atualizar o contêiner especificado
-        const fetchBancas = (query, container, isModal = false) => {
-            fetch(`/app/u/0/buscar_bancas/?q=${query}`)
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
+const fetchBancas = (query, container, isModal = false) => {
+    fetch(`{% url 'buscar_bancas' %}?q=${query}`)
+        .then(response => {
+            // Verifica se a resposta foi bem-sucedida
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            // Valida se os dados retornados são uma lista ou acessa a chave correta
+            if (!Array.isArray(data)) {
+                if (data.bancas && Array.isArray(data.bancas)) {
+                    data = data.bancas; // Caso os dados estejam encapsulados na chave "bancas"
+                } else {
+                    throw new Error("Os dados retornados pelo servidor não são uma lista válida.");
+                }
+            }
+
+            // Limpa o conteúdo anterior do contêiner
+            container.innerHTML = "";
+
+            // Verifica se há bancas retornadas
+            if (data.length === 0) {
+                container.innerHTML = "<p>Nenhuma banca encontrada.</p>";
+            } else {
+                // Cria um conjunto de IDs existentes no contêiner para evitar duplicação
+                const existingIds = new Set(
+                    Array.from(container.querySelectorAll("input[name='banca_id']")).map(input => input.value)
+                );
+
+                // Determina os itens a serem exibidos, limitando a 5 itens, se necessário
+                const itemsToDisplay = isModal ? data : data.slice(0, 5);
+
+                itemsToDisplay.forEach(item => {
+                    // Adiciona apenas itens com IDs que ainda não estão no contêiner
+                    if (!existingIds.has(String(item.id))) {
+                        const div = document.createElement("div");
+                        div.className = "list-item";
+                        div.innerHTML = `
+                            <span>${item.nome || "Sem nome"}</span>
+                            <form method="post" class="delete-form">
+                                {% csrf_token %}
+                                <input type="hidden" name="banca_id" value="${item.id}">
+                                <button type="submit" name="delete" class="btn-delete">Remover</button>
+                            </form>`;
+                        container.appendChild(div);
                     }
-                    return response.json();
-                })
-                .then(data => {
-                    container.innerHTML = "";
-                    if (data.length === 0) {
-                        container.innerHTML = "<p>Nenhuma banca encontrada.</p>";
-                    } else {
-                        const existingIds = new Set(
-                            Array.from(container.querySelectorAll("input[name='banca_id']")).map(input => input.value)
-                        );
-                        const itemsToDisplay = isModal ? data : data.slice(0, 5);
-                        itemsToDisplay.forEach(item => {
-                            if (!existingIds.has(String(item.id))) {
-                                const div = document.createElement("div");
-                                div.className = "list-item";
-                                div.innerHTML = `
-                                    <span>${item.nome}</span>
-                                    <form method="post" class="delete-form">
-                                        {% csrf_token %}
-                                        <input type="hidden" name="banca_id" value="${item.id}">
-                                        <button type="submit" name="delete" class="btn-delete">Remover</button>
-                                    </form>`;
-                                container.appendChild(div);
-                            }
-                        });
-                    }
-                    if (!isModal && data.length > 5) {
-                        if (viewMoreBtn) viewMoreBtn.style.display = "block";
-                    } else {
-                        if (viewMoreBtn) viewMoreBtn.style.display = "none";
-                    }
-                })
-                .catch(error => {
-                    console.error("Erro ao buscar bancas:", error);
-                    container.innerHTML = "<p>Erro ao buscar bancas. Tente novamente.</p>";
                 });
-        };
+            }
+
+            // Verifica se o botão "Ver mais" existe antes de manipulá-lo
+            if (typeof viewMoreBtn !== 'undefined' && viewMoreBtn !== null) {
+                if (!isModal && data.length > 5) {
+                    viewMoreBtn.style.display = "block";
+                } else {
+                    viewMoreBtn.style.display = "none";
+                }
+            }
+        })
+        .catch(error => {
+            // Lida com erros e exibe uma mensagem de erro no contêiner
+            console.error("Erro ao buscar bancas:", error);
+            container.innerHTML = "<p>Erro ao buscar bancas. Tente novamente.</p>";
+        });
+};
+
 
         // Busca ao clicar no botão "Buscar"
         if (searchButton) {
