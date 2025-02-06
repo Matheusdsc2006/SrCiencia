@@ -178,6 +178,16 @@
         var currentEmail = null;
         var turmaIdToCancel = null;
 
+        var userId = "{{ user.id }}"; // Obtém o ID do usuário atual
+
+        // Carregar a imagem correta do usuário
+        var savedAvatar = localStorage.getItem("userAvatar_" + userId);
+        if (savedAvatar) {
+            document.querySelectorAll(".user-avatar img").forEach(img => {
+                img.src = savedAvatar;
+            });
+        }
+
         // Fechar modal ao clicar no "X"
         closeConfirmationModal.addEventListener("click", () => {
             confirmationModal.style.display = "none";

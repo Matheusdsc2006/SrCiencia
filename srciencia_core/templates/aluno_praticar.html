@@ -246,6 +246,15 @@
     var newAccountInput = document.getElementById("new-account");
     let selectedEmail = null;
 
+    var userId = "{{ user.id }}"; // Obtém o ID do usuário atual
+
+        // Carregar a imagem correta do usuário
+        var savedAvatar = localStorage.getItem("userAvatar_" + userId);
+        if (savedAvatar) {
+            document.querySelectorAll(".user-avatar img").forEach(img => {
+                img.src = savedAvatar;
+            });
+        }
 
     // Função para salvar progresso no localStorage
     function salvarProgresso(questoes) {
@@ -1371,6 +1380,7 @@ function exibirMensagemSemQuestoes() {
         location.reload();
     });
 
-
     });
 </script>
+</body>
+</html>

@@ -8,6 +8,8 @@ from srciencia_auth.models import Usuario
 from srciencia_core.models.Turma import Turma
 from django.core.exceptions import ValidationError
 from django.contrib import messages
+from django.http import JsonResponse
+
 
 @login_required
 def aluno_perfil(request):
@@ -79,11 +81,22 @@ def editar_foto(request):
                 request.user.foto = foto
                 request.user.save()
                 messages.success(request, "Foto atualizada com sucesso.")
+
+                # Retorna a URL da nova foto para atualização via AJAX
+                if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                    return JsonResponse({"success": True, "foto_url": request.user.foto.url})
+                    
             except Exception as e:
                 messages.error(request, f"Erro ao salvar a foto: {e}")
+                if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                    return JsonResponse({"success": False, "error": str(e)})
         else:
             messages.error(request, "Nenhuma foto foi enviada.")
+            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                return JsonResponse({"success": False, "error": "Nenhuma foto foi enviada."})
+
     return redirect('professor_perfil' if request.user.perfil == 3 else 'aluno_perfil')
+
 
 
 

@@ -136,6 +136,69 @@
     var imagePreview = document.getElementById("image-preview");
     var profileImage = document.getElementById("profile-image");
     var closeButton = document.getElementById("close-edit-modal");
+    var formEditarFoto = document.querySelector("form[action='{% url 'editar_foto' %}']");
+
+    // Obtém o ID do usuário atual
+    var userId = "{{ user.id }}";
+
+// Atualizar a pré-visualização antes de enviar a foto
+uploadPhotoInput.addEventListener("change", function (event) {
+    var file = event.target.files[0];
+    if (file) {
+        var reader = new FileReader();
+        reader.onload = function (e) {
+            imagePreview.src = e.target.result;
+            imagePreview.style.display = "block";
+        };
+        reader.readAsDataURL(file);
+    }
+});
+
+// Capturar o envio do formulário para atualizar a foto instantaneamente
+formEditarFoto.addEventListener("submit", function (event) {
+    event.preventDefault();
+    var formData = new FormData(this);
+    var csrfToken = document.querySelector("[name=csrfmiddlewaretoken]").value;
+
+    fetch("{% url 'editar_foto' %}", {
+        method: "POST",
+        headers: { "X-CSRFToken": csrfToken, "X-Requested-With": "XMLHttpRequest" },
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            var newImageUrl = data.foto_url;
+            
+            // Atualizar a imagem do perfil do usuário atual
+            profileImage.src = newImageUrl;
+
+            // Atualizar todas as imagens do avatar automaticamente em qualquer página
+            document.querySelectorAll(".user-avatar img").forEach(img => {
+                img.src = newImageUrl;
+            });
+
+            // Salvar no localStorage com identificador único para cada usuário
+            localStorage.setItem("userAvatar_" + userId, newImageUrl);
+
+            alert("Foto salva com sucesso!");
+            closeAllModals();
+            modal.style.display = "none";
+        } else {
+            alert("Erro ao atualizar a foto: " + data.error);
+        }
+    })
+    .catch(error => console.error("Erro ao enviar a foto:", error));
+});
+
+// Carregar a imagem específica do usuário ao abrir a página
+var savedAvatar = localStorage.getItem("userAvatar_" + userId);
+if (savedAvatar) {
+    profileImage.src = savedAvatar;
+    document.querySelectorAll(".user-avatar img").forEach(img => {
+        img.src = savedAvatar;
+    });
+}
 
     // Função para fechar todos os modais
     function closeAllModals() {
@@ -195,39 +258,6 @@
             }
         });
     });
-
-    // Pré-visualizar imagem ao selecionar um arquivo
-    if (uploadPhotoInput && imagePreview) {
-        uploadPhotoInput.addEventListener("change", (event) => {
-            var file = event.target.files[0];
-            if (file) {
-                var reader = new FileReader();
-                reader.onload = (e) => {
-                    imagePreview.src = e.target.result;
-                    imagePreview.style.display = "block"; // Mostra a pré-visualização
-                };
-                reader.readAsDataURL(file);
-            } else {
-                imagePreview.style.display = "none";
-                imagePreview.src = ""; // Limpa a pré-visualização
-            }
-        });
-    }
-
-    // Atualiza apenas a pré-visualização no modal ao escolher uma nova foto
-    if (uploadPhotoInput && profileImage) {
-        uploadPhotoInput.addEventListener("change", (event) => {
-            var file = event.target.files[0];
-            if (file) {
-                var reader = new FileReader();
-                reader.onload = (e) => {
-                    imagePreview.src = e.target.result;
-                    imagePreview.style.display = "block"; // Mostra a imagem no modal
-                };
-                reader.readAsDataURL(file);
-            }
-        });
-    }
 });
 
 </script>

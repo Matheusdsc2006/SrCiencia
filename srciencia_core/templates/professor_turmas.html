@@ -215,9 +215,18 @@
         var eyeShowIcon = document.getElementById("icon-eye-show-delete-password");
         var eyeOffIcon = document.getElementById("icon-eye-off-delete-password");
 
-
         let turmaIdToDelete = null;
         let selectedEmail = null;
+
+        var userId = "{{ user.id }}"; // Obtém o ID do usuário atual
+
+        // Carregar a imagem correta do usuário
+        var savedAvatar = localStorage.getItem("userAvatar_" + userId);
+        if (savedAvatar) {
+            document.querySelectorAll(".user-avatar img").forEach(img => {
+                img.src = savedAvatar;
+            });
+        }
 
         function toggleDeletePasswordVisibility() {
         if (deletePasswordInput.type === "password") {
