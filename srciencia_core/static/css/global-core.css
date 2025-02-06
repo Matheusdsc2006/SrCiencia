@@ -829,6 +829,9 @@ select option {
     cursor: pointer;
     transition: background-color 0.3s ease;
 }
+.modal-actions .btn-confirm-sim:hover {
+    background-color: var(--dark-purple);
+}
 
 .close-icon {
     position: absolute;
