@@ -32,12 +32,12 @@ from bs4 import BeautifulSoup
 import json
 
 @login_required
-def aluno_praticar(request):
+def praticar(request):
     """
     Renderiza a página de prática para o aluno ou professor.
     """
     disciplinas = Disciplina.objects.all()  
-    return render(request, 'aluno_praticar.html', {
+    return render(request, 'praticar.html', {
         'disciplinas': disciplinas,
         'conteudos': [],
         'topicos': [],

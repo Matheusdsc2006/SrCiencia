@@ -33,7 +33,7 @@ urlpatterns = [
 
     # Funcionalidades do professor e aluno
     path('professor_turmas/', include('srciencia_core.urls.ProfessorUrls')),
-    path('aluno/', include('srciencia_core.urls.AlunoUrls')),
+    path('praticar/', include('srciencia_core.urls.AlunoUrls')),
 
     # Turmas específicas
     path('turmas/<int:turma_id>/alunos/', listar_alunos_turma, name='listar_alunos_turma'),

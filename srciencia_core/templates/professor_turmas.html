@@ -24,7 +24,7 @@
                             <img src="{% static 'assets/profile.svg' %}" alt="">Meu Perfil
                         </a>
                     </li>
-                    <li><a href="{% url 'aluno_praticar' %}"><img src="{% static 'assets/practice.svg' %}" alt="">Praticar</a></li>
+                    <li><a href="{% url 'praticar' %}"><img src="{% static 'assets/practice.svg' %}" alt="">Praticar</a></li>
                     <li>
                         <a href="{% if user.perfil == 3 %}{% url 'professor_turmas' %}{% else %}{% url 'turmas' %}{% endif %}" class="active">
                             <img src="{% static 'assets/classes.svg' %}" alt="">Turmas

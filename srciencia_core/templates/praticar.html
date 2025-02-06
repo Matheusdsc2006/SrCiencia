@@ -19,7 +19,7 @@
             },
         };
     </script>
-    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>     
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>   
     <link rel="stylesheet" href="{% static 'css/praticar.css' %}">
     <link rel="stylesheet" href="{% static 'css/global.css' %}">
 </head>
@@ -39,7 +39,7 @@
                                 <img src="{% static 'assets/profile.svg' %}" alt="">Meu Perfil
                             </a>
                         </li>
-                        <li><a href="{% url 'aluno_praticar' %}" class="active"><img src="{% static 'assets/practice.svg' %}" alt="">Praticar</a></li>
+                        <li><a href="{% url 'praticar' %}" class="active"><img src="{% static 'assets/practice.svg' %}" alt="">Praticar</a></li>
                         <li>
                             <a href="{% if user.perfil == 3 %}{% url 'professor_turmas' %}{% else %}{% url 'turmas' %}{% endif %}">
                                 <img src="{% static 'assets/classes.svg' %}" alt="">Turmas
@@ -423,7 +423,7 @@ function exibirResumo(questoes) {
     var descricao = prompt("Descreva o problema encontrado:");
     if (!descricao) return;
 
-    fetch("/aluno/praticar/reportar_questao/", {
+    fetch("/praticar/reportar_questao/", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -659,7 +659,7 @@ function ativarFavoritarQuestoes() {
             const questaoId = this.dataset.questaoId.trim();
             const heartIcon = this.querySelector(".heart-icon");
 
-            fetch(`/aluno/favoritar_questao/${encodeURIComponent(questaoId)}/`, {
+            fetch(`/praticar/favoritar_questao/${encodeURIComponent(questaoId)}/`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -719,93 +719,104 @@ function salvarFavoritosLocalStorage(questoes) {
     localStorage.setItem("favoritos", JSON.stringify(favoritos));
 }
 
-// Garantir que os eventos sejam associados após a renderização
 function renderizarQuestoes(questoes, isResumo = false) {
-    salvarFavoritosLocalStorage(questoes);
-    var questoesContainer = document.getElementById("questoes-container");
-    var whiteSpace = document.getElementById("white-space");
-    var acertosContainer = document.getElementById("acertos-container");
+  // Salva os favoritos no LocalStorage (sua função já existente)
+  salvarFavoritosLocalStorage(questoes);
 
-    // Ocultar o resumo ao gerar uma nova atividade
-    if (acertosContainer) {
-        acertosContainer.style.display = "none";
-        acertosContainer.classList.add("hidden");
-    }
+  var questoesContainer = document.getElementById("questoes-container");
+  var whiteSpace = document.getElementById("white-space");
+  var acertosContainer = document.getElementById("acertos-container");
 
-    // Limpar o container de questões
-    questoesContainer.innerHTML = "";
+  // Oculta o resumo, se houver
+  if (acertosContainer) {
+    acertosContainer.style.display = "none";
+    acertosContainer.classList.add("hidden");
+  }
+  questoesContainer.innerHTML = "";
 
-    // Exibir mensagem caso não existam questões
-    if (!questoes || questoes.length === 0) {
-        questoesContainer.style.display = "block";
-        questoesContainer.innerHTML = `
-            <p style="color: white; text-align: center; font-size: 1.2rem;">
-                Não há questões para o filtro selecionado.
-            </p>`;
-        return;
-    }
-
-    questoesContainer.innerHTML = ""; // Limpa o container
-
-    questoes.forEach((questao, index) => {
-        var resolucaoID = `resolucao-${index}`;
-        var questaoHTML = `
-        <div class="questao-item">
-            <h3>
-                Questão ${index + 1}
-                <button class="favorite-button" data-questao-id="${questao.id}" aria-label="Favoritar">
-                    <img src="${questao.favoritada ? '/static/assets/heart-filled.png' : '/static/assets/heart-outline.png'}" alt="Favoritar" class="heart-icon ${questao.favoritada ? 'favorited' : ''}">
-                </button>
-            </h3>
-            <p>${questao.descricao}</p>
-            <ul>
-                ${questao.alternativas.map(alt => `
-                    <li>
-                        <input type="radio" id="alt-${alt.id}" name="alternativa-${questao.id}" value="${alt.id}">
-                        <label for="alt-${alt.id}">${alt.descricao}</label>
-                    </li>
-                `).join("")}
-            </ul>
-            <div class="resolucao">
-                <h3 style="display: flex; justify-content: space-between; align-items: center;">
-                    Resolução:
-                    <button class="toggle-visibility" data-target="${resolucaoID}">
-                        <img class="eye-show" src="{% static 'assets/eye-show.svg' %}" alt="Mostrar" style="display: none;">
-                        <img class="eye-off" src="{% static 'assets/eye-off.svg' %}" alt="Esconder" style="display: inline;">
-                    </button>
-                </h3>
-                <div id="${resolucaoID}" class="resolucao-content" style="display: none;">
-                    ${questao.resolucao || "Nenhuma resolução disponível."}
-                </div>
-            </div>
-        </div>`;
-        questoesContainer.insertAdjacentHTML("beforeend", questaoHTML);
-    });
-
-    // Ocultar o white space se as questões forem geradas
-    if (whiteSpace) {
-        whiteSpace.style.display = "none";
-    }
-
-    // Tornar o container de questões visível
+  if (!questoes || questoes.length === 0) {
     questoesContainer.style.display = "block";
+    questoesContainer.innerHTML = `
+      <p style="color: white; text-align: center; font-size: 1.2rem;">
+        Não há questões para o filtro selecionado.
+      </p>`;
+    return;
+  }
 
-    // Ativar funcionalidade do botão de favoritar
-    ativarFavoritarQuestoes();
+  questoes.forEach((questao, index) => {
+    var resolucaoID = `resolucao-${index}`;
 
-    // Adicionar dinamicamente o botão "Finalizar Atividade"
-    adicionarBotaoFinalizarAtividade();
+    // Bloco com as informações adicionais – deve usar a classe .questao-info
+    var headerHtml = `
+      <div class="questao-info">
+        ${questao.ano ? `<p><strong>Ano:</strong> ${questao.ano}</p>` : ""}
+        ${questao.banca ? `<p><strong>Banca:</strong> ${questao.banca}</p>` : ""}
+        ${questao.disciplina ? `<p><strong>Disciplina:</strong> ${questao.disciplina}</p>` : ""}
+        ${questao.conteudo ? `<p><strong>Conteúdo:</strong> ${questao.conteudo}</p>` : ""}
+        ${questao.topico ? `<p><strong>Tópico:</strong> ${questao.topico}</p>` : ""}
+      </div>
+    `;
 
-    // Ativar os botões de visibilidade para resoluções
-    ativarBotoesVisibilidade();
+    // Linha de cabeçalho para o número da questão e o botão de favoritar
+    var cabecalhoHtml = `
+    <h3 style="display: inline-flex; align-items: center; gap: 10px; margin: 0; padding: 10px 0;">
+        <span>Questão ${index + 1}</span>
+        <button class="favorite-button" data-questao-id="${questao.id}" aria-label="Favoritar" style="background: none; border: none; cursor: pointer;">
+        <img src="${questao.favoritada ? '/static/assets/heart-filled.png' : '/static/assets/heart-outline.png'}" alt="Favoritar" class="heart-icon ${questao.favoritada ? 'favorited' : ''}">
+        </button>
+    </h3>
+    `;
 
-    // Chamar função para carregar questões favoritadas
-    carregarFavoritosLocalStorage();
 
-    // Reprocessar o MathJax para renderizar fórmulas matemáticas, se necessário
-    if (window.MathJax) {
-        MathJax.typeset();
-    }
+
+    var questaoHTML = `
+      <div class="questao-item">
+        ${headerHtml}
+        ${cabecalhoHtml}
+        <div class="questao-descricao">
+          ${questao.descricao}
+        </div>
+        <ul>
+          ${questao.alternativas.map(alt => `
+            <li>
+              <input type="radio" id="alt-${alt.id}" name="alternativa-${questao.id}" value="${alt.id}">
+              <label for="alt-${alt.id}">${alt.descricao}</label>
+            </li>
+          `).join("")}
+        </ul>
+        <div class="resolucao">
+          <h3 style="display: flex; justify-content: space-between; align-items: center;">
+            <span>Resolução:</span>
+            <button class="toggle-visibility" data-target="${resolucaoID}" style="background: none; border: none; cursor: pointer;">
+              <img class="eye-show" src="{% static 'assets/eye-show.svg' %}" alt="Mostrar" style="display: none;">
+              <img class="eye-off" src="{% static 'assets/eye-off.svg' %}" alt="Esconder" style="display: inline;">
+            </button>
+          </h3>
+          <div id="${resolucaoID}" class="resolucao-content" style="display: none;">
+            ${questao.resolucao || "Nenhuma resolução disponível."}
+          </div>
+        </div>
+      </div>
+    `;
+    questoesContainer.insertAdjacentHTML("beforeend", questaoHTML);
+  });
+
+  // Oculta o espaço em branco, se houver
+  if (whiteSpace) {
+    whiteSpace.style.display = "none";
+  }
+  questoesContainer.style.display = "block";
+
+  // Ativa as funcionalidades adicionais
+  ativarFavoritarQuestoes();
+  adicionarBotaoFinalizarAtividade();
+  ativarBotoesVisibilidade();
+  carregarFavoritosLocalStorage();
+
+  // Reprocessa o MathJax (se houver fórmulas matemáticas)
+  if (window.MathJax) {
+    MathJax.typeset();
+  }
 }
 
     var quantidade = quantidadeInput.value.trim();
@@ -923,74 +934,74 @@ function salvarAlternativas() {
 
     function buscarQuestoes() {
     var form = document.querySelector("#filtro-questoes-form");
+    // Cria o objeto de parâmetros a partir do formulário
     var params = new URLSearchParams(new FormData(form));
 
-    // Limpar progresso salvo antes de uma nova busca
+    // Limpa o progresso salvo (para nova atividade)
     localStorage.removeItem(localStorageKey);
 
-    // Adicionar filtro de status
-    var statusFilters = [];
+    // --- Processa os checkboxes de status ---
+    // Remove o parâmetro "status" que possa ter sido adicionado automaticamente
+    params.delete("status");
     document.querySelectorAll("input[name='status']:checked").forEach((checkbox) => {
-        statusFilters.push(checkbox.value);
+      params.append("status", checkbox.value);
     });
 
-    if (statusFilters.length > 0) {
-        params.set("status", statusFilters.join(",")); // Atualiza o parâmetro com os valores selecionados
-    } else {
-        params.delete("status"); // Remove o parâmetro se nenhum filtro estiver selecionado
-    }
-
-    // Garantir que o campo de busca seja enviado
+    // --- Processa o campo de busca ---
     var buscaInput = form.querySelector("#busca-questoes");
-    if (buscaInput && buscaInput.value.trim()) {
-        params.set("busca", buscaInput.value.trim()); // Garante que o valor do campo seja enviado
+    if (buscaInput && buscaInput.value.trim() !== "") {
+      params.set("busca", buscaInput.value.trim());
     } else {
-        params.delete("busca"); // Remove o parâmetro de busca se estiver vazio
+      params.delete("busca");
     }
 
-    // Garantir que a quantidade seja válida
-    var quantidade = parseInt(document.getElementById("quantidade").value.trim());
-    if (isNaN(quantidade) || quantidade <= 0 || quantidade > 50) {
-        alert("Por favor, insira um número válido de questões (1 a 50).");
-        return;
+    // --- Validação da quantidade ---
+    var quantidade = parseInt(quantidadeInput.value.trim(), 10);
+    if (isNaN(quantidade) || quantidade < 1 || quantidade > 50) {
+      alert("Por favor, insira um número válido de questões (1 a 50).");
+      return;
     }
 
-    // Fazer a requisição para o backend
-    fetch(`/aluno/api/questoes?${params}`)
-        .then((response) => {
-            if (!response.ok) {
-                throw new Error(`Erro HTTP: ${response.status}`);
-            }
-            return response.json();
-        })
-        .then((data) => {
-            // Limpar interface e progresso local antes de renderizar novos dados
-            var questoesContainer = document.getElementById("questoes-container");
-            questoesContainer.innerHTML = ""; // Limpa o container para evitar sobreposição
-            var questoesFiltradas = data.questoes.slice(0, quantidade);
+    // --- Realiza o fetch para o endpoint ---
+    // Atenção: ajuste a URL abaixo de acordo com sua rota (ex.: "/praticar/api/questoes" ou "{% url 'buscar_questoes' %}")
+    fetch(`/praticar/api/questoes?${params.toString()}`)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`Erro HTTP: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then((data) => {
+        // Limita as questões à quantidade solicitada
+        var questoesFiltradas = data.questoes.slice(0, quantidade);
 
-            if (questoesFiltradas.length === 0) {
-                // Exibir mensagem de "Nenhuma questão encontrada"
-                questoesContainer.innerHTML = `
-                    <p style="color: white; text-align: center; font-size: 1.2rem;">
-                        Nenhuma questão encontrada para os filtros aplicados.
-                    </p>`;
-                questoesContainer.style.display = "block";
-                localStorage.removeItem(localStorageKey); // Remove cache vazio
-                return;
-            }
+        if (questoesFiltradas.length === 0) {
+          questoesContainer.innerHTML = `
+            <p style="color: white; text-align: center; font-size: 1.2rem;">
+              Nenhuma questão encontrada para os filtros aplicados.
+            </p>`;
+          questoesContainer.style.display = "block";
+          localStorage.removeItem(localStorageKey);
+          return;
+        }
 
-            // Renderizar questões filtradas
-            renderizarQuestoes(questoesFiltradas);
+        // Renderiza as questões e salva o progresso
+        renderizarQuestoes(questoesFiltradas);
+        salvarProgresso(questoesFiltradas);
+      })
+      .catch((error) => {
+        console.error("Erro ao buscar questões:", error);
+      });
+  }
 
-            // Salvar progresso no localStorage
-            salvarProgresso(questoesFiltradas);
-        })
-        .catch((error) => {
-            console.error("Erro ao buscar questões:", error);
-        });
-}
-
+  gerarAtividadeBtn.addEventListener("click", function () {
+    var quantidade = parseInt(quantidadeInput.value.trim(), 10);
+    if (isNaN(quantidade) || quantidade < 1 || quantidade > 50) {
+      alert("Por favor, insira um número válido de questões (1 a 50).");
+      return;
+    }
+    buscarQuestoes();
+  });
 
     // Função para exibir mensagem "Nenhuma questão encontrada"
 function exibirMensagemSemQuestoes() {
@@ -1263,47 +1274,6 @@ function exibirMensagemSemQuestoes() {
         console.error("O formulário '#filtro-questoes-form' não foi encontrado.");
         return;
     }
-
-    // Evento de clique no botão "Gerar Atividade"
-    gerarAtividadeBtn.addEventListener("click", function () {
-        var quantidade = quantidadeInput.value.trim();
-        if (!quantidade || isNaN(quantidade) || quantidade <= 0 || quantidade > 50) {
-            alert("Por favor, insira um número válido de questões (1 a 50).");
-            return;
-        }
-
-        buscarQuestoes();
-
-        // Parâmetros para requisição de questões
-        var filtroForm = document.querySelector("#filtro-questoes-form");
-        var params = new URLSearchParams(new FormData(filtroForm));
-
-        // Requisição para buscar as questões
-        fetch("{% url 'buscar_questoes' %}?${params.toString()}")
-            .then(response => {
-                if (!response.ok) throw new Error(`Erro HTTP: ${response.status}`);
-                return response.json();
-            })
-            .then(data => {
-                var questoesFiltradas = data.questoes.slice(0, quantidade);
-                renderizarQuestoes(questoesFiltradas);
-
-                // Salva as questões no localStorage
-                localStorage.setItem("questoesAtuais", JSON.stringify({ questoes: questoesFiltradas }));
-                whiteSpace.style.display = "none"; // Oculta o espaço branco
-            })
-            .catch(error => console.error("Erro ao buscar questões:", error));
-    });
-    
-    document.getElementById("gerar-atividade").addEventListener("click", () => {
-        var quantidade = document.getElementById("quantidade").value.trim();
-        if (!quantidade || isNaN(quantidade) || quantidade <= 0 || quantidade > 50) {
-            alert("Por favor, insira um número válido de questões (1 a 50).");
-            return;
-        }
-
-    buscarQuestoes(); // Chama a função que fará a busca
-});
 
 
     // Adicionar evento para salvar respostas ao marcar alternativas

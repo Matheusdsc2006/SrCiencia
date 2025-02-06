@@ -440,6 +440,14 @@ body {
     color: var(--danger-red);
 }
 
+.heart-icon {
+    position: absolute;
+    right: 0;
+    top: 65px;
+    /* Outras propriedades que possam influenciar */
+}
+
+
 .account-list {
     display: flex;
     flex-direction: column;
@@ -536,28 +544,23 @@ body {
 }
 
 /* Detalhes adicionais da questão */
-.questao-info {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px 15px;
+.questao-item > .questao-info {
     background-color: var(--white);
-    border-radius: 5px;
-    border-bottom: 1px solid var(--light-gray);
     border-top: 1px solid var(--light-gray);
-    font-size: 0.9rem;
-    color: var(--dark-purple);
-    margin-bottom: 10px;
-}
+    border-bottom: 1px solid var(--light-gray);
+    border-radius: 5px;
+    margin-bottom: 5px;
+    padding-top: 10px;
+    display: flex;
+    gap: 20px;
+    justify-content: space-around;
+    align-items: center;
+  }
 
-.questao-info p.detalhe {
-    font-size: 0.9rem;
-    font-weight: 500;
+  /* Detalhes adicionais da questão */
+.questao-item > .questao-info p{
     color: var(--dark-purple);
-    margin: 0;
-    padding: 0 5px;
-}
-
+  }
 
 /* Estilo do item da questão */
 #questoes-container {
@@ -579,6 +582,7 @@ body {
     box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
     position: relative;
 }
+
 
 
 .questao-item h3 {
@@ -810,23 +814,22 @@ body {
     width: 24px;
     height: 24px;
     transition: transform 0.2s ease, filter 0.2s ease;
-    filter: grayscale(1) brightness(0.5); /* Escurece e deixa cinza inicialmente */
+    /* Filtro para converter o ícone (PNG) para a cor #5e4b8a */
+    filter: brightness(0) saturate(100%) invert(27%) sepia(75%) saturate(600%) hue-rotate(230deg) brightness(90%) contrast(85%);
 }
 
 .favorite-button img:hover {
     transform: scale(1.2);
-    filter: grayscale(0) brightness(1) hue-rotate(-30deg); /* Remove cinza e aplica cor vibrante no hover */
+    /* Se quiser manter exatamente a mesma cor, use os mesmos valores.
+       Se preferir dar um leve realce, pode aumentar ligeiramente o brightness */
+    filter: brightness(0) saturate(100%) invert(27%) sepia(75%) saturate(600%) hue-rotate(230deg) brightness(95%) contrast(85%);
 }
 
-/* Ícone preenchido */
-.favorite-button img[src*='heart-filled.png'] {
-    filter: grayscale(0) brightness(1);
-    color: #5e4b8a; /* Define a cor preenchida como #5e4b8a */
-}
-
-/* Ícone vazio */
+.favorite-button img[src*='heart-filled.png'],
 .favorite-button img[src*='heart-outline.png'] {
-    color: #aaa; /* Cinza claro padrão */
+    /* Aplica filtro para converter o ícone para a cor #5e4b8a */
+    filter: brightness(0) saturate(100%) invert(27%) sepia(75%) saturate(600%) hue-rotate(230deg) brightness(90%) contrast(85%);
 }
+
 
 

@@ -4,7 +4,7 @@ from srciencia_core.views.PerfilView import *
 
 urlpatterns = [
     # Página inicial de prática para o aluno
-    path('', aluno_praticar, name='aluno_praticar'),
+    path('', praticar, name='praticar'),
 
     # Rota para buscar questões filtradas
     path('api/questoes', buscar_questoes, name='buscar_questoes'),
